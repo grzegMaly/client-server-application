@@ -1,0 +1,40 @@
+.chatBG {
+    -fx-background-color: #5f5d5d;
+}
+
+.chatBarBG {
+    -fx-background-color: #404040;
+}
+
+.chatFriendsList {
+    -fx-alignment: right;
+}
+
+.hbox {
+    -fx-border-color: green;
+}
+
+.topChatBarText {
+    -fx-padding: 7;
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+}
+
+.sentMessage, .receivedMessage {
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-padding: 5;
+    -fx-font-size: 20px;
+}
+
+.sentMessage {
+    -fx-background-color: #a638ca;
+}
+
+.receivedMessage {
+    -fx-background-color: #404040
+}
+
+.listCellBG, .listCellBG .list-cell {
+    -fx-background-color: transparent;
+}

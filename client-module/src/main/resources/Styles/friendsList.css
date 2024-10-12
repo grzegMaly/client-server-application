@@ -1,0 +1,31 @@
+.friendsListBG {
+    -fx-background-color: #2e2e2e;
+    -fx-border-color: transparent;
+}
+
+.friendsListBG .list-cell {
+    -fx-background-color: #2e2e2e;
+    -fx-text-fill: white;
+    -fx-font-size: 25;
+    -fx-alignment: center;
+    -fx-border-color: transparent;
+}
+
+.friendsListBG .list-cell:hover {
+    -fx-background-color: #6d6d6d;
+}
+
+friendsListBG .list.cell:selected {
+    -fx-background-color: #2e2e2e;
+}
+
+.friendsListBG .list-cell:empty {
+    -fx-background-color: transparent;
+    -fx-text-fill: transparent;
+    -fx-border-color: transparent;
+}
+
+.list-view .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+

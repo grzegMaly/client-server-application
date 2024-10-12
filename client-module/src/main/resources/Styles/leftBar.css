@@ -1,0 +1,13 @@
+.leftBarBG {
+    -fx-background-color: #2e2e2e;
+}
+
+.leftBarBtn {
+    -fx-background-color: #3b3b3b;
+    -fx-text-fill: #dbdbdb;
+}
+
+.leftBarBtn:hover {
+    -fx-background-color: #6d6d6d;
+    -fx-text-fill: #fdfdfd;
+}
