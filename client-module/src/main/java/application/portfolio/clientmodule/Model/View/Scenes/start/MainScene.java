@@ -134,6 +134,7 @@ public class MainScene extends VBox implements Page {
         return new AtomicBoolean(true);
     }
 
+
     public static void useElement(Node element) {
 
         if (!templatesHolder.getChildren().contains(element)) {
