@@ -15,7 +15,7 @@ import java.util.Set;
 
 public class TaskBinder {
 
-    private final TaskDialog.Operation operation;
+    private TaskDialog.Operation operation;
     private PersonDAO selectedUser;
     PersonDAO actualUser = UserSession.getInstance().getLoggedInUser();
     private TaskDAO taskDAO;
@@ -25,12 +25,15 @@ public class TaskBinder {
     private final Set<Runnable> binds = new HashSet<>();
     private final Set<Runnable> clearSet = new HashSet<>();
 
-    public TaskBinder(TaskDialog.Operation operation) {
-        this.operation = operation;
+    public TaskBinder() {
     }
 
     public void withTaskDAO(TaskDAO task) {
         this.taskDAO = task;
+    }
+
+    public void withOpenOperation(TaskDialog.Operation operation) {
+        this.operation = operation;
     }
 
     public void withTitle(Label titleLbl) {

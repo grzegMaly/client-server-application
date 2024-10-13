@@ -31,8 +31,6 @@ public class TaskDialog extends Stage {
         }
     }
 
-    private static TaskDialog instance = null;
-
     private final GridPane gp = new GridPane();
 
     private final ButtonBar buttons = new ButtonBar();
@@ -74,21 +72,14 @@ public class TaskDialog extends Stage {
             deadlineSp, descriptionLbl, descriptionTa);
 
     private Operation openOperation = null;
-    private TaskBinder taskBinder = null;
+    private TaskBinder taskBinder = new TaskBinder();
 
 
-    private TaskDialog() {
+    public TaskDialog() {
         this.setOnCloseRequest(evt -> {
             close();
             evt.consume();
         });
-    }
-
-    public static TaskDialog getInstance() {
-        if (instance == null) {
-            instance = new TaskDialog();
-        }
-        return instance;
     }
 
     public void createTask() {
@@ -99,14 +90,14 @@ public class TaskDialog extends Stage {
 
         this.openOperation = operation;
 
-        taskBinder = new TaskBinder(openOperation);
+        taskBinder.withOpenOperation(openOperation);
         taskBinder.withTaskDAO(task);
 
         initGP();
         boundSizeProperties();
 
         taskBinder.bind();
-        this.show();
+        this.showAndWait();
     }
 
     private void initGP() {
@@ -262,7 +253,6 @@ public class TaskDialog extends Stage {
     public void close() {
         taskBinder.clearFields();
         taskBinder = null;
-        instance = null;
         super.close();
     }
 }

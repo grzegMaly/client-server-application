@@ -45,12 +45,13 @@ public class TaskController {
         tasksTable.setRowFactory(evt -> {
             TableRow<TaskDAO> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 2 &&
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1 &&
                         (!row.isEmpty())) {
 
                     TaskDAO task = row.getItem();
                     TaskDialog.Operation operation = TaskDialog.Operation.determineOperation(task);
-                    TaskDialog.getInstance().useDialog(task, operation);
+                    TaskDialog taskDialog = new TaskDialog();
+                    taskDialog.useDialog(task, operation);
                 }
             });
             return row;

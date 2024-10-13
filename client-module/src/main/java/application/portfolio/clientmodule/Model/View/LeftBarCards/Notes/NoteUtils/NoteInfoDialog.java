@@ -84,7 +84,9 @@ public class NoteInfoDialog extends Stage {
                 () -> {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
-                    saveBtn.setOnAction(evt -> noteBinder.save());
+                    saveBtn.setOnAction(evt -> {
+                        if (noteBinder.save()) noteBinder.clearFields();
+                    });
                     saveBtn.setVisible(false);
                     btnBar.getChildren().addAll(cancelBtn, spacer, editBtn, saveBtn);
                     noteBinder.withContent(contentTa);
@@ -262,5 +264,6 @@ public class NoteInfoDialog extends Stage {
     @Override
     public void close() {
         super.close();
+        noteBinder.clearFields();
     }
 }

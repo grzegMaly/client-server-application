@@ -4,6 +4,7 @@ import application.portfolio.clientmodule.Model.Request.Notes.NotesRequestViewMo
 import application.portfolio.clientmodule.OtherElements.NoteDAO;
 import application.portfolio.clientmodule.utils.DateUtils;
 import javafx.application.Platform;
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
@@ -22,17 +23,18 @@ public class NoteBinder {
     private ComboBox<String> categoryCb;
     private ComboBox<String> priorityCb;
     private DatePicker datePicker;
+    private Label deadlineLbl;
     private TextArea contentTa;
 
     private static final Set<Runnable> startBinds = new HashSet<>();
-    private static final Set<Runnable> changingBinds = new HashSet<>();
+    private static final Set<Runnable> unbindingSet = new HashSet<>();
 
     public void withNoteDAO(NoteDAO noteDAO) {
 
         note = noteDAO;
         viewModel.setNoteDAO(noteDAO);
 
-        changingBinds.add(() -> {
+        startBinds.add(() -> {
             note = null;
             viewModel.setNoteDAO(null);
         });
@@ -40,10 +42,8 @@ public class NoteBinder {
 
     public void withTitleLbl(Label titleLbl) {
 
-        Runnable action = () -> titleLbl.textProperty().bindBidirectional(viewModel.titleProperty());
-        action.run();
-
-        changingBinds.add(() -> {
+        titleLbl.textProperty().bindBidirectional(viewModel.titleProperty());
+        unbindingSet.add(() -> {
                     viewModel.setTitle(null);
                     titleLbl.textProperty().unbindBidirectional(viewModel.titleProperty());
                 }
@@ -54,18 +54,17 @@ public class NoteBinder {
 
         this.titleTf = titleTf;
 
-        Runnable action = () -> this.titleTf.textProperty().bindBidirectional(viewModel.titleProperty());
-        startBinds.add(() -> viewModel.setTitle(null));
+        this.titleTf.textProperty().bindBidirectional(viewModel.titleProperty());
 
-        action.run();
+        startBinds.add(() -> viewModel.setTitle(null));
+        unbindingSet.add(() -> this.titleTf.textProperty().unbindBidirectional(viewModel.titleProperty()));
     }
 
     public void withNoteCreatedDate(Label createdDateLbl) {
 
-        Runnable action = () -> createdDateLbl.textProperty().bindBidirectional(viewModel.createdDateProperty());
-        action.run();
+        createdDateLbl.textProperty().bindBidirectional(viewModel.createdDateProperty());
 
-        changingBinds.add(() -> {
+        unbindingSet.add(() -> {
             viewModel.setCreatedDate(null);
             createdDateLbl.textProperty().unbindBidirectional(viewModel.createdDateProperty());
         });
@@ -73,10 +72,9 @@ public class NoteBinder {
 
     public void withNoteTypeLbl(Label noteTypeLbl) {
 
-        Runnable action = () -> noteTypeLbl.textProperty().bind(viewModel.noteTypeProperty());
-        action.run();
+        noteTypeLbl.textProperty().bind(viewModel.noteTypeProperty());
 
-        changingBinds.add(() -> {
+        unbindingSet.add(() -> {
                     noteTypeLbl.textProperty().unbind();
                     noteTypeLbl.setText(null);
                 }
@@ -86,7 +84,7 @@ public class NoteBinder {
     public void withNoteTypeCb(ComboBox<String> typeCb) {
 
         this.typeCb = typeCb;
-        Runnable action = () -> viewModel.noteTypeProperty().bind(this.typeCb.valueProperty());
+        viewModel.noteTypeProperty().bind(this.typeCb.valueProperty());
 
         ObservableList<String> elements = FXCollections.observableList(NoteDAO.getNames(NoteDAO.NoteType.class));
         this.typeCb.setItems(elements);
@@ -97,15 +95,13 @@ public class NoteBinder {
         } else {
             this.typeCb.getSelectionModel().select(0);
         }
-        action.run();
     }
 
     public void withNoteCategoryLbl(Label noteCategoryLbl) {
 
-        Runnable action = () -> noteCategoryLbl.textProperty().bind(viewModel.categoryProperty());
-        action.run();
+        noteCategoryLbl.textProperty().bind(viewModel.categoryProperty());
 
-        changingBinds.add(() -> {
+        unbindingSet.add(() -> {
                     noteCategoryLbl.textProperty().unbind();
                     noteCategoryLbl.setText(null);
                 }
@@ -115,28 +111,30 @@ public class NoteBinder {
     public void withNoteCategoryCb(ComboBox<String> categoryCb) {
 
         this.categoryCb = categoryCb;
-        Runnable action = () -> viewModel.categoryProperty().bind(this.categoryCb.valueProperty());
-        String CATEGORY = "Category";
+        viewModel.categoryProperty().bind(this.categoryCb.valueProperty());
 
+        String CATEGORY = "Category";
         ObservableList<String> elements = FXCollections.observableArrayList(NoteDAO.getNames(NoteDAO.Category.class));
         elements.addFirst(CATEGORY);
         this.categoryCb.setItems(elements);
 
         if (note != null) {
             String category = NoteDAO.getName(note.getCategory());
-            if (category != null) this.categoryCb.getSelectionModel().select(category);
+            if (category != null) {
+                this.categoryCb.getSelectionModel().select(category);
+            } else {
+                this.categoryCb.getSelectionModel().select(0);
+            }
         } else {
             this.categoryCb.getSelectionModel().select(0);
         }
-        action.run();
     }
 
     public void withNotePriorityLbl(Label priorityLbl) {
 
-        Runnable action = () -> priorityLbl.textProperty().bind(viewModel.priorityProperty());
-        action.run();
+        priorityLbl.textProperty().bind(viewModel.priorityProperty());
 
-        changingBinds.add(() -> {
+        unbindingSet.add(() -> {
                     priorityLbl.textProperty().unbind();
                     priorityLbl.setText(null);
                 }
@@ -146,10 +144,9 @@ public class NoteBinder {
     public void withNotePriorityCb(ComboBox<String> priorityCb) {
 
         this.priorityCb = priorityCb;
-        Runnable action = () -> viewModel.priorityProperty().bind(this.priorityCb.valueProperty());
+        viewModel.priorityProperty().bind(this.priorityCb.valueProperty());
 
         String PRIORITY = "Priority";
-
         ObservableList<String> elements =
                 FXCollections.observableList(NoteDAO.getNames(NoteDAO.Priority.class));
         elements.addFirst(PRIORITY);
@@ -157,62 +154,84 @@ public class NoteBinder {
 
         if (note != null) {
             String priority = NoteDAO.getName(note.getPriority());
-            if (priority != null) priorityCb.getSelectionModel().select(priority);
+            if (priority != null) {
+                priorityCb.getSelectionModel().select(priority);
+            } else {
+                priorityCb.getSelectionModel().select(0);
+            }
         } else {
             priorityCb.getSelectionModel().select(0);
         }
-        action.run();
     }
 
     public void withNoteDeadlineLbl(Label deadlineLbl) {
 
-        Runnable action = () -> {
-            String date = DateUtils.formatDeadlineDate(viewModel.getDeadline());
-            deadlineLbl.setText(date);
-        };
-        action.run();
-        changingBinds.add(() -> deadlineLbl.setText(null));
+        this.deadlineLbl = deadlineLbl;
+        this.deadlineLbl.textProperty().bind(
+                Bindings.createStringBinding(
+                        () -> {
+                            LocalDate deadline = viewModel.getDeadline();
+                            return deadline != null ? deadline.format(DateUtils.DEADLINE_FORMATTER) : "";
+                        },
+                        viewModel.deadlineProperty()
+                ));
+
+        unbindingSet.add(() -> {
+            this.deadlineLbl.textProperty().unbind();
+            this.deadlineLbl.setText(null);
+        });
     }
 
     public void withNoteDeadlineDp(DatePicker datePicker) {
 
         this.datePicker = datePicker;
-        Runnable action = () -> {
-            if (note != null) {
-                this.datePicker.setValue(note.getDeadline());
-            } else {
-                this.datePicker.setValue(LocalDate.now());
-            }
-            this.datePicker.valueProperty().bindBidirectional(viewModel.deadlineProperty());
-        };
+
+        if (note != null) {
+            this.datePicker.setValue(note.getDeadline());
+        } else {
+            this.datePicker.setValue(LocalDate.now());
+        }
+        this.datePicker.valueProperty().bindBidirectional(viewModel.deadlineProperty());
+
         this.datePicker.setEditable(false);
-        startBinds.add(() -> viewModel.setDeadline(null));
-        action.run();
+
+        startBinds.add(() -> viewModel.setDeadline(LocalDate.now()));
+        unbindingSet.add(() -> {
+            viewModel.setDeadline(null);
+            this.datePicker.valueProperty().unbindBidirectional(viewModel.deadlineProperty());
+        });
     }
 
     public void withContent(TextArea contentTa) {
 
         this.contentTa = contentTa;
-        Runnable action = () -> this.contentTa.textProperty().bindBidirectional(viewModel.contentProperty());
+        this.contentTa.textProperty().bindBidirectional(viewModel.contentProperty());
+
         this.contentTa.setWrapText(true);
+
         startBinds.add(() -> viewModel.setContent(null));
-        action.run();
+        unbindingSet.add(() -> this.contentTa.textProperty().unbindBidirectional(viewModel.contentProperty()));
     }
 
-    public void clearStartFields() {
-        Platform.runLater(() -> startBinds.forEach(Runnable::run));
+    public void clearFields() {
+
+        if (note != null) {
+            Platform.runLater(() -> {
+                startBinds.forEach(Runnable::run);
+                unbindingSet.forEach(Runnable::run);
+            });
+            startBinds.clear();
+            unbindingSet.clear();
+        } else {
+            Platform.runLater(() -> startBinds.forEach(Runnable::run));
+        }
     }
 
-    public void clearChangingBinds() {
-        Platform.runLater(() -> changingBinds.forEach(Runnable::run));
-        changingBinds.clear();
-    }
-
-    public void save() {
+    public boolean save() {
 
         if (!validateElements()) {
 //            addListeners();
-            return;
+            return false;
         }
 
         if (note == null) {
@@ -220,18 +239,20 @@ public class NoteBinder {
         } else {
             viewModel.update();
         }
+
+        return true;
     }
 
     private boolean validateElements() {
 
         boolean flag = true;
 
-        if (titleTf.getText().isEmpty() || titleTf.getText().isBlank()) {
+        if (titleTf.getText() == null || titleTf.getText().isEmpty() || titleTf.getText().isBlank()) {
 //            titleTf.getStyleClass().add("badElement");
             flag = false;
         }
 
-        if (contentTa.getText().isEmpty() || contentTa.getText().isBlank()) {
+        if (contentTa.getText() == null || contentTa.getText().isEmpty() || contentTa.getText().isBlank()) {
 //            contentTa.getStyleClass().add("badElement");
             flag = false;
         }

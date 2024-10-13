@@ -74,7 +74,7 @@ public class NotesForm extends GridPane implements Page {
 
     private void setSaveBtnAction() {
         saveBtn.setOnAction(evt -> {
-             noteBinder.save();
+             if (noteBinder.save()) noteBinder.clearFields();
         });
     }
 

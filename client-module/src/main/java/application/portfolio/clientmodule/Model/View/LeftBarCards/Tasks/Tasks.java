@@ -77,7 +77,7 @@ public class Tasks extends VBox implements Page {
 
         buttonBar.getButtons().addAll(receivedTasksBtn, wroteTasksBtn);
 
-        newTaskBtn.setOnAction(evt -> TaskDialog.getInstance().createTask());
+        newTaskBtn.setOnAction(evt -> new TaskDialog().createTask());
         wroteTasksBtn.setOnAction(evt -> TaskController.loadWroteTasks(tasksTable));
         receivedTasksBtn.setOnAction(evt -> TaskController.loadReceivedTasks(tasksTable));
 
