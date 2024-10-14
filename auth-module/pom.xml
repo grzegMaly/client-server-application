@@ -3,27 +3,23 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>application.portfolio</groupId>
+        <artifactId>client-server-application</artifactId>
+        <version>1.0.0</version>
+    </parent>
 
-    <groupId>application.portfolio</groupId>
-    <artifactId>client-server-application</artifactId>
-    <version>1.0.0</version>
+    <artifactId>auth-module</artifactId>
     <packaging>pom</packaging>
+    <modules>
+        <module>auth-server</module>
+        <module>auth-database</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <modules>
-        <module>client-module</module>
-        <module>client-admin-module</module>
-        <module>http-server-module</module>
-        <module>websocket-server-module</module>
-        <module>tcp-server-module</module>
-        <module>udp-server-module</module>
-        <module>database-module</module>
-        <module>auth-module</module>
-    </modules>
 
 </project>

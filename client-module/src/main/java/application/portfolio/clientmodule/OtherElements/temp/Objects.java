@@ -211,7 +211,7 @@ public class Objects {
         NoteDAO note2 = new NoteDAO("Title2", NoteDAO.NoteType.REGULAR_NOTE, "No Elo");
         note2.setCategory(NoteDAO.Category.MEETING);
 
-        NoteDAO note3 = new NoteDAO("Title3", NoteDAO.NoteType.DEADLINE_NOTE, "Dupa");
+        NoteDAO note3 = new NoteDAO("Title3", NoteDAO.NoteType.DEADLINE_NOTE, "Testowe");
         note3.setPriority(NoteDAO.Priority.HIGH);
         note3.setDeadline(LocalDate.now().plusDays(3));
 
