@@ -1,21 +1,14 @@
 package application.portfolio.clientmodule.Config;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
-public final class BaseConfig {
+public final class StyleProps {
 
-    private static final String PROPERTIES_FILE = "/basePropsAndStyles.properties";
-    private static final Properties properties = new Properties();
+    private static final String STYLE_PROPS = "/View/basePropsAndStyles.properties";
+    private static Properties properties = null;
 
     static {
-        try (InputStream input = BaseConfig.class.getResourceAsStream(PROPERTIES_FILE)) {
-
-            properties.load(input);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        properties = PropertiesLoader.getProperties(STYLE_PROPS);
     }
 
     private static String getProperty(String key) {

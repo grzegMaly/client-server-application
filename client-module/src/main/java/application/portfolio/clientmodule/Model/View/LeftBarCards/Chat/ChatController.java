@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
-import application.portfolio.clientmodule.HttpClient.UserSession;
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.OtherElements.MessageDAO;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import application.portfolio.clientmodule.OtherElements.temp.Objects;

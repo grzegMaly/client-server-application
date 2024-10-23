@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.Scenes;
 
-import application.portfolio.clientmodule.Config.BaseConfig;
+import application.portfolio.clientmodule.Config.StyleProps;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
@@ -67,7 +67,7 @@ public class StartImage extends StackPane implements Page {
 
     private Image getImage() {
 
-        String imageLoc = BaseConfig.getAppScreenPath();
+        String imageLoc = StyleProps.getAppScreenPath();
 
         try {
             URL resource = StartImage.class.getResource(imageLoc);

@@ -3,6 +3,7 @@ module application.portfolio.clientmodule {
     requires javafx.fxml;
     requires java.net.http;
     requires java.desktop;
+    requires com.fasterxml.jackson.databind;
 
 
     exports application.portfolio.clientmodule;

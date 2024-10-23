@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule;
 
-import application.portfolio.clientmodule.Config.BaseConfig;
+import application.portfolio.clientmodule.Config.StyleProps;
+import application.portfolio.clientmodule.Connection.HttpClientAgent;
 import application.portfolio.clientmodule.Model.View.Scenes.LoginPage.LoginScene;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.StartImage;
@@ -33,13 +34,7 @@ public class TeamLinkApp extends Application {
     //ToDo: Move to HttpClientAgent
     private Boolean checkConnection() {
 
-        try {
-            TimeUnit.MILLISECONDS.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        return true;
+        return HttpClientAgent.ping();
     }
 
     @Override
@@ -47,18 +42,18 @@ public class TeamLinkApp extends Application {
 
 
         primaryStage = stage;
-        stage.setTitle(BaseConfig.getAppName());
+        stage.setTitle(StyleProps.getAppName());
+        runStartImage();
 
         CompletableFuture<Boolean> connectionFuture = CompletableFuture.supplyAsync(this::checkConnection, executor);
-        CompletableFuture<Void> startImageFuture = CompletableFuture.runAsync(this::runStartImage, executor);
+        CompletableFuture<LoginScene> loginSceneFuture =
+                CompletableFuture.supplyAsync(() -> PageFactory.getInstance(LoginScene.class), executor);
 
-
-        connectionFuture.thenCompose(success -> {
-            if (success) {
-                return CompletableFuture.supplyAsync(() -> PageFactory.getInstance(LoginScene.class));
+        connectionFuture.thenCombine(loginSceneFuture, (isConnected, loginScene) -> {
+            if (isConnected) {
+                return loginScene;
             } else {
-                //Todo
-                throw new RuntimeException("Error in start, problem with logging to application");
+                throw new RuntimeException("error in start");
             }
         }).thenAccept(loginPage -> {
             if (loginPage != null) {
@@ -67,12 +62,6 @@ public class TeamLinkApp extends Application {
                 System.out.println("Login Page is null");
             }
         }).exceptionally(ex -> {
-            ex.printStackTrace();
-            return null;
-        });
-
-        startImageFuture.exceptionally(ex -> {
-            ex.printStackTrace();
             return null;
         });
     }

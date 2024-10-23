@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog;
 
-import application.portfolio.clientmodule.HttpClient.UserSession;
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import application.portfolio.clientmodule.OtherElements.TaskDAO;
 import javafx.geometry.HPos;

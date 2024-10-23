@@ -32,7 +32,7 @@ public class NoteController {
         contentCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getContent()));
 
         notesTable.getColumns().addAll(List.of(titleCol, typeCol, createdDateCol, contentCol));
-        notesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        notesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         List<NoteDAO> notes = loadNotes();
         notesTable.getItems().addAll(notes);

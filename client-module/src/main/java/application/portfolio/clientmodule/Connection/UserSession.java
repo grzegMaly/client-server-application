@@ -1,4 +1,4 @@
-package application.portfolio.clientmodule.HttpClient;
+package application.portfolio.clientmodule.Connection;
 
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 

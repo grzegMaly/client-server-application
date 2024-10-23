@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Config.LoadStyles;
-import application.portfolio.clientmodule.HttpClient.UserSession;
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
@@ -16,7 +16,6 @@ import javafx.util.Callback;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Friends extends ListView<PersonDAO> implements Page {
 

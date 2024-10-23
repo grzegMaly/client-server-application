@@ -115,7 +115,7 @@ public class NoteBinder {
 
         String CATEGORY = "Category";
         ObservableList<String> elements = FXCollections.observableArrayList(NoteDAO.getNames(NoteDAO.Category.class));
-        elements.addFirst(CATEGORY);
+        elements.add(0, CATEGORY);
         this.categoryCb.setItems(elements);
 
         if (note != null) {
@@ -149,7 +149,7 @@ public class NoteBinder {
         String PRIORITY = "Priority";
         ObservableList<String> elements =
                 FXCollections.observableList(NoteDAO.getNames(NoteDAO.Priority.class));
-        elements.addFirst(PRIORITY);
+        elements.add(0, PRIORITY);
         this.priorityCb.setItems(elements);
 
         if (note != null) {

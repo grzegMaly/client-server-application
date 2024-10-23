@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule.Model.View.Scenes.LoginPage;
 
 import application.portfolio.clientmodule.Config.LoadStyles;
-import application.portfolio.clientmodule.HttpClient.UserSession;
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;

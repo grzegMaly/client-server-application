@@ -33,7 +33,7 @@ public class TaskController {
         descriptionCol.setCellValueFactory(celLData -> new SimpleStringProperty(celLData.getValue().getDescription()));
 
         tasksTable.getColumns().addAll(List.of(titleCol, authorCol, deadlineCol, descriptionCol));
-        tasksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_ALL_COLUMNS);
+        tasksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         loadBehavior(tasksTable);
 
