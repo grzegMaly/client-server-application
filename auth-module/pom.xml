@@ -10,11 +10,6 @@
     </parent>
 
     <artifactId>auth-module</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>auth-server</module>
-        <module>auth-database</module>
-    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

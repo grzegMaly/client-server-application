@@ -2,12 +2,12 @@ package application.portfolio;
 
 
 import application.portfolio.endpoints.EndpointHandler;
+import application.portfolio.clientServer.ServerHolder;
 import application.portfolio.utils.Infrastructure;
 import com.sun.net.httpserver.HttpServer;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -15,8 +15,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
-
-    private static HttpServer server;
 
     public static void main(String[] args) {
 
@@ -28,26 +26,21 @@ public class Main {
             throw new RuntimeException("Error loading endpoints");
         }
 
-        server.start();
+        ServerHolder.start();
     }
 
     private static boolean setServer() {
 
-        Map<String, String> gatewayData = Infrastructure.getGatewayData();
+        Map<String, String> data = Infrastructure.getCurrentServerData();
         String host;
         int port;
-        if (gatewayData.size() == 2) {
-            host = gatewayData.get("host");
-            port = Integer.parseInt(gatewayData.get("port"));
+        if (data.size() == 2) {
+            host = Infrastructure.getHost(data);
+            port = Integer.parseInt(Infrastructure.getPort(data));
+            ServerHolder.bind(host, port, 0);
+            return true;
         } else {
             throw new RuntimeException("Error loading server data");
-        }
-
-        try {
-            server = HttpServer.create(new InetSocketAddress(host, port), 0);
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 
@@ -55,6 +48,7 @@ public class Main {
 
         List<CompletableFuture<Void>> futures = new ArrayList<>();
         ServiceLoader<EndpointHandler> loader = ServiceLoader.load(EndpointHandler.class);
+        HttpServer server = ServerHolder.getServer();
 
         for (EndpointHandler handler : loader) {
             CompletableFuture<Void> future = CompletableFuture.runAsync(() -> handler.registerEndpoint(server));;

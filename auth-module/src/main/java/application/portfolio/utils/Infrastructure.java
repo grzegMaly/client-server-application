@@ -49,7 +49,7 @@ public class Infrastructure {
         return getData("currentServer");
     }
 
-    public static Map<String, String> getAuthorizationData() {
-        return getData("authServer");
+    public static Map<String, String> getDatabaseData() {
+        return getData("databaseServer");
     }
 }
