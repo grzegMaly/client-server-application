@@ -36,3 +36,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/client-module/.mvn/
+/client-module/mvnw
+/client-module/mvnw.cmd

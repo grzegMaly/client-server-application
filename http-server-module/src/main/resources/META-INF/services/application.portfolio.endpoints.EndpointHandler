@@ -1,5 +1,6 @@
 application.portfolio.endpoints.endpointClasses.PingEndpoint
-application.portfolio.endpoints.endpointClasses.LoginEndpoint
+application.portfolio.endpoints.endpointClasses.session.LoginEndpoint
+application.portfolio.endpoints.endpointClasses.session.LogoutEndpoint
 application.portfolio.endpoints.endpointClasses.ChatEndpoint
 application.portfolio.endpoints.endpointClasses.NotesEndpoint
 application.portfolio.endpoints.endpointClasses.PasswordEndpoint

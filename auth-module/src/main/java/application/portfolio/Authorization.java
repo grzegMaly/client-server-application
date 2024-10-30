@@ -1,20 +1,18 @@
 package application.portfolio;
 
-
-import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.clientServer.ServerHolder;
+import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.utils.Infrastructure;
 import com.sun.net.httpserver.HttpServer;
 
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-public class Main {
+public class Authorization {
 
     public static void main(String[] args) {
 

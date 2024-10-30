@@ -1,0 +1,2 @@
+application.portfolio.endpoints.endpointClasses.AuthEndpoint
+application.portfolio.endpoints.endpointClasses.LogoutEndpoint
