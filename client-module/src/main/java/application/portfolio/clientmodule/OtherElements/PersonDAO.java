@@ -24,20 +24,22 @@ public class PersonDAO {
         this.password = password;
     }
 
-    public PersonDAO(UUID id, String firstName, String lastName, Role role) {
-        this.id = id;
+    public PersonDAO(String id, String firstName, String lastName, String role) {
+        this.id = UUID.fromString(id);
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = role;
+        castRole(role);
     }
 
     public PersonDAO(String firstName, String lastName, String role, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.role = Role.valueOf(role.toUpperCase());
         this.email = email;
         this.password = password;
+        castRole(role);
+    }
 
+    private void castRole(String role) {
         try {
             this.role = Role.valueOf(role.toUpperCase());
         } catch (IllegalArgumentException e) {

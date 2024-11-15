@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule;
 
 import application.portfolio.clientmodule.Config.StyleProps;
-import application.portfolio.clientmodule.Connection.HttpClientAgent;
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.View.Scenes.LoginPage.LoginScene;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.StartImage;
@@ -27,19 +27,15 @@ public class TeamLinkApp extends Application {
     private static boolean stageShown = false;
 
     public static void main(String[] args) {
-
         launch();
     }
 
-    //ToDo: Move to HttpClientAgent
     private Boolean checkConnection() {
-
-        return HttpClientAgent.ping();
+        return UserSession.ping();
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-
 
         primaryStage = stage;
         stage.setTitle(StyleProps.getAppName());
@@ -61,9 +57,7 @@ public class TeamLinkApp extends Application {
             } else {
                 System.out.println("Login Page is null");
             }
-        }).exceptionally(ex -> {
-            return null;
-        });
+        }).exceptionally(ex -> null);
     }
 
     /**
@@ -134,7 +128,6 @@ public class TeamLinkApp extends Application {
 
     @Override
     public void stop() throws Exception {
-
         ExecutorServiceManager.shutDownAll();
         super.stop();
     }

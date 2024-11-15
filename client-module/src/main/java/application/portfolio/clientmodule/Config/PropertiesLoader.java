@@ -6,7 +6,7 @@ import java.util.Properties;
 
 public final class PropertiesLoader {
 
-    public static Properties getProperties(String path) {
+    public synchronized static Properties getProperties(String path) {
 
         Properties properties;
         try (InputStream input = PropertiesLoader.class.getResourceAsStream(path)) {

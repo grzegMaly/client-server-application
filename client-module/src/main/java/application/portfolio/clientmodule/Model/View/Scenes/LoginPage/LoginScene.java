@@ -1,14 +1,10 @@
 package application.portfolio.clientmodule.Model.View.Scenes.LoginPage;
 
 import application.portfolio.clientmodule.Config.LoadStyles;
-import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.View.Page;
-import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import application.portfolio.clientmodule.OtherElements.temp.Objects;
 import application.portfolio.clientmodule.TeamLinkApp;
-import application.portfolio.clientmodule.utils.ExecutorServiceManager;
-import application.portfolio.clientmodule.utils.PageFactory;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.scene.Parent;
@@ -19,9 +15,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 
@@ -30,11 +24,10 @@ public class LoginScene extends GridPane implements Page {
     private final Label loginLbl = new Label("Login/Email:");
     private final Label passLbl = new Label("Password:");
 
-    private final TextField loginTf = new TextField();
+    private final TextField emailTf = new TextField();
     private final PasswordField passPf = new PasswordField();
     private final Button loginBtn = new Button("Log In");
-    private final ExecutorService executor =
-            ExecutorServiceManager.createCachedThreadPool(this.getClass().getSimpleName());
+    private final LoginBinder binder = new LoginBinder();
 
     private final List<PersonDAO> persons = Objects.getPersons();
 
@@ -50,7 +43,6 @@ public class LoginScene extends GridPane implements Page {
         Platform.runLater(() -> {
             try {
                 completePage();
-                bindFields();
                 future.complete(true);
             } catch (Exception e) {
                 future.complete(false);
@@ -63,6 +55,7 @@ public class LoginScene extends GridPane implements Page {
     }
 
     private void completePage() {
+
             ColumnConstraints col1 = new ColumnConstraints();
             ColumnConstraints col2 = new ColumnConstraints();
             col1.setHgrow(Priority.NEVER);
@@ -71,9 +64,12 @@ public class LoginScene extends GridPane implements Page {
             col2.setPercentWidth(15);
             getColumnConstraints().addAll(col1, col2);
 
+            binder.withEmailTf(emailTf);
+            binder.withPasswordTf(passPf);
+            binder.withLoginBtn(loginBtn);
+
             this.add(loginLbl, 0, 0);
-            this.add(loginTf, 1, 0);
-            loginTf.setPromptText("example@company.com");
+            this.add(emailTf, 1, 0);
 
             this.add(passLbl, 0, 1);
             this.add(passPf, 1, 1);
@@ -83,37 +79,6 @@ public class LoginScene extends GridPane implements Page {
             GridPane.setHalignment(loginBtn, HPos.CENTER);
             loginBtn.setMaxWidth(Double.MAX_VALUE);
             loginBtn.requestFocus();
-
-    }
-
-    public void bindFields() {
-
-        loginBtn.setOnAction(evt -> {
-
-            if (checkLogging()) {
-                Page mainScene = PageFactory.getInstance(MainScene.class);
-                TeamLinkApp.useScene(mainScene.getClass());
-            }
-        });
-    }
-
-    //TODO: TEMP
-    private Boolean checkLogging() {
-
-        String email = loginTf.getText();
-        String password = passPf.getText();
-
-        PersonDAO personDAO = new PersonDAO(email, password);
-
-        Optional<PersonDAO> matchedUser = persons.stream()
-                .filter(p -> p.equals(personDAO))
-                .findFirst();
-
-        return matchedUser.map(user -> {
-            UserSession.getInstance().setLoggedInUser(user);
-            System.out.println(user);
-            return true;
-        }).orElse(false);
     }
 
     @Override

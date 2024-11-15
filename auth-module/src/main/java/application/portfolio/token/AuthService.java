@@ -29,27 +29,48 @@ public class AuthService {
     }
 
     public AuthTokenResponse authorize(byte[] data) {
-        JsonNode node = getDataFromDatabase(data);
+
         ObjectNode objectNode = objectMapper.createObjectNode();
-
-        if (node != null) {
-            String id = node.get("id").asText();
-            UUID personId = UUID.fromString(id);
-            AuthToken token = Tokens.createToken(personId);
-
-            objectNode.set("response", node);
-            return new AuthTokenResponse(objectNode, token);
-        } else {
-            objectNode.put("response", "Invalid Credentials");
-            return new AuthTokenResponse(objectNode, HTTP_UNAUTHORIZED);
+        var map = getDataFromDatabase(data);
+        if (map == null) {
+            objectNode.put("response", "Unknown Error");
+            return new AuthTokenResponse(objectNode, HTTP_INTERNAL_ERROR);
         }
+
+        var entry = map.entrySet().stream()
+                .findFirst()
+                .orElseGet(() -> {
+                    objectNode.put("response", "Unknown Error");
+                    return Map.entry(HTTP_INTERNAL_ERROR, objectNode);
+                });
+
+        Integer code = entry.getKey();
+        JsonNode response = entry.getValue();
+
+        if (code != HTTP_OK && code != HTTP_UNAUTHORIZED) {
+            objectNode.put("response", "Unknown Error");
+            return new AuthTokenResponse(objectNode, HTTP_INTERNAL_ERROR);
+        }
+
+        JsonNode subNode = response.get("response");
+        if (code == HTTP_UNAUTHORIZED) {
+            objectNode.put("response", subNode.asText());
+            return new AuthTokenResponse(objectNode, code);
+        }
+
+        String id = subNode.get("id").asText();
+        UUID personId = UUID.fromString(id);
+        AuthToken token = Tokens.createToken(personId);
+
+        objectNode.set("response", subNode);
+        return new AuthTokenResponse(objectNode, token);
     }
 
-    private JsonNode getDataFromDatabase(byte[] data) {
+    private Map<Integer, JsonNode> getDataFromDatabase(byte[] data) {
 
         HttpClient client = ClientHolder.getClient();
         Map<String, String> authData = Infrastructure.getDatabaseData();
-        URI baseUri = Infrastructure.getBaseUri(authData).resolve("/getUser");
+        URI baseUri = Infrastructure.getBaseUri(authData).resolve("/user/login");
 
         HttpRequest request = HttpRequest.newBuilder(baseUri)
                 .POST(HttpRequest.BodyPublishers.ofByteArray(data))
@@ -57,14 +78,9 @@ public class AuthService {
                 .timeout(Duration.ofSeconds(10))
                 .build();
 
-        client.sendAsync(request, handler)
-                .thenApply(response -> {
-                    if (response.statusCode() != HTTP_OK) {
-                        return null;
-                    }
-                    return response.body();
-                }).exceptionally(ex -> null);
-        return null;
+        return client.sendAsync(request, handler)
+                .thenApply(response -> Map.of(response.statusCode(), response.body()))
+                .exceptionally(ex -> null).join();
     }
 
     public AuthTokenResponse deactivate(String token, JsonNode node) {

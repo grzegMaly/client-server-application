@@ -32,8 +32,6 @@ public class NotesRequestViewModel {
 
     private final NotesRequestConverter converter = new NotesRequestConverter();
     private final NoteRequestModel model = new NoteRequestModel();
-    private final ExecutorService executor =
-            ExecutorServiceManager.createCachedThreadPool(Notes.class.getSimpleName());
 
     public String getTitle() {
         return title.get();

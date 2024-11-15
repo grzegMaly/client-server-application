@@ -247,12 +247,12 @@ public class NoteBinder {
 
         boolean flag = true;
 
-        if (titleTf.getText() == null || titleTf.getText().isEmpty() || titleTf.getText().isBlank()) {
+        if (titleTf.getText() == null || titleTf.getText().isBlank()) {
 //            titleTf.getStyleClass().add("badElement");
             flag = false;
         }
 
-        if (contentTa.getText() == null || contentTa.getText().isEmpty() || contentTa.getText().isBlank()) {
+        if (contentTa.getText() == null || contentTa.getText().isBlank()) {
 //            contentTa.getStyleClass().add("badElement");
             flag = false;
         }

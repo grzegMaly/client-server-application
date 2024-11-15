@@ -4,6 +4,8 @@ module application.portfolio.clientmodule {
     requires java.net.http;
     requires java.desktop;
     requires com.fasterxml.jackson.databind;
+    requires java.compiler;
+    exports application.portfolio.clientmodule.Model.Request.Login.LoginRequest;
 
 
     exports application.portfolio.clientmodule;

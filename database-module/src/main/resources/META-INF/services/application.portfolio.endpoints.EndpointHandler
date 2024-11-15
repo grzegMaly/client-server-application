@@ -1,0 +1,3 @@
+application.portfolio.endpoints.endpointClasses.user.UserEndpoint
+application.portfolio.endpoints.endpointClasses.user.session.LoginUser
+application.portfolio.endpoints.endpointClasses.user.session.RegisterUser

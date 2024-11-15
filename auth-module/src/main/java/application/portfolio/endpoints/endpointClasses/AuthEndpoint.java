@@ -28,14 +28,20 @@ public class AuthEndpoint implements EndpointHandler, HttpHandler {
     @Override
     public void handle(HttpExchange exchange) throws IOException {
 
-        if ("POST".equals(exchange.getRequestMethod())) {
-            byte[] data = exchange.getRequestBody().readAllBytes();
+        try {
+            if ("POST".equals(exchange.getRequestMethod())) {
+                byte[] data = exchange.getRequestBody().readAllBytes();
 
-            AuthTokenResponse response = authService.authorize(data);
-            ResponseHandler.sendResponse(exchange, response);
-        } else {
-            AuthTokenResponse response = new AuthTokenResponse("Method Not Allowed", HTTP_BAD_REQUEST);
-            ResponseHandler.sendResponse(exchange, response);
+                AuthTokenResponse response = authService.authorize(data);
+                ResponseHandler.sendResponse(exchange, response);
+            } else {
+                AuthTokenResponse response = new AuthTokenResponse("Method Not Allowed", HTTP_BAD_REQUEST);
+                ResponseHandler.sendResponse(exchange, response);
+            }
+        } catch (IOException e) {
+            exchange.sendResponseHeaders(HTTP_INTERNAL_ERROR, -1);
+        } finally {
+            exchange.close();
         }
     }
 }
