@@ -2,8 +2,8 @@ package application.portfolio.endpoints.endpointClasses.session.user;
 
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
-import application.portfolio.endpoints.endpointClasses.session.user.methods.DeleteUser;
-import application.portfolio.endpoints.endpointClasses.session.user.methods.PostUser;
+import application.portfolio.endpoints.endpointClasses.session.user.userUtils.DeleteUser;
+import application.portfolio.endpoints.endpointClasses.session.user.userUtils.PostUser;
 import application.portfolio.utils.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;

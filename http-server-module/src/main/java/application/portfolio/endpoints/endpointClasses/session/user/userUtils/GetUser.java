@@ -1,4 +1,4 @@
-package application.portfolio.endpoints.endpointClasses.session.user.methods;
+package application.portfolio.endpoints.endpointClasses.session.user.userUtils;
 
 import application.portfolio.clientServer.ClientHolder;
 import application.portfolio.endpoints.EndpointHandler;
