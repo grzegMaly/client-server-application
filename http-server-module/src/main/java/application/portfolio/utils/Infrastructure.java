@@ -65,6 +65,19 @@ public class Infrastructure {
         return URI.create(uri);
     }
 
+    public static String uriSpecificPart(Map<String, String> data, String endpoint) {
+        return uriSpecificPart(data, endpoint, "");
+    }
+
+    public static String uriSpecificPart(Map<String, String> data, String endpoint, String params) {
+
+        String point = data.get(endpoint);
+        if (point == null) {
+            return "";
+        }
+        return point.concat(params);
+    }
+
     public static Map<String, Map<String, String>> getInfrastructureData() {
         return new HashMap<>(infrastructureData);
     }

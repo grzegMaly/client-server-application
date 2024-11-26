@@ -18,7 +18,7 @@ import java.util.Map;
 import static java.net.HttpURLConnection.HTTP_BAD_GATEWAY;
 import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
-@EndpointInfo(path = "/logout")
+@EndpointInfo(path = "/user/logout")
 public class LogoutEndpoint implements EndpointHandler, HttpHandler {
     @Override
     public HttpHandler endpoint() {
@@ -40,7 +40,6 @@ public class LogoutEndpoint implements EndpointHandler, HttpHandler {
                         .POST(HttpRequest.BodyPublishers.ofByteArray(exchange.getRequestBody().readAllBytes()))
                         .header("Authorization", token)
                         .build();
-
 
                 HttpResponse<byte[]> response;
                 try {

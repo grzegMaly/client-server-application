@@ -1,12 +1,11 @@
-package application.portfolio.endpoints.endpointClasses.session.log;
+package application.portfolio.endpoints.endpointClasses.session.user.methods;
 
 import application.portfolio.clientServer.ClientHolder;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
+import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
 import application.portfolio.utils.ResponseHandler;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -17,14 +16,8 @@ import java.util.Map;
 
 import static java.net.HttpURLConnection.*;
 
-@EndpointInfo(path = "/user/login")
-public class LoginEndpoint implements EndpointHandler, HttpHandler {
-
-    private static final ObjectMapper objectMapper = new ObjectMapper();
-
-    static {
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-    }
+@EndpointInfo(path = "/user/get")
+public class GetUser implements EndpointHandler, HttpHandler {
 
     @Override
     public HttpHandler endpoint() {
@@ -33,15 +26,25 @@ public class LoginEndpoint implements EndpointHandler, HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-
         try (exchange) {
-            if ("POST".equals(exchange.getRequestMethod())) {
+            if ("GET".equals(exchange.getRequestMethod())) {
 
-                Map<String, String> authData = Infrastructure.getAuthorizationData();
-                URI baseUri = Infrastructure.getBaseUri(authData).resolve("/authorization");
-                byte[] data = exchange.getRequestBody().readAllBytes();
+                Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
+                if (paramsMap == null) {
+                    paramsMap = Map.of("limit", "10", "offset", "0");
+                }
 
-                HttpResponse<byte[]> response = ClientHolder.sendPostRequest(baseUri, data);
+                String params = DataParser.paramsString(paramsMap);
+                if (params == null) {
+                    ResponseHandler.handleError(exchange, "Forbidden", HTTP_FORBIDDEN);
+                    return;
+                }
+
+                Map<String, String> dbData = Infrastructure.getDatabaseData();
+                String spec = Infrastructure.uriSpecificPart(dbData, "user", params);
+                URI baseUri = Infrastructure.getBaseUri(dbData).resolve(spec);
+
+                HttpResponse<byte[]> response = ClientHolder.sendGetRequest(baseUri);
                 if (response == null) {
                     ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
                 }
@@ -49,6 +52,7 @@ public class LoginEndpoint implements EndpointHandler, HttpHandler {
             } else {
                 ResponseHandler.handleError(exchange, "Bad Gateway", HTTP_BAD_GATEWAY);
             }
+            throw new IOException();
         } catch (IOException e) {
             ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
         }

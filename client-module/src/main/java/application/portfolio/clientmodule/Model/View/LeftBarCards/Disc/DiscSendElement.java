@@ -18,5 +18,4 @@ public class DiscSendElement extends VBox implements Page {
     public Parent asParent() {
         return this;
     }
-
 }

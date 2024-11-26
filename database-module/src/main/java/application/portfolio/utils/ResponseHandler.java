@@ -1,20 +1,19 @@
 package application.portfolio.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
-import java.net.http.HttpResponse;
 import java.util.AbstractMap;
 import java.util.Map;
 
 public class ResponseHandler {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String responseKey = "response";
 
     static {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -24,7 +23,7 @@ public class ResponseHandler {
     public static void handleError(HttpExchange exchange, String message, int statusCode) {
 
         ObjectNode responseNode = objectMapper.createObjectNode();
-        responseNode.put("response", message);
+        responseNode.put(responseKey, message);
 
         Map.Entry<Integer, JsonNode> responseData = new AbstractMap.SimpleEntry<>(statusCode, responseNode);
         sendResponse(exchange, responseData);

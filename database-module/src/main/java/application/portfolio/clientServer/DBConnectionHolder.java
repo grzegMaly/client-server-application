@@ -30,7 +30,7 @@ public class DBConnectionHolder {
                             entry -> entry.getValue().toString()
                     ));
 
-            return !  statements.isEmpty();
+            return !statements.isEmpty();
         } catch (Exception e) {
             return false;
         }
@@ -68,11 +68,31 @@ public class DBConnectionHolder {
         return connection;
     }
 
-    public static String getUserStatementCall() {
+    public static String getUserByParamsCall() {
         return statements.get("getUserByParams");
     }
 
     public static String getUserByIdCall() {
         return statements.get("getUserById");
+    }
+
+    public static String modifyUserById() {
+        return statements.get("modifyUserById");
+    }
+
+    public static String getStatusInfo() {
+        return statements.get("getStatusInfo");
+    }
+
+    public static String deleteUserById() {
+        return statements.get("deleteUserById");
+    }
+
+    public static String getUsers() {
+        return statements.get("getUsers");
+    }
+
+    public static String addUser() {
+        return statements.get("addUser");
     }
 }
