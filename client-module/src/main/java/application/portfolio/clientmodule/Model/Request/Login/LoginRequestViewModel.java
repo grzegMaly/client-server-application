@@ -6,10 +6,13 @@ import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import application.portfolio.clientmodule.TeamLinkApp;
+import application.portfolio.clientmodule.utils.CustomAlert;
 import application.portfolio.clientmodule.utils.PageFactory;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.ButtonType;
 
 import java.util.Map;
+
 
 public class LoginRequestViewModel {
 
@@ -46,6 +49,14 @@ public class LoginRequestViewModel {
             UserSession.getInstance().setLoggedInUser(person);
             Page mainScene = PageFactory.getInstance(MainScene.class);
             TeamLinkApp.useScene(mainScene.getClass());
+        } else {
+            String message = "Unknown error";
+            CustomAlert alert = new CustomAlert("", message);
+            alert.showAndWait().ifPresent(res -> {
+                if (res == ButtonType.OK) {
+                    alert.close();
+                }
+            });
         }
     }
 }

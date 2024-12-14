@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.application.Platform;
 import javafx.scene.control.ButtonType;
 
 import java.io.IOException;
@@ -57,6 +56,7 @@ public class LoginRequestModel {
         try {
             response = client.send(request, handler);
         } catch (IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
             return null;
         }
 
@@ -68,7 +68,6 @@ public class LoginRequestModel {
         JsonNode node = response.body();
 
         int status = response.statusCode();
-        System.out.println(status);
 
         if (status != HTTP_OK) {
             String title = "";
@@ -87,8 +86,6 @@ public class LoginRequestModel {
         }
 
         PersonDAO personDAO = parseJsonToPerson(node);
-        System.out.println(personDAO);
-
         if (personDAO != null) {
             String token = response.headers().map().get("Authorization").get(0);
             UserSession.getInstance().setToken(token);
@@ -105,7 +102,7 @@ public class LoginRequestModel {
             String id = node.get("id").asText();
             String firstName = node.get("firstName").asText();
             String lastName = node.get("lastName").asText();
-            String role = node.get("role").asText();
+            int role = node.get("role").asInt();
 
             return new PersonDAO(id, firstName, lastName, role);
         } catch (Exception e) {

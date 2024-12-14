@@ -4,7 +4,7 @@ import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
 import application.portfolio.endpoints.endpointClasses.user.userUtils.UserPostMethods;
 import application.portfolio.objects.model.Person.Person;
-import application.portfolio.objects.model.Person.PersonResponse;
+import application.portfolio.clientServer.response.PersonResponse;
 import application.portfolio.objects.model.Person.PersonUtils;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,7 +46,7 @@ public class RegisterUser implements EndpointHandler, HttpHandler {
             JsonNode node = objectMapper.readTree(body);
             PersonResponse personResponse = handleAdding(node);
 
-            Map.Entry<Integer, JsonNode> entry = PersonResponse.toPersonJsonResponse(personResponse);
+            Map.Entry<Integer, JsonNode> entry = personResponse.toJsonResponse();
             ResponseHandler.sendResponse(exchange, entry);
         } catch (IOException e) {
             exchange.sendResponseHeaders(HTTP_INTERNAL_ERROR, -1);

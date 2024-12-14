@@ -1,8 +1,11 @@
 application.portfolio.endpoints.endpointClasses.PingEndpoint
 application.portfolio.endpoints.endpointClasses.session.log.LoginEndpoint
 application.portfolio.endpoints.endpointClasses.session.log.LogoutEndpoint
-application.portfolio.endpoints.endpointClasses.session.user.userUtils.GetUser
-application.portfolio.endpoints.endpointClasses.session.user.UserEndpoint
+application.portfolio.endpoints.endpointClasses.session.userGroup.user.GetUser
+application.portfolio.endpoints.endpointClasses.session.userGroup.user.UserEndpoint
+application.portfolio.endpoints.endpointClasses.session.userGroup.group.GroupEndpoint
+application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.GroupUserEndpoint
+application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.GroupUserMoveEndpoint
 application.portfolio.endpoints.endpointClasses.ChatEndpoint
 application.portfolio.endpoints.endpointClasses.NotesEndpoint
 application.portfolio.endpoints.endpointClasses.PasswordEndpoint

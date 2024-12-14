@@ -6,10 +6,6 @@ import java.util.*;
 
 public class PersonDAO {
 
-    public enum Role {
-        EMPLOYEE, MANAGER, ADMIN
-    }
-
     private UUID id = UUID.randomUUID();
     private String firstName;
     private String lastName;
@@ -19,19 +15,22 @@ public class PersonDAO {
     private final Set<GroupDAO> groups = new HashSet<>();
     private Set<GroupDAO> ownedGroups = null;
 
+    public PersonDAO() {
+    }
+
     public PersonDAO(String email, String password) {
         this.email = email;
         this.password = password;
     }
 
-    public PersonDAO(String id, String firstName, String lastName, String role) {
+    public PersonDAO(String id, String firstName, String lastName, int role) {
         this.id = UUID.fromString(id);
         this.firstName = firstName;
         this.lastName = lastName;
         castRole(role);
     }
 
-    public PersonDAO(String firstName, String lastName, String role, String email, String password) {
+    public PersonDAO(String firstName, String lastName, int role, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -39,9 +38,9 @@ public class PersonDAO {
         castRole(role);
     }
 
-    private void castRole(String role) {
+    private void castRole(int role) {
         try {
-            this.role = Role.valueOf(role.toUpperCase());
+            this.role = Role.fromId(role);
         } catch (IllegalArgumentException e) {
             //TODO: Custom Window and logout
             throw new RuntimeException("Niepoprawna rola: " + role);
@@ -145,19 +144,5 @@ public class PersonDAO {
         int result = getEmail().hashCode();
         result = 31 * result + getPassword().hashCode();
         return result;
-    }
-
-    //Todo: Delete in the Future
-    @Override
-    public String toString() {
-        return "PersonDAO{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", role='" + role + '\'' +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", groups=" + groups +
-                '}';
     }
 }

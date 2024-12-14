@@ -1,4 +1,4 @@
-package application.portfolio.endpoints.endpointClasses.session.user.userUtils;
+package application.portfolio.endpoints.endpointClasses.session.userGroup.user.userUtils;
 
 import application.portfolio.clientServer.ClientHolder;
 import application.portfolio.utils.DataParser;
@@ -8,37 +8,33 @@ import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpResponse;
 import java.util.Map;
 
 import static java.net.HttpURLConnection.*;
-import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
 public class PostUser {
 
     public static void handlePost(HttpExchange exchange) throws IOException {
 
         Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
-        Map<String, String> dbData = Infrastructure.getDatabaseData();
+        if (paramsMap == null || !paramsMap.containsKey("option")) {
+            ResponseHandler.handleError(exchange, "Forbidden", HTTP_FORBIDDEN);
+            return;
+        }
 
         String spec;
-        if (paramsMap == null) {
+        String option = paramsMap.get("option");
+        Map<String, String> dbData = Infrastructure.getDatabaseData();
+        if (option.equals("modify")) {
+            spec = Infrastructure.uriSpecificPart(dbData, "user");
+        } else if (option.equals("register")) {
             spec = Infrastructure.uriSpecificPart(dbData, "user/register");
-        } else if (paramsMap.containsKey("id")) {
-            String param = DataParser.paramsString(paramsMap);
-            spec = Infrastructure.uriSpecificPart(dbData, "user", param);
         } else {
             ResponseHandler.handleError(exchange, "Forbidden", HTTP_FORBIDDEN);
             return;
         }
 
-        byte[] data = exchange.getRequestBody().readAllBytes();
         URI baseUri = Infrastructure.getBaseUri(dbData).resolve(spec);
-
-        HttpResponse<byte[]> response = ClientHolder.sendPostRequest(baseUri, data);
-        if (response == null) {
-            ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
-        }
-        ResponseHandler.sendResponse(response, exchange);
+        ClientHolder.handlePostRequest(exchange, baseUri);
     }
 }

@@ -2,6 +2,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDia
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.OtherElements.Role;
 import application.portfolio.clientmodule.OtherElements.TaskDAO;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
@@ -26,7 +27,7 @@ public class TaskDialog extends Stage {
         public static Operation determineOperation(TaskDAO task) {
             PersonDAO person = UserSession.getInstance().getLoggedInUser();
             if (task == null) return CREATE;
-            return person.getRole().equals(PersonDAO.Role.EMPLOYEE) ? READ :
+            return person.getRole().equals(Role.EMPLOYEE) ? READ :
                     (person.getId().equals(task.getAssignedBy().getId()) ? READ_MODIFY : READ);
         }
     }

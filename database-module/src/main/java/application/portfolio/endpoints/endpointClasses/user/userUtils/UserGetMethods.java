@@ -1,7 +1,7 @@
 package application.portfolio.endpoints.endpointClasses.user.userUtils;
 
 import application.portfolio.clientServer.DBConnectionHolder;
-import application.portfolio.objects.model.Person.PersonResponse;
+import application.portfolio.clientServer.response.PersonResponse;
 import application.portfolio.utils.DataParser;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,15 +31,16 @@ public class UserGetMethods {
             return new PersonResponse(e.getMessage(), HTTP_UNAUTHORIZED);
         }
 
-
         Connection conn = DBConnectionHolder.getConnection();
         try (CallableStatement cs = conn.prepareCall(
-                DBConnectionHolder.getUserByParamsCall()
+                DBConnectionHolder.getUserByParams()
         )) {
 
             cs.setString(1, email);
             cs.setString(2, password);
-            return PersonResponse.personResponseFromDB(cs, null);
+
+            return new PersonResponse()
+                    .personResponseFromDB(cs, null);
         } catch (SQLException e) {
             return new PersonResponse("Unknown Error", HTTP_INTERNAL_ERROR);
         }
@@ -49,11 +50,12 @@ public class UserGetMethods {
 
         Connection conn = DBConnectionHolder.getConnection();
         try (CallableStatement cs = conn.prepareCall(
-                DBConnectionHolder.getUserByIdCall()
+                DBConnectionHolder.getUserById()
         )) {
 
             cs.setObject(1, id);
-            return PersonResponse.personResponseFromDB(cs, null);
+            return new PersonResponse()
+                    .personResponseFromDB(cs, null);
         } catch (SQLException e) {
             return new PersonResponse("Unknown Error", HTTP_INTERNAL_ERROR);
         }
@@ -69,9 +71,30 @@ public class UserGetMethods {
             cs.setInt(1, offset);
             cs.setInt(2, limit);
 
-            return PersonResponse.personResponseFromDB(cs, null);
+            return new PersonResponse()
+                    .personResponseFromDB(cs, null);
         } catch (SQLException e) {
             return new PersonResponse("Unknown Error", HTTP_INTERNAL_ERROR);
         }
     }
+
+    public static PersonResponse getUsersFriends(String userId) {
+
+        UUID uId = DataParser.parseId(userId);
+        if (uId == null) {
+            return new PersonResponse("Not Found", HTTP_FORBIDDEN);
+        }
+
+        Connection conn = DBConnectionHolder.getConnection();
+        try (CallableStatement cs = conn.prepareCall(
+                DBConnectionHolder.getUserColleagues()
+        )) {
+
+            cs.setObject(1, uId);
+            return new PersonResponse()
+                    .personResponseFromDB(cs, null);
+        } catch (SQLException e) {
+            return new PersonResponse("Unknown Error", HTTP_INTERNAL_ERROR);
+        }
+     }
 }

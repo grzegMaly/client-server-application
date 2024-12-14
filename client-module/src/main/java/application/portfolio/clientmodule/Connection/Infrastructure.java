@@ -54,6 +54,19 @@ public class Infrastructure {
         return data.get("port");
     }
 
+    public static String uriSpecificPart(Map<String, String> data, String endpoint) {
+        return uriSpecificPart(data, endpoint, "");
+    }
+
+    public static String uriSpecificPart(Map<String, String> data, String endpoint, String params) {
+
+        String point = data.get(endpoint);
+        if (point == null) {
+            return "";
+        }
+        return point.concat(params);
+    }
+
     public static URI getBaseUri(Map<String, String> data) {
 
         String host = getHost(data);
@@ -73,5 +86,9 @@ public class Infrastructure {
 
     public static String getLoginEndpoint() {
         return endpointsData.get("login");
+    }
+
+    public static String getGroupUserEndpoint() {
+        return endpointsData.get("group-user");
     }
 }

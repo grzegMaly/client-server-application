@@ -2,10 +2,11 @@ package application.portfolio.objects.model.Person;
 
 import application.portfolio.objects.dao.person.PersonDAO;
 import application.portfolio.objects.dao.person.Role;
+import application.portfolio.objects.model.DAOConverter;
 
 import java.util.*;
 
-public class Person {
+public class Person implements DAOConverter<Person, PersonDAO> {
 
     private UUID id;
     private String firstName;
@@ -87,23 +88,12 @@ public class Person {
         this.password = password;
     }
 
-    public static PersonDAO DAOFromPerson(Person p) {
-        return new PersonDAO(p.getId(), p.getFirstName(), p.getLastName(), Role.fromId(p.getRole()));
-    }
-
-    public static Person personFromDAO(PersonDAO p) {
-        return new Person(p.getId(), p.getFirstName(), p.getLastName(), p.getRole());
-    }
-
     @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", role=" + role +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                '}';
+    public PersonDAO toDAO() {
+        return new PersonDAO(this.getId(), this.getFirstName(), this.getLastName(), Role.fromId(this.getRole()));
+    }
+
+    public static Person fromDAO(PersonDAO p) {
+        return new Person(p.getId(), p.getFirstName(), p.getLastName(), p.getRole());
     }
 }

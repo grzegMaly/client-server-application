@@ -3,7 +3,7 @@ package application.portfolio.endpoints.endpointClasses.user.session;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
 import application.portfolio.endpoints.endpointClasses.user.userUtils.UserGetMethods;
-import application.portfolio.objects.model.Person.PersonResponse;
+import application.portfolio.clientServer.response.PersonResponse;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -43,7 +43,7 @@ public class LoginUser implements EndpointHandler, HttpHandler {
             JsonNode node = objectMapper.readTree(body);
 
             PersonResponse personResponse = UserGetMethods.getPersonFromDatabase(node);
-            Map.Entry<Integer, JsonNode> responseNode = PersonResponse.toPersonJsonResponse(personResponse);
+            Map.Entry<Integer, JsonNode> responseNode = personResponse.toJsonResponse();
 
             ResponseHandler.sendResponse(exchange, responseNode);
         } catch (IOException e) {

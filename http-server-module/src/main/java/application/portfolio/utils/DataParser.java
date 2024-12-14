@@ -31,24 +31,22 @@ public class DataParser {
 
         StringBuilder sb = new StringBuilder();
         StringJoiner sj = new StringJoiner("&", "?", "");
-        if (map.containsKey("id")) {
-            sb.append("id=").append(map.get("id"));
-            sj.add(sb.toString());
-            return sj.toString();
-        }
 
         for (Map.Entry<String, String> m : map.entrySet()) {
-            if (m.getKey().equals("limit") || m.getKey().equals("offset")) {
-                sb.append(m.getKey())
-                        .append("=")
-                        .append(m.getValue());
+            sb.append(m.getKey())
+                    .append("=")
+                    .append(m.getValue());
 
-                sj.add(sb.toString());
-                sb.setLength(0);
-            } else {
-                return null;
-            }
+            sj.add(sb.toString());
+            sb.setLength(0);
         }
         return sj.toString();
+    }
+
+    public static Map<String, String> handleMap(Map<String, String> paramsMap) {
+        if (paramsMap == null) {
+            return Map.of("limit", "10", "offset", "0");
+        }
+        return paramsMap;
     }
 }

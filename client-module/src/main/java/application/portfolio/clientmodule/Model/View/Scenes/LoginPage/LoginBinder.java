@@ -46,7 +46,6 @@ public class LoginBinder {
     }
 
     public void withLoginBtn(Button loginBtn) {
-
         loginBtn.setOnAction(evt -> login());
     }
 

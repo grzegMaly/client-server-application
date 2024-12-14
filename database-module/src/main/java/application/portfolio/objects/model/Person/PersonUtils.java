@@ -5,12 +5,10 @@ import application.portfolio.utils.DataParser;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Consumer;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class PersonUtils {
@@ -18,7 +16,7 @@ public class PersonUtils {
     private static final List<String> existingPersonKeys = List.of("id", "firstName", "lastName", "role");
     private static final List<String> newPersonKeys = List.of("firstName", "lastName", "role", "email", "password");
 
-    public static Person createPerson(ResultSet rs) throws SQLException {
+    public static Person  createPerson(ResultSet rs) {
         try {
             String id = rs.getString(1);
             UUID uId = UUID.fromString(id);
@@ -99,7 +97,7 @@ public class PersonUtils {
     private static boolean validatePerson(Person person) {
 
         if (person.getId() == null) {
-            if (!isNullOrEmpty(person.getEmail()) && !isNullOrEmpty(person.getPassword())) {
+            if (!DataParser.isNullOrEmpty(person.getEmail()) && !DataParser.isNullOrEmpty(person.getPassword())) {
 
                 boolean emailPattern = Pattern.compile("([\\w.-]+)@teamLink.com")
                         .matcher(person.getEmail()).matches();
@@ -109,7 +107,6 @@ public class PersonUtils {
 
                 String password = person.getPassword();
                 if (password.length() < 8 || password.length() > 20) {
-                    password = "";
                     return false;
                 }
                 boolean lowerPattern = Pattern.compile(".*[a-z].*").matcher(password).matches();
@@ -125,14 +122,10 @@ public class PersonUtils {
             }
         }
 
-        if (isNullOrEmpty(person.getFirstName()) || isNullOrEmpty(person.getLastName())) {
+        if (DataParser.isNullOrEmpty(person.getFirstName()) || DataParser.isNullOrEmpty(person.getLastName())) {
             return false;
         }
         return person.getRole() <= 2 && person.getRole() >= 0;
-    }
-
-    private static boolean isNullOrEmpty(String value) {
-        return value == null || value.isEmpty();
     }
 
     private static Person createPerson(JsonNode personNode, String[] keysArr) {

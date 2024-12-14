@@ -1,3 +1,6 @@
 application.portfolio.endpoints.endpointClasses.user.UserEndpoint
 application.portfolio.endpoints.endpointClasses.user.session.LoginUser
 application.portfolio.endpoints.endpointClasses.user.session.RegisterUser
+application.portfolio.endpoints.endpointClasses.group.GroupEndpoint
+application.portfolio.endpoints.endpointClasses.groupUser.GroupUsersEndpoint
+application.portfolio.endpoints.endpointClasses.groupUser.GroupUserMoveEndpoint

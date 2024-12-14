@@ -1,12 +1,15 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Config.LoadStyles;
+import application.portfolio.clientmodule.Connection.ClientHolder;
+import application.portfolio.clientmodule.Connection.Infrastructure;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import application.portfolio.clientmodule.OtherElements.temp.Objects;
 import application.portfolio.clientmodule.TeamLinkApp;
+import application.portfolio.clientmodule.utils.DataParser;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -14,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
 
+import java.net.http.HttpClient;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
@@ -65,6 +69,18 @@ public class Friends extends ListView<PersonDAO> implements Page {
     }
 
     private Boolean loadFriends() {
+
+        HttpClient client = ClientHolder.getClient();
+        Map<String, String> dbGateway = Infrastructure.getGatewayData();
+        System.out.println(dbGateway);
+        String id = UserSession.getInstance().getLoggedInUser().getId().toString();
+        System.out.println(id);
+        String groupUserEndpoint = Infrastructure.getGroupUserEndpoint();
+        System.out.println(groupUserEndpoint);
+        String params = DataParser.paramsString(Map.of("id", id, "friends", "true"));
+        System.out.println(params);
+        String spec = Infrastructure.uriSpecificPart(dbGateway, groupUserEndpoint, params);
+        System.out.println(spec);
 
         //Todo: Connect to the server
         List<PersonDAO> people = Objects.getPersons();

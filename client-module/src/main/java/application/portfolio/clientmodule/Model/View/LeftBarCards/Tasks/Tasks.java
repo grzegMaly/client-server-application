@@ -6,6 +6,7 @@ import application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDial
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.OtherElements.Role;
 import application.portfolio.clientmodule.OtherElements.TaskDAO;
 import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
@@ -33,8 +34,8 @@ public class Tasks extends VBox implements Page {
     }
 
     public static boolean moreThanEmployee() {
-        PersonDAO.Role role = UserSession.getInstance().getLoggedInUser().getRole();
-        return role == PersonDAO.Role.MANAGER || role == PersonDAO.Role.ADMIN;
+        Role role = UserSession.getInstance().getLoggedInUser().getRole();
+        return role == Role.MANAGER || role == Role.ADMIN;
     }
 
     private Boolean checkRole() {

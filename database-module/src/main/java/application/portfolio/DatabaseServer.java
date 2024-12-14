@@ -19,10 +19,6 @@ public class DatabaseServer {
             throw new RuntimeException("Error loading server");
         }
 
-        if (!connectToDatabase()) {
-            throw new RuntimeException("Error loading server");
-        }
-
         if (!loadEndpoints()) {
             throw new RuntimeException("Error loading endpoints");
         }
@@ -47,11 +43,6 @@ public class DatabaseServer {
         } else {
             throw new RuntimeException("Error loading server data");
         }
-    }
-
-    private static boolean connectToDatabase() {
-
-        return true;
     }
 
     private static boolean loadEndpoints() {

@@ -17,8 +17,6 @@ public class AuthEndpoint implements EndpointHandler, HttpHandler {
 
     private final AuthService authService = new AuthService();
 
-    public AuthEndpoint() {
-    }
 
     @Override
     public HttpHandler endpoint() {

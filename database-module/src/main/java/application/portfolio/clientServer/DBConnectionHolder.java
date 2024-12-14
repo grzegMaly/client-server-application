@@ -68,20 +68,22 @@ public class DBConnectionHolder {
         return connection;
     }
 
-    public static String getUserByParamsCall() {
+    public static String getStatusInfo() {
+        return statements.get("getStatusInfo");
+    }
+
+    //--------------------------------------------------------------------
+
+    public static String getUserByParams() {
         return statements.get("getUserByParams");
     }
 
-    public static String getUserByIdCall() {
+    public static String getUserById() {
         return statements.get("getUserById");
     }
 
-    public static String modifyUserById() {
-        return statements.get("modifyUserById");
-    }
-
-    public static String getStatusInfo() {
-        return statements.get("getStatusInfo");
+    public static String modifyUser() {
+        return statements.get("modifyUser");
     }
 
     public static String deleteUserById() {
@@ -94,5 +96,53 @@ public class DBConnectionHolder {
 
     public static String addUser() {
         return statements.get("addUser");
+    }
+
+    //--------------------------------------------------------------------
+
+    public static String getGroupById() {
+        return statements.get("getGroupById");
+    }
+
+    public static String getGroups() {
+        return statements.get("getGroups");
+    }
+
+    public static String modifyGroupById() {
+        return statements.get("modifyGroupById");
+    }
+
+    public static String addGroup() {
+        return statements.get("addGroup");
+    }
+
+    public static String deleteGroupById() {
+        return statements.get("deleteGroupById");
+    }
+
+    //--------------------------------------------------------------------
+
+    public static String getGroupMembers() {
+        return statements.get("getGroupMembers");
+    }
+
+    public static String addUserToGroup() {
+        return statements.get("addUserToGroup");
+    }
+
+    public static String getUserGroups() {
+        return statements.get("getUserGroups");
+    }
+
+    public static String deleteUserFromGroup() {
+        return statements.get("deleteUserFromGroup");
+    }
+
+    public static String getUserColleagues() {
+        return statements.get("getUserColleagues");
+    }
+
+    public static String moveUserToGroup() {
+        return statements.get("moveUserToGroup");
     }
 }

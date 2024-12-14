@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class Objects {
 
     private static List<PersonDAO> persons = new ArrayList<>();
-    private static final PersonDAO admin = new PersonDAO("Hugo", "Boss", "ADMIN", "hugo", "boss");
-    private static final PersonDAO manager1 = new PersonDAO("Mike", "Tys", "MANAGER", "admin", "admin");
-    private static final PersonDAO manager2 = new PersonDAO("Tim", "Lee", "MANAGER", "admin1", "admin1");
+    private static final PersonDAO admin = new PersonDAO("Hugo", "Boss", 2, "hugo", "boss");
+    private static final PersonDAO manager1 = new PersonDAO("Mike", "Tys", 1, "admin", "admin");
+    private static final PersonDAO manager2 = new PersonDAO("Tim", "Lee", 1, "admin1", "admin1");
     private static final GroupDAO managersGroup = new GroupDAO("Managers", admin);
 
     private static final GroupDAO testingGroup1 = new GroupDAO("Testing", manager1);
@@ -37,16 +37,16 @@ public class Objects {
         manager1.addToGroup(managersGroup);
         manager2.addToGroup(managersGroup);
 
-        PersonDAO employee1 = new PersonDAO("John", "Doe", "EMPLOYEE", "john.doe@example.com", "password123");
-        PersonDAO employee2 = new PersonDAO("Jane", "Smith", "EMPLOYEE", "jane.smith@example.com", "password456");
-        PersonDAO employee3 = new PersonDAO("Michael", "Brown", "EMPLOYEE", "michael.brown@example.com", "password789");
-        PersonDAO employee4 = new PersonDAO("Emily", "Davis", "EMPLOYEE", "emily.davis@example.com", "passwordabc");
-        PersonDAO employee5 = new PersonDAO("Chris", "Johnson", "EMPLOYEE", "chris.johnson@example.com", "passworddef");
-        PersonDAO employee6 = new PersonDAO("Sara", "Wilson", "EMPLOYEE", "sara.wilson@example.com", "passwordghi");
-        PersonDAO employee7 = new PersonDAO("Tom", "Anderson", "EMPLOYEE", "tom.anderson@example.com", "passwordjkl");
-        PersonDAO employee8 = new PersonDAO("Laura", "Miller", "EMPLOYEE", "laura.miller@example.com", "passwordmno");
-        PersonDAO employee9 = new PersonDAO("David", "Garcia", "EMPLOYEE", "david.garcia@example.com", "passwordpqr");
-        PersonDAO employee10 = new PersonDAO("Sophia", "Martinez", "EMPLOYEE", "sophia.martinez@example.com", "passwordstu");
+        PersonDAO employee1 = new PersonDAO("John", "Doe", 0, "john.doe@example.com", "password123");
+        PersonDAO employee2 = new PersonDAO("Jane", "Smith", 0, "jane.smith@example.com", "password456");
+        PersonDAO employee3 = new PersonDAO("Michael", "Brown", 0, "michael.brown@example.com", "password789");
+        PersonDAO employee4 = new PersonDAO("Emily", "Davis", 0, "emily.davis@example.com", "passwordabc");
+        PersonDAO employee5 = new PersonDAO("Chris", "Johnson", 0, "chris.johnson@example.com", "passworddef");
+        PersonDAO employee6 = new PersonDAO("Sara", "Wilson", 0, "sara.wilson@example.com", "passwordghi");
+        PersonDAO employee7 = new PersonDAO("Tom", "Anderson", 0, "tom.anderson@example.com", "passwordjkl");
+        PersonDAO employee8 = new PersonDAO("Laura", "Miller", 0, "laura.miller@example.com", "passwordmno");
+        PersonDAO employee9 = new PersonDAO("David", "Garcia", 0, "david.garcia@example.com", "passwordpqr");
+        PersonDAO employee10 = new PersonDAO("Sophia", "Martinez", 0, "sophia.martinez@example.com", "passwordstu");
 
         employee1.addToGroup(testingGroup1, developmentGroup, programmingGroup);
         employee2.addToGroup(testingGroup1, developmentGroup);

@@ -2,9 +2,8 @@ package application.portfolio.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.net.URI;
+import java.util.*;
 
 public class DataParser {
 
@@ -39,5 +38,41 @@ public class DataParser {
         List<String> keys = new ArrayList<>();
         node.fieldNames().forEachRemaining(keys::add);
         return keys.toArray(String[]::new);
+    }
+
+    public static UUID parseId(String id) {
+
+        UUID userId = null;
+        try {
+            userId = UUID.fromString(id);
+        } catch (IllegalArgumentException ignore) {
+            //Nothing
+        }
+        return userId;
+    }
+
+    public static Map<String, String> getParams(URI uri) {
+
+        String params = uri.getQuery();
+        Map<String, String> paramsMap;
+
+        if (params == null) {
+            return null;
+        }
+
+        String[] splitParams = params.split("&");
+        paramsMap = new LinkedHashMap<>();
+
+        for (String s : splitParams) {
+            String[] keyVal = s.split("=", 2);
+            if (keyVal.length == 2) {
+                paramsMap.put(keyVal[0], keyVal[1]);
+            }
+        }
+        return paramsMap;
+    }
+
+    public static boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
     }
 }

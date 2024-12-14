@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class LoginRequestConverter {
     public LoginRequest toLoginRequest(Map<String, String> map) {
-
         String email = map.get("email");
         String password = map.get("password");
         return new LoginRequest(email, password);
