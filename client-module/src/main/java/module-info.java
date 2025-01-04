@@ -14,7 +14,8 @@ module application.portfolio.clientmodule {
     exports application.portfolio.clientmodule.Model.View.Scenes;
     exports application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
     exports application.portfolio.clientmodule.OtherElements;
-    exports application.portfolio.clientmodule.Model.Request.Chat;
-    exports application.portfolio.clientmodule.Model.Request.Chat.ChatRequest;
+    exports application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequest;
     exports application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.Bars;
+    exports application.portfolio.clientmodule.Model.Request.Chat.Chat;
+    exports application.portfolio.clientmodule.Connection.WebSocket.Listeners;
 }

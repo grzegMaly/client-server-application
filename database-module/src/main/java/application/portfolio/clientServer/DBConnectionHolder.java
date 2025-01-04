@@ -145,4 +145,12 @@ public class DBConnectionHolder {
     public static String moveUserToGroup() {
         return statements.get("moveUserToGroup");
     }
+
+    public static String getChatHistory() {
+        return statements.get("getChatHistory");
+    }
+
+    public static String saveMessage() {
+        return statements.get("saveMessage");
+    }
 }

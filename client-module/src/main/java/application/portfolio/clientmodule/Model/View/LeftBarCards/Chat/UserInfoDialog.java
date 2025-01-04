@@ -1,6 +1,9 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
-import application.portfolio.clientmodule.OtherElements.GroupDAO;
+import application.portfolio.clientmodule.Connection.UserSession;
+import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequest.FriendsRequest;
+import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestModel;
+import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -73,24 +76,27 @@ public class UserInfoDialog extends Stage {
 
     private void getSupervisor() {
 
-        //Todo: Connect To server
-        supervisor = person.getGroups().stream()
-                .map(GroupDAO::getOwner)
-                .findFirst().get();
+        int role = UserSession.getInstance().getLoggedInUser().getRole().getId();
+        supervisor = FriendsRequestViewModel.getFriends()
+                .stream()
+                .filter(f -> f.getRole().getId() > role)
+                .findFirst()
+                .orElse(null);
 
-        System.out.println(supervisor);
     }
 
     private void bindFields() {
 
         nameLbl2.setText(person.getName());
+        if (supervisor == person) {
+            supervisor = null;
+        }
         supervisorLbl2.setText(supervisor == null ? "Unknown" : supervisor.getName());
         roleLbl2.setText(person.getRole().toString());
     }
 
     @Override
     public void close() {
-
         instance = null;
         super.close();
     }

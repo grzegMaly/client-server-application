@@ -1,13 +1,12 @@
 package application.portfolio;
 
 
-import application.portfolio.clientServer.ClientHolder;
+import application.portfolio.clientServer.webSocket.WebSocketHolder;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.clientServer.ServerHolder;
 import application.portfolio.utils.Infrastructure;
 import com.sun.net.httpserver.HttpServer;
 
-import java.net.http.HttpClient;
 import java.util.*;
 
 import java.util.concurrent.CompletableFuture;
@@ -17,15 +16,33 @@ public class Gateway {
 
     public static void main(String[] args) {
 
-        if (!setServer()) {
-            throw new RuntimeException("Error loading server");
-        }
+        CompletableFuture<Boolean> httpServerFuture = CompletableFuture.supplyAsync(() -> {
+            if (!setServer()) {
+                throw new RuntimeException("Error loading server");
+            }
 
-        if (!loadEndpoints()) {
-            throw new RuntimeException("Error loading endpoints");
-        }
+            if (!loadEndpoints()) {
+                throw new RuntimeException("Error loading endpoints");
+            }
 
-        ServerHolder.start();
+            ServerHolder.start();
+            return true;
+        }).exceptionally(ex -> false);
+
+
+        CompletableFuture<Void> webSocketServerFuture = CompletableFuture.runAsync(() -> {
+            if (!WebSocketHolder.initializeServers()) {
+                throw new RuntimeException("Error loading WebSocket server");
+            }
+            WebSocketHolder.start();
+        });
+
+        CompletableFuture<Void> allOf = CompletableFuture.allOf(httpServerFuture, webSocketServerFuture);
+        try {
+            allOf.get();
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Failed to start Server");
+        }
 
         //Todo: Implement in the future
 //        new Thread(Gateway::tokenize).start();

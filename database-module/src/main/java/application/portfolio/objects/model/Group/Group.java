@@ -1,7 +1,7 @@
 package application.portfolio.objects.model.Group;
 
-import application.portfolio.objects.dao.group.GroupDAO;
-import application.portfolio.objects.model.DAOConverter;
+import application.portfolio.objects.dao.Group.GroupDAO;
+import application.portfolio.objects.dao.DAOConverter;
 
 import java.util.UUID;
 
@@ -49,15 +49,6 @@ public class Group implements DAOConverter<Group, GroupDAO> {
 
     @Override
     public GroupDAO toDAO() {
-        return new GroupDAO(this.getGroupId(), this.getGroupName(), this.getOwnerId());
-    }
-
-    @Override
-    public String toString() {
-        return "Group{" +
-                "groupId=" + groupId +
-                ", groupName='" + groupName + '\'' +
-                ", ownerId=" + ownerId +
-                '}';
+        return new GroupDAO(getGroupId(), getGroupName(), getOwnerId());
     }
 }

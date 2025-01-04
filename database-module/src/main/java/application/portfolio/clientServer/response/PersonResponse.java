@@ -1,6 +1,6 @@
 package application.portfolio.clientServer.response;
 
-import application.portfolio.objects.dao.person.PersonDAO;
+import application.portfolio.objects.dao.Person.PersonDAO;
 import application.portfolio.objects.model.Person.Person;
 import application.portfolio.objects.model.Person.PersonUtils;
 
@@ -39,8 +39,7 @@ public class PersonResponse extends Response<Person, PersonDAO> {
 
     private void handleResultSet(ResultSet rs) throws SQLException {
 
-        int cCount;
-        cCount = rs.getMetaData().getColumnCount();
+        int cCount = rs.getMetaData().getColumnCount();
         if (!rs.next()) {
             throw new SQLException();
         }

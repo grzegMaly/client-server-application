@@ -33,7 +33,8 @@ public class LogoutEndpoint implements EndpointHandler, HttpHandler {
 
                 HttpClient client = ClientHolder.getClient();
                 Map<String, String> authData = Infrastructure.getAuthorizationData();
-                URI baseUri = Infrastructure.getBaseUri(authData).resolve("/logout");
+                String spec = Infrastructure.uriSpecificPart(authData, "logout");
+                URI baseUri = Infrastructure.getBaseUri(authData).resolve(spec);
 
                 String token = exchange.getRequestHeaders().getFirst("Authorization");
                 HttpRequest request = HttpRequest.newBuilder(baseUri)

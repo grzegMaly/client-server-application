@@ -1,8 +1,7 @@
 package application.portfolio.clientServer.response;
 
 import application.portfolio.clientServer.DBConnectionHolder;
-import application.portfolio.objects.model.DAOConverter;
-import application.portfolio.objects.model.Group.Group;
+import application.portfolio.objects.dao.DAOConverter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -108,7 +107,7 @@ public class Response<T extends DAOConverter<T, D>, D> implements IResponse {
     }
 
     private boolean itemsExists() {
-        return items != null && !items.isEmpty();
+        return items != null;
     }
 
     protected Response<T, D> executeCallable(CallableStatement cs, Integer outputPosition) throws SQLException {
@@ -116,7 +115,6 @@ public class Response<T extends DAOConverter<T, D>, D> implements IResponse {
         Response<T, D> response;
         Connection conn = DBConnectionHolder.getConnection();
         try {
-            conn.setAutoCommit(false);
             if (!cs.execute()) {
                 int statusCode = -1;
                 if (outputPosition == null) {
@@ -140,10 +138,7 @@ public class Response<T extends DAOConverter<T, D>, D> implements IResponse {
                 response = new Response<>(cs, HTTP_OK);
             }
         } catch (SQLException e) {
-            conn.rollback();
             throw new SQLException();
-        } finally {
-            conn.setAutoCommit(true);
         }
         return response;
     }
@@ -155,14 +150,20 @@ public class Response<T extends DAOConverter<T, D>, D> implements IResponse {
         if (itemsExists()) {
             JsonNode itemsNode;
             if (items.size() > 1) {
-                List<D> DAOs = items.stream()
-                        .map(T::toDAO)
-                        .toList();
-            itemsNode = objectMapper.valueToTree(DAOs);
-            } else {
+                try {
+                    List<D> DAOs = items.stream()
+                            .map(T::toDAO)
+                            .toList();
+                    itemsNode = objectMapper.valueToTree(DAOs);
+                } catch (Exception e) {
+                    itemsNode = null;
+                }
+            } else if (items.size() == 1) {
                 T object = items.get(0);
                 D objectDAO = object.toDAO();
                 itemsNode = objectMapper.valueToTree(objectDAO);
+            } else {
+                itemsNode = objectMapper.createArrayNode();
             }
             responseNode.set(responseKey, itemsNode);
         } else {

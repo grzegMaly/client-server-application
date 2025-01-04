@@ -1,0 +1,29 @@
+USE master;
+
+IF EXISTS (SELECT * FROM sys.database_principals WHERE name = 'MyAppUser') 
+BEGIN
+    DROP USER MyAppUser;
+END
+
+IF EXISTS (SELECT * FROM sys.server_principals WHERE name = 'TLDBUser')
+BEGIN
+    DROP LOGIN TLDBUser;
+END
+
+CREATE LOGIN TLDBUser
+WITH PASSWORD = 'tempPassword123',
+DEFAULT_DATABASE = TeamLinkDB;
+
+USE TeamLinkDB;
+
+CREATE USER MyAppUser FOR LOGIN TLDBUser;
+
+GRANT EXECUTE TO MyAppUser;
+
+GRANT CREATE TABLE TO MyAppUser;
+
+ALTER USER MyAppUser 
+WITH DEFAULT_SCHEMA = dbo;
+
+GRANT CONTROL ON SCHEMA::dbo TO MyAppUser;
+GRANT EXECUTE ON SCHEMA::dbo TO MyAppUser;

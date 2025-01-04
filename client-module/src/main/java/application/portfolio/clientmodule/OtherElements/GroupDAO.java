@@ -1,20 +1,32 @@
 package application.portfolio.clientmodule.OtherElements;
 
+
+import application.portfolio.clientmodule.utils.DataParser;
+
 import java.util.UUID;
 
 public class GroupDAO {
 
-    private final UUID groupId = UUID.randomUUID();
+    private UUID groupId;
     private String groupName;
-    private PersonDAO owner;
+    private UUID ownerId;
 
     public GroupDAO(String groupName) {
-        this(groupName, null);
+        this(null, groupName);
     }
 
-    public GroupDAO(String groupName, PersonDAO owner) {
+    public GroupDAO(String groupName, String ownerId) {
+        this(null, groupName, ownerId);
+    }
+
+    public GroupDAO(String groupId, String groupName, String ownerId) {
+        this.groupId = DataParser.parseId(groupId);
         this.groupName = groupName;
-        this.owner = owner;
+        this.ownerId = DataParser.parseId(ownerId);
+    }
+
+    public void setGroupId(UUID groupId) {
+        this.groupId = groupId;
     }
 
     public UUID getGroupId() {
@@ -29,12 +41,12 @@ public class GroupDAO {
         this.groupName = groupName;
     }
 
-    public PersonDAO getOwner() {
-        return owner;
+    public UUID getOwner() {
+        return ownerId;
     }
 
-    public void setOwner(PersonDAO owner) {
-        this.owner = owner;
+    public void setOwner(UUID owner) {
+        this.ownerId = owner;
     }
 
     @Override
@@ -42,7 +54,7 @@ public class GroupDAO {
         return "GroupDAO{" +
                 "groupId=" + groupId +
                 ", groupName='" + groupName + '\'' +
-                ", owner=" + owner +
+                ", owner=" + ownerId +
                 '}';
     }
 }

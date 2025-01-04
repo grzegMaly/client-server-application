@@ -1,6 +1,6 @@
 package application.portfolio.objects.model.Person;
 
-import application.portfolio.objects.dao.person.Role;
+import application.portfolio.objects.dao.Person.Role;
 import application.portfolio.utils.DataParser;
 import com.fasterxml.jackson.databind.JsonNode;
 

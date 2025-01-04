@@ -2,8 +2,6 @@ package application.portfolio.clientmodule.Model.View.Scenes.LoginPage;
 
 import application.portfolio.clientmodule.Config.LoadStyles;
 import application.portfolio.clientmodule.Model.View.Page;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
-import application.portfolio.clientmodule.OtherElements.temp.Objects;
 import application.portfolio.clientmodule.TeamLinkApp;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
@@ -14,7 +12,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -28,8 +25,6 @@ public class LoginScene extends GridPane implements Page {
     private final PasswordField passPf = new PasswordField();
     private final Button loginBtn = new Button("Log In");
     private final LoginBinder binder = new LoginBinder();
-
-    private final List<PersonDAO> persons = Objects.getPersons();
 
     private LoginScene() {
     }

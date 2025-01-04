@@ -1,7 +1,5 @@
 package application.portfolio.clientmodule.OtherElements;
 
-import application.portfolio.clientmodule.OtherElements.temp.Objects;
-
 import java.util.*;
 
 public class PersonDAO {
@@ -99,35 +97,15 @@ public class PersonDAO {
         return firstName + " " + lastName;
     }
 
-    public void addToGroup(GroupDAO... groups) {
-        this.groups.addAll(Arrays.asList(groups));
+    public void addToGroup(List<GroupDAO> groups) {
+        this.groups.addAll(groups);
     }
 
-    public void addOwnedGroups(GroupDAO... groups) {
-
+    public void addOwnedGroups(List<GroupDAO> groups) {
         if (ownedGroups != null) {
-            this.ownedGroups.addAll(Arrays.asList(groups));
+            this.ownedGroups.addAll(groups);
         }
 
-    }
-
-
-    //ToDo: Fix after connecting to the server
-    public List<PersonDAO> getSubordinateUsers() {
-
-        Set<PersonDAO> subordinates = new HashSet<>();
-
-        List<PersonDAO> users = Objects.getPersons();
-
-        this.ownedGroups.forEach(g -> {
-            users.forEach(user -> {
-                if (user.groups.contains(g)) {
-                    subordinates.add(user);
-                }
-            });
-        });
-
-        return new ArrayList<>(subordinates);
     }
 
     @Override
@@ -136,13 +114,25 @@ public class PersonDAO {
         if (o == null || getClass() != o.getClass()) return false;
 
         PersonDAO personDAO = (PersonDAO) o;
-        return getEmail().equals(personDAO.getEmail()) && getPassword().equals(personDAO.getPassword());
+        return getId().equals(personDAO.getId());
     }
 
     @Override
     public int hashCode() {
-        int result = getEmail().hashCode();
-        result = 31 * result + getPassword().hashCode();
-        return result;
+        return getId().hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return "PersonDAO{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", role=" + role +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", groups=" + groups +
+                ", ownedGroups=" + ownedGroups +
+                '}';
     }
 }

@@ -1,6 +1,6 @@
 package application.portfolio.clientServer.response;
 
-import application.portfolio.objects.dao.group.GroupDAO;
+import application.portfolio.objects.dao.Group.GroupDAO;
 import application.portfolio.objects.model.Group.Group;
 import application.portfolio.objects.model.Group.GroupUtils;
 

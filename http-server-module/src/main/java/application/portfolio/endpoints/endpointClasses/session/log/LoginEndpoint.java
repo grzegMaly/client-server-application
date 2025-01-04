@@ -38,7 +38,8 @@ public class LoginEndpoint implements EndpointHandler, HttpHandler {
             if ("POST".equals(exchange.getRequestMethod())) {
 
                 Map<String, String> authData = Infrastructure.getAuthorizationData();
-                URI baseUri = Infrastructure.getBaseUri(authData).resolve("/authorization");
+                String spec = Infrastructure.uriSpecificPart(authData, "authorization");
+                URI baseUri = Infrastructure.getBaseUri(authData).resolve(spec);
                 byte[] data = exchange.getRequestBody().readAllBytes();
 
                 HttpResponse<byte[]> response = ClientHolder.sendPostRequest(baseUri, data);

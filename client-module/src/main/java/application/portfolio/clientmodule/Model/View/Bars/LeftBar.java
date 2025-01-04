@@ -19,7 +19,7 @@ import javafx.scene.layout.VBox;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class LeftBar extends VBox implements Page {
+public class  LeftBar extends VBox implements Page {
 
     private final Button chatBtn = new Button("Chat");
     private final Button notesBtn = new Button("Notes");
@@ -110,10 +110,5 @@ public class LeftBar extends VBox implements Page {
     @Override
     public Parent asParent() {
         return this;
-    }
-
-    @Override
-    public AtomicBoolean usedAsScene() {
-        return new AtomicBoolean(false);
     }
 }

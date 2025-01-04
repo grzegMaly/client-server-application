@@ -1,23 +1,29 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
+import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.OtherElements.MessageDAO;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
-import application.portfolio.clientmodule.OtherElements.temp.Objects;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
+import javafx.scene.layout.StackPane;
 
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Stream;
 
 public class ChatController {
 
-    public static ChatView getChat(PersonDAO personDAO) {
+    private static PersonDAO actualUser;
+    private static ChatView actualChat;
 
-        ChatView chatView = new ChatView(personDAO.getId().toString());
+    public static ChatView createChat(PersonDAO personDAO, ChatRequestViewModel viewModel) {
 
-        List<MessageDAO> messages = loadMessages(personDAO);
-        chatView.getItems().addAll(messages);
+        ChatView chatView = new ChatView(personDAO.getId(), viewModel);
+
+        loadChatHistory(chatView, personDAO);
+        addScrollListener(chatView, personDAO);
 
         chatView.skinProperty().addListener((obs, oldVal, newVal) -> {
             Platform.runLater(() -> {
@@ -29,6 +35,7 @@ public class ChatController {
             });
         });
 
+        List<MessageDAO> messages = chatView.getItems();
         Platform.runLater(() -> {
             int visibleRowCount = calcVisibleRowCount(chatView);
             if (messages.size() > visibleRowCount) {
@@ -47,7 +54,7 @@ public class ChatController {
                     if (scrollBar.getOrientation().equals(Orientation.VERTICAL)) {
                         scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
                             if (Math.abs(newValue.doubleValue() - oldValue.doubleValue()) > 0.1) {
-                                smoothScroll(scrollBar, oldValue.doubleValue(), newValue.doubleValue());
+                                smoothScroll(scrollBar, newValue.doubleValue());
                             }
                         });
                     }
@@ -56,7 +63,7 @@ public class ChatController {
         });
     }
 
-    private static void smoothScroll(ScrollBar scrollBar, double oldValue, double newValue) {
+    private static void smoothScroll(ScrollBar scrollBar, double newValue) {
         scrollBar.setValue(newValue);
     }
 
@@ -72,10 +79,102 @@ public class ChatController {
         return (int) (chatViewHeight / cellHeight);
     }
 
-    private static List<MessageDAO> loadMessages(PersonDAO personId) {
+    private static void loadChatHistory(ChatView chatView, PersonDAO receiver) {
 
-        //Todo: Connect to server
-        PersonDAO userId = UserSession.getInstance().getLoggedInUser();
-        return Objects.getMessages(userId, personId);
+        if (!chatView.hasMoreMessages()) {
+            return;
+        }
+
+        ChatRequestViewModel viewModel = new ChatRequestViewModel();
+        viewModel.setSender(UserSession.getInstance().getLoggedInUser());
+        viewModel.setReceiver(receiver);
+
+        List<MessageDAO> messages = viewModel.loadChatHistory(chatView.getOffset(), ChatView.LIMIT);
+        System.out.println(messages);
+
+        if (messages == null || messages.isEmpty()) {
+            chatView.setHasMoreMessages(false);
+            return;
+        }
+
+        chatView.setHasMoreMessages(messages.size() >= ChatView.LIMIT);
+
+        Platform.runLater(() -> {
+            chatView.getItems().addAll(0, messages);
+            chatView.incrementOffset();
+        });
+    }
+
+    private static void addScrollListener(ChatView chatView, PersonDAO personDAO) {
+        chatView.skinProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                for (ScrollBar scrollBar : chatView.lookupAll(".scroll-bar").toArray(new ScrollBar[0])) {
+                    if (scrollBar.getOrientation() == Orientation.VERTICAL) {
+                        scrollBar.valueProperty().addListener((observable, oldValue, newValue1) -> {
+                            if (newValue1.doubleValue() <= scrollBar.getMin()) {
+                                loadChatHistory(chatView, personDAO);
+                            }
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    public static void handleBadMessage(MessageDAO messageDAO) {
+
+        UUID id = messageDAO.getTempId();
+        Platform.runLater(() -> findChats()
+                .filter(chatView -> chatView.getItems().stream()
+                        .anyMatch(message -> message.getTempId().equals(id)))
+                .findFirst()
+                .ifPresent(chatView -> chatView.getItems().removeIf(m -> id.equals(m.getTempId())))
+        );
+    }
+
+    public static void addMessageToChat(MessageDAO messageDAO) {
+
+        PersonDAO sender = messageDAO.getSender();
+        UUID id = sender.getId();
+
+        if (id.equals(UserSession.getInstance().getLoggedInUser().getId())) {
+            Platform.runLater(() -> actualChat.getItems().add(messageDAO));
+        } else {
+            if (actualChat != null && id.equals(actualChat.getChatId())) {
+                Platform.runLater(() -> actualChat.getItems().add(messageDAO));
+            } else {
+                Platform.runLater(() -> findChats()
+                        .filter(chatView -> chatView.getChatId().equals(id))
+                        .findFirst()
+                        .ifPresentOrElse(chatView -> chatView.getItems().add(messageDAO),
+                                () -> {
+                                    ChatView chatView = Friends.createChat(sender);
+                                    chatView.getItems().add(messageDAO);
+                                }
+                        )
+                );
+            }
+        }
+    }
+
+    private static Stream<ChatView> findChats() {
+
+        StackPane chats = Chat.getChats();
+        return chats.getChildren()
+                .stream()
+                .filter(c -> c instanceof ChatView)
+                .map(c -> (ChatView) c);
+    }
+
+    public static PersonDAO getActualUser() {
+        return actualUser;
+    }
+
+    public static void setActualUser(PersonDAO actualUser) {
+        ChatController.actualUser = actualUser;
+    }
+
+    public static void setActualChat(ChatView chatView) {
+        ChatController.actualChat = chatView;
     }
 }

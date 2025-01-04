@@ -1,6 +1,8 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Config.LoadStyles;
+import application.portfolio.clientmodule.Connection.WebSocket.WebSocketClientHolder;
+import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.Bars.BottomChatBar;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.Bars.TopChatBar;
 import application.portfolio.clientmodule.Model.View.Page;
@@ -19,7 +21,6 @@ import javafx.stage.Screen;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class Chat extends VBox implements Page {
@@ -27,7 +28,7 @@ public class Chat extends VBox implements Page {
     private final ChatBinder chatBinder = new ChatBinder();
 
     private final TopChatBar topChatBar = new TopChatBar(chatBinder);
-    private final StackPane chatPages = new StackPane();
+    private static final StackPane chatPages = new StackPane();
     private BottomChatBar bottomChatBar = null;
     private final VBox chatTemplate = new VBox();
     private Friends friendsList = null;
@@ -36,6 +37,18 @@ public class Chat extends VBox implements Page {
             ExecutorServiceManager.createCachedThreadPool(Chat.class.getSimpleName());
 
     private Chat() {
+        ChatRequestViewModel.setUpChatConnection();
+        setUpVisibilityListener();
+    }
+
+    private void setUpVisibilityListener() {
+        this.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                ChatRequestViewModel.setUpChatConnection();
+            } else {
+                WebSocketClientHolder.getInstance().close();
+            }
+        });
     }
 
     @Override
@@ -84,6 +97,10 @@ public class Chat extends VBox implements Page {
                     e.printStackTrace();
                     return false;
                 });
+    }
+
+    public static StackPane getChats() {
+        return chatPages;
     }
 
     @Override

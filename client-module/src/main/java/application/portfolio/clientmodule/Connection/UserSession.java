@@ -51,9 +51,9 @@ public class UserSession {
     public static Boolean ping() {
 
         HttpClient client = ClientHolder.getClient();
-        Map<String, String> data = Infrastructure.getGatewayData();
-        String pingEndpoint = Infrastructure.getPingEndpoint();
-        URI baseUri = Infrastructure.getBaseUri(data).resolve(pingEndpoint);
+        Map<String, String> gData = Infrastructure.getGatewayData();
+        String spec = Infrastructure.uriSpecificPart(gData, "ping");
+        URI baseUri = Infrastructure.getBaseUri(gData).resolve(spec);
 
         HttpResponse<String> response;
 

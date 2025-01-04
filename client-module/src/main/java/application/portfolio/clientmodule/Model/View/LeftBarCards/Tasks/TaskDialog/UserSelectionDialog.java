@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog;
 
 import application.portfolio.clientmodule.Connection.UserSession;
+import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 import application.portfolio.clientmodule.OtherElements.GroupDAO;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
@@ -99,7 +100,7 @@ public class UserSelectionDialog extends Stage {
     private CompletableFuture<List<PersonDAO>> loadUsers() {
 
         return CompletableFuture.supplyAsync(() -> {
-            List<PersonDAO> persons = loggedInUser.getSubordinateUsers();
+            List<PersonDAO> persons = FriendsRequestViewModel.getFriends();
             persons.add(loggedInUser);
             return persons;
         }, executor);

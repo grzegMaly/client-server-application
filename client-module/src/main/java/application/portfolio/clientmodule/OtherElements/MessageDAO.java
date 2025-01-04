@@ -1,19 +1,45 @@
 package application.portfolio.clientmodule.OtherElements;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class MessageDAO {
 
+    private UUID tempId = UUID.randomUUID();
+    private Long id;
     private PersonDAO sender;
     private PersonDAO receiver;
     private String content;
     private LocalDateTime timestamp;
+
+    public MessageDAO() {}
+
+    public MessageDAO(PersonDAO sender, PersonDAO receiver) {
+        this.sender = sender;
+        this.receiver = receiver;
+    }
 
     public MessageDAO(PersonDAO sender, PersonDAO receiver, String content, LocalDateTime timestamp) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
         this.timestamp = timestamp;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public UUID getTempId() {
+        return tempId;
+    }
+
+    public void setTempId(UUID tempId) {
+        this.tempId = tempId;
     }
 
     public PersonDAO getSender() {
@@ -51,8 +77,10 @@ public class MessageDAO {
     @Override
     public String toString() {
         return "MessageDAO{" +
-                "senderId=" + sender +
-                ", receiverId=" + receiver +
+                "tempId=" + tempId +
+                ", id=" + id +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
                 ", content='" + content + '\'' +
                 ", timestamp=" + timestamp +
                 '}';

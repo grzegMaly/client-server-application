@@ -2,11 +2,11 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes;
 
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NoteInfoDialog;
 import application.portfolio.clientmodule.OtherElements.NoteDAO;
-import application.portfolio.clientmodule.OtherElements.temp.Objects;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class NoteController {
@@ -99,7 +99,6 @@ public class NoteController {
     }
 
     public static List<NoteDAO> loadNotes() {
-
-        return Objects.loadNotes();
+        return new ArrayList<>();
     }
 }

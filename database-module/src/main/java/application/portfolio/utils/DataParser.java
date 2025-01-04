@@ -75,4 +75,12 @@ public class DataParser {
     public static boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty();
     }
+
+    public static boolean validateParams(Map<String, String> paramsMap, String... params) {
+
+        if (paramsMap != null) {
+            return paramsMap.keySet().containsAll(Arrays.asList(params)) && paramsMap.size() == params.length;
+        }
+        return false;
+    }
 }

@@ -3,18 +3,27 @@ package application.portfolio.utils;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 public class Infrastructure {
 
     private static final String PROTOCOL = "http://";
+    private static final String WB_PROTOCOL = "ws://";
     private static final String OTHER_SERVERS_PROPS = "/config/otherServers.properties";
-    private static Map<String, Map<String, String>> infrastructureData;
+    private static final String WS_SERVERS_PROPS = "/config/wsServers.properties";
+    private static final Map<String, Map<String, String>> httpData;
+    private static final Map<String, Map<String, String>> wsData;
 
     static {
+        httpData = initData(OTHER_SERVERS_PROPS);
+        wsData = initData(WS_SERVERS_PROPS);
+    }
 
-        infrastructureData = PropertiesLoader.getProperties(OTHER_SERVERS_PROPS).entrySet()
+    private static Map<String, Map<String, String>> initData(String path) {
+         Map<String, Map<String, String>> map = PropertiesLoader.getProperties(path).entrySet()
                 .stream()
                 .collect(Collectors.groupingBy(
                         entry -> entry.getKey().toString().split("\\.")[0],
@@ -26,15 +35,11 @@ public class Infrastructure {
                         )
                 ));
 
-        infrastructureData = new ConcurrentHashMap<>(infrastructureData);
+        return new ConcurrentHashMap<>(map);
     }
 
-    public static void addToMap(String key, Map<String, String> value) {
-
-    }
-
-    private static Map<String, String> getData(String key) {
-        return new HashMap<>(infrastructureData.get(key));
+    public static Map<String, String> getData(String key, int mapNum) {
+        return mapNum == 0 ? httpData.get(key) : wsData.get(key);
     }
 
     public static String getHost(Map<String, String> data) {
@@ -56,12 +61,19 @@ public class Infrastructure {
         return null;
     }
 
-    public static URI getBaseUri(Map<String, String> data) {
+    public static URI getWBBaseUri(Map<String, String> data) {
+        return createBaseUri(data, WB_PROTOCOL);
+    }
 
+    public static URI getBaseUri(Map<String, String> data) {
+        return createBaseUri(data, PROTOCOL);
+    }
+
+    private static URI createBaseUri(Map<String, String> data, String protocol) {
         String host = getHost(data);
         String port = getPort(data);
 
-        String uri = "%s%s:%s".formatted(PROTOCOL, host, port);
+        String uri = "%s%s:%s".formatted(protocol, host, port);
         return URI.create(uri);
     }
 
@@ -78,19 +90,23 @@ public class Infrastructure {
         return point.concat(params);
     }
 
-    public static Map<String, Map<String, String>> getInfrastructureData() {
-        return new HashMap<>(infrastructureData);
-    }
-
     public static Map<String, String> getCurrentServerData() {
-        return getData("currentServer");
+        return getData("currentServer", 0);
     }
 
     public static Map<String, String> getAuthorizationData() {
-        return getData("authServer");
+        return getData("authServer", 0);
     }
 
     public static Map<String, String> getDatabaseData() {
-        return getData("databaseServer");
+        return getData("databaseServer", 0);
+    }
+
+    public static Map<String, String> getCurrentWSServerData() {
+        return getData("currentWebSocketServer", 1);
+    }
+
+    public static Map<String, String> getChatWSData() {
+        return getData("ChatWebSocketServer", 1);
     }
 }

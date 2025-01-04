@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
+import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.OtherElements.MessageDAO;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
@@ -8,18 +9,50 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollBar;
 
+import java.util.UUID;
+
 public class ChatView extends ListView<MessageDAO> {
 
-    private final String chatId;
+    private final UUID chatId;
+    private int offset = 0;
+    public static final int LIMIT = 15;
+    private boolean hasMoreMessages = true;
+    private final ChatRequestViewModel viewModel;
 
-    public ChatView(String id) {
+    public ChatView(UUID id, ChatRequestViewModel viewModel) {
         this.chatId = id;
+        this.viewModel = viewModel;
         initListCell();
         setActionStyles();
     }
 
-    public String getChatId() {
+    public UUID getChatId() {
         return chatId;
+    }
+
+    public int getOffset() {
+        return offset;
+    }
+
+    public void incrementOffset() {
+        this.offset++;
+    }
+
+    public void resetOffset() {
+        this.offset = 0;
+        this.hasMoreMessages = true;
+    }
+
+    public boolean hasMoreMessages() {
+        return hasMoreMessages;
+    }
+
+    public void setHasMoreMessages(boolean hasMoreMessages) {
+        this.hasMoreMessages = hasMoreMessages;
+    }
+
+    public ChatRequestViewModel getViewModel() {
+        return viewModel;
     }
 
     private void setActionStyles() {
@@ -50,12 +83,10 @@ public class ChatView extends ListView<MessageDAO> {
     }
 
     private void initListCell() {
-
         this.setCellFactory(list -> new ListCell<>() {
             @Override
             protected void updateItem(MessageDAO message, boolean empty) {
                 super.updateItem(message, empty);
-
                 if (message == null || empty) {
                     setText(null);
                     setGraphic(null);

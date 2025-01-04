@@ -58,11 +58,11 @@ public class UserEndpoint implements EndpointHandler, HttpHandler {
 
     private PersonResponse handleGet(Map<String, String> params) {
 
-        if (params.size() == 1 && params.containsKey("id")) {
+        if (DataParser.validateParams(params, "id")) {
             return handleGetById(params.get("id"));
         }
 
-        if (params.size() == 2 && params.containsKey("offset") && params.containsKey("limit")) {
+        if (DataParser.validateParams(params, "offset", "limit")) {
             return handleGetWithPagination(params.get("offset"), params.get("limit"));
         }
 
@@ -110,7 +110,7 @@ public class UserEndpoint implements EndpointHandler, HttpHandler {
 
     private PersonResponse handleDelete(Map<String, String> params) {
 
-        if (params.size() != 1 && !params.containsKey("id")) {
+        if (!DataParser.validateParams(params, "id")) {
             return new PersonResponse("Bad Data", HTTP_FORBIDDEN);
         }
 

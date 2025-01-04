@@ -29,7 +29,7 @@ public class GroupEndpoint implements EndpointHandler, HttpHandler {
             String method = exchange.getRequestMethod();
 
             Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
-            if (paramsMap == null || !paramsMap.containsKey("option")) {
+            if (paramsMap == null) {
                 ResponseHandler.handleError(exchange, "Forbidden", HTTP_FORBIDDEN);
                 return;
             }

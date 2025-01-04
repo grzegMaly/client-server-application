@@ -4,3 +4,5 @@ application.portfolio.endpoints.endpointClasses.user.session.RegisterUser
 application.portfolio.endpoints.endpointClasses.group.GroupEndpoint
 application.portfolio.endpoints.endpointClasses.groupUser.GroupUsersEndpoint
 application.portfolio.endpoints.endpointClasses.groupUser.GroupUserMoveEndpoint
+application.portfolio.endpoints.endpointClasses.chat.ChatHistoryEndpoint
+application.portfolio.endpoints.endpointClasses.chat.ChatEndpoint

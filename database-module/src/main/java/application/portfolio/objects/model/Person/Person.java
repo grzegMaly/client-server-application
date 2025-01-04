@@ -1,8 +1,8 @@
 package application.portfolio.objects.model.Person;
 
-import application.portfolio.objects.dao.person.PersonDAO;
-import application.portfolio.objects.dao.person.Role;
-import application.portfolio.objects.model.DAOConverter;
+import application.portfolio.objects.dao.Person.PersonDAO;
+import application.portfolio.objects.dao.Person.Role;
+import application.portfolio.objects.dao.DAOConverter;
 
 import java.util.*;
 

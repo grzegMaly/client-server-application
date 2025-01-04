@@ -6,7 +6,7 @@ application.portfolio.endpoints.endpointClasses.session.userGroup.user.UserEndpo
 application.portfolio.endpoints.endpointClasses.session.userGroup.group.GroupEndpoint
 application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.GroupUserEndpoint
 application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.GroupUserMoveEndpoint
-application.portfolio.endpoints.endpointClasses.ChatEndpoint
+application.portfolio.endpoints.endpointClasses.chat.ChatHistoryEndpoint
 application.portfolio.endpoints.endpointClasses.NotesEndpoint
 application.portfolio.endpoints.endpointClasses.PasswordEndpoint
 application.portfolio.endpoints.endpointClasses.StoreEndpoint

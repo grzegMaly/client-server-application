@@ -3,47 +3,37 @@ package application.portfolio.clientmodule.Connection;
 import application.portfolio.clientmodule.Config.PropertiesLoader;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class Infrastructure {
 
     private static final String PROTOCOL = "http://";
-    private static final Map.Entry<String, Map<String, String>> gatewayData;
-    private static final Map<String, String> endpointsData;
+    private static final String WS_PROTOCOL = "ws://";
+    private static final Map<String, Map<String, String>> gatewayData;
 
     static {
         gatewayData = loadGatewayData();
-        endpointsData = loadEndpointData();
     }
 
-    private static Map.Entry<String, Map<String, String>> loadGatewayData() {
+    private static Map<String, Map<String, String>> loadGatewayData() {
 
         String path = "/Connection/connection.properties";
-        return PropertiesLoader.getProperties(path)
+        Map<String, Map<String, String>> data =  PropertiesLoader.getProperties(path)
                 .entrySet()
                 .stream()
                 .collect(Collectors.groupingBy(
                         entry -> entry.getKey().toString().split("\\.")[0],
                         Collectors.toMap(
                                 entry -> entry.getKey().toString().split("\\.")[1],
-                                entry -> entry.getValue().toString()
+                                entry -> entry.getValue().toString(),
+                                (existing, replacement) -> existing,
+                                ConcurrentHashMap::new
                         )
-                ))
-                .entrySet()
-                .stream().findFirst().orElse(null);
-    }
-
-    private static Map<String, String> loadEndpointData() {
-
-        String path = "/Connection/endpoints.properties";
-        return PropertiesLoader.getProperties(path).entrySet()
-                .stream()
-                .collect(Collectors.toMap(
-                        entry -> (String) entry.getKey(),
-                        entry -> (String) entry.getValue()
                 ));
+
+        return new ConcurrentHashMap<>(data);
     }
 
     public static String getHost(Map<String, String> data) {
@@ -67,28 +57,27 @@ public class Infrastructure {
         return point.concat(params);
     }
 
-    public static URI getBaseUri(Map<String, String> data) {
+    public static URI getWSBaseUri(Map<String, String> data) {
+        return createBaseUri(data, WS_PROTOCOL);
+    }
 
+    public static URI getBaseUri(Map<String, String> data) {
+        return createBaseUri(data, PROTOCOL);
+    }
+
+    private static URI createBaseUri(Map<String, String> data, String protocol) {
         String host = getHost(data);
         String port = getPort(data);
 
-        String uri = "%s%s:%s".formatted(PROTOCOL, host, port);
+        String uri = "%s%s:%s".formatted(protocol, host, port);
         return URI.create(uri);
     }
 
     public static Map<String, String> getGatewayData() {
-        return new HashMap<>(gatewayData.getValue());
+        return gatewayData.get("gateway");
     }
 
-    public static String getPingEndpoint() {
-        return endpointsData.get("ping");
-    }
-
-    public static String getLoginEndpoint() {
-        return endpointsData.get("login");
-    }
-
-    public static String getGroupUserEndpoint() {
-        return endpointsData.get("group-user");
+    public static Map<String, String> getGatewayChatWSData() {
+        return gatewayData.get("gatewayChatWS");
     }
 }

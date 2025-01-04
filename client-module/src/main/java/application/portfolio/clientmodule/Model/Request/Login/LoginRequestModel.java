@@ -5,6 +5,7 @@ import application.portfolio.clientmodule.Connection.Infrastructure;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Login.LoginRequest.LoginRequest;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.OtherElements.PersonMethods;
 import application.portfolio.clientmodule.utils.CustomAlert;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -33,8 +34,8 @@ public class LoginRequestModel {
 
         HttpClient client = ClientHolder.getClient();
         Map<String, String> gData = Infrastructure.getGatewayData();
-        String loginEndpoint = Infrastructure.getLoginEndpoint();
-        URI baseUri = Infrastructure.getBaseUri(gData).resolve(loginEndpoint);
+        String spec = Infrastructure.uriSpecificPart(gData, "login");
+        URI baseUri = Infrastructure.getBaseUri(gData).resolve(spec);
         JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
 
         JsonNode node = objectMapper.valueToTree(req);
@@ -56,14 +57,13 @@ public class LoginRequestModel {
         try {
             response = client.send(request, handler);
         } catch (IOException | InterruptedException e) {
-            System.out.println(e.getMessage());
             return null;
         }
 
-        return handleResponse(response);
+        return handlePersonResponse(response);
     }
 
-    private PersonDAO handleResponse(HttpResponse<JsonNode> response) {
+    private PersonDAO handlePersonResponse(HttpResponse<JsonNode> response) {
 
         JsonNode node = response.body();
 
@@ -85,28 +85,12 @@ public class LoginRequestModel {
             return null;
         }
 
-        PersonDAO personDAO = parseJsonToPerson(node);
+        node = node.get("response");
+        PersonDAO personDAO = PersonMethods.createPersonFromNode(node);
         if (personDAO != null) {
             String token = response.headers().map().get("Authorization").get(0);
             UserSession.getInstance().setToken(token);
         }
-
         return personDAO;
-    }
-
-    private PersonDAO parseJsonToPerson(JsonNode node) {
-
-        node = node.get("response");
-
-        try {
-            String id = node.get("id").asText();
-            String firstName = node.get("firstName").asText();
-            String lastName = node.get("lastName").asText();
-            int role = node.get("role").asInt();
-
-            return new PersonDAO(id, firstName, lastName, role);
-        } catch (Exception e) {
-            return null;
-        }
     }
 }

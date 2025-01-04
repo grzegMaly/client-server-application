@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
-import application.portfolio.clientmodule.Model.Request.Chat.ChatRequestViewModel;
+import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,7 +12,7 @@ import java.util.Set;
 
 public class ChatBinder {
 
-    private final ChatRequestViewModel viewModel = new ChatRequestViewModel();
+    private static final ChatRequestViewModel viewModel = new ChatRequestViewModel();
     private final Set<Runnable> clearFields = new HashSet<>();
 
     {
@@ -53,12 +53,16 @@ public class ChatBinder {
         viewModel.messageProperty().bind(messageTf.textProperty());
 
         sendBtn.setOnAction(evt -> {
-            viewModel.save();
+            viewModel.sendMessage();
             messageTf.clear();
         });
     }
 
     public void clearFields() {
         clearFields.forEach(Runnable::run);
+    }
+
+    public ChatRequestViewModel getViewModel() {
+        return viewModel;
     }
 }
