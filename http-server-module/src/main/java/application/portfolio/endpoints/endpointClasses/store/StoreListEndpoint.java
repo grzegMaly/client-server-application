@@ -1,4 +1,4 @@
-package application.portfolio.endpoints.endpointClasses.session.userGroup.user;
+package application.portfolio.endpoints.endpointClasses.store;
 
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
@@ -14,11 +14,15 @@ import java.util.Map;
 
 import static java.net.HttpURLConnection.*;
 
-@EndpointInfo(path = "/user/get")
-public class GetUser implements EndpointHandler, HttpHandler {
+@EndpointInfo(path = "/store/list")
+public class StoreListEndpoint implements EndpointHandler, HttpHandler {
 
-    private final String[] ID = {"id"};
-    private final String[] LIMIT_OFFSET = {"limit", "offset"};
+    private final String[] VIEW_PARAMS = {"userId", "path", "limit", "offset"};
+    private final Map<String, String> fData;
+
+    {
+        fData = Infrastructure.getFileServerData();
+    }
 
     @Override
     public HttpHandler endpoint() {
@@ -27,21 +31,21 @@ public class GetUser implements EndpointHandler, HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+
         try (exchange) {
-            if ("GET".equals(exchange.getRequestMethod())) {
+            String method = exchange.getRequestMethod();
+            if ("GET".equals(method)) {
 
                 Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
-                if (!DataParser.validateParams(paramsMap, LIMIT_OFFSET) && !DataParser.validateParams(paramsMap, ID)) {
+                if (!DataParser.validateParams(paramsMap, VIEW_PARAMS)) {
                     ResponseHandler.handleError(exchange, "Bad Params", HTTP_FORBIDDEN);
-                    return;
+                } else {
+                    BaseGetUtils.handleBaseGet(exchange, paramsMap, fData, "store/list");
                 }
-                Map<String, String> dbData = Infrastructure.getDatabaseData();
-                BaseGetUtils.handleBaseGet(exchange, paramsMap, dbData, "user");
             } else {
-                ResponseHandler.handleError(exchange, "Bad Gateway", HTTP_BAD_GATEWAY);
+                ResponseHandler.handleError(exchange, "Bad Method", HTTP_BAD_REQUEST);
             }
-            throw new IOException();
-        } catch (IOException e) {
+        } catch (Exception e) {
             ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
         }
     }

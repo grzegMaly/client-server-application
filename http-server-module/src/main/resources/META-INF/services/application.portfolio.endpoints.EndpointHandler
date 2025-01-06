@@ -1,4 +1,4 @@
-application.portfolio.endpoints.endpointClasses.PingEndpoint
+application.portfolio.endpoints.endpointClasses.ping.PingEndpoint
 application.portfolio.endpoints.endpointClasses.session.log.LoginEndpoint
 application.portfolio.endpoints.endpointClasses.session.log.LogoutEndpoint
 application.portfolio.endpoints.endpointClasses.session.userGroup.user.GetUser
@@ -7,8 +7,7 @@ application.portfolio.endpoints.endpointClasses.session.userGroup.group.GroupEnd
 application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.GroupUserEndpoint
 application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.GroupUserMoveEndpoint
 application.portfolio.endpoints.endpointClasses.chat.ChatHistoryEndpoint
-application.portfolio.endpoints.endpointClasses.NotesEndpoint
-application.portfolio.endpoints.endpointClasses.PasswordEndpoint
-application.portfolio.endpoints.endpointClasses.StoreEndpoint
-application.portfolio.endpoints.endpointClasses.TasksEndpoint
-application.portfolio.endpoints.endpointClasses.WatchEndpoint
+application.portfolio.endpoints.endpointClasses.notes.NotesEndpoint
+application.portfolio.endpoints.endpointClasses.password.PasswordEndpoint
+application.portfolio.endpoints.endpointClasses.store.StoreListEndpoint
+application.portfolio.endpoints.endpointClasses.tasks.TasksEndpoint

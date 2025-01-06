@@ -101,6 +101,9 @@ public class Infrastructure {
     public static Map<String, String> getDatabaseData() {
         return getData("databaseServer", 0);
     }
+    public static Map<String, String> getFileServerData() {
+        return getData("fileServer", 0);
+    }
 
     public static Map<String, String> getCurrentWSServerData() {
         return getData("currentWebSocketServer", 1);

@@ -28,9 +28,9 @@
         <module>client-admin-module</module>
         <module>http-server-module</module>
         <module>websocket-server-module</module>
-        <module>tcp-server-module</module>
         <module>database-module</module>
         <module>auth-module</module>
+        <module>file-server-module</module>
     </modules>
 
 </project>

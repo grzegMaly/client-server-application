@@ -1,4 +1,4 @@
-package application.portfolio.endpoints.endpointClasses;
+package application.portfolio.endpoints.endpointClasses.notes;
 
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;

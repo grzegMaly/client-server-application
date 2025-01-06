@@ -1,4 +1,4 @@
-package application.portfolio.endpoints.endpointClasses;
+package application.portfolio.endpoints.endpointClasses.ping;
 
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;

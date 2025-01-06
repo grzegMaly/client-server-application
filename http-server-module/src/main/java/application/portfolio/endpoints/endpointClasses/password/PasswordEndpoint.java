@@ -1,4 +1,4 @@
-package application.portfolio.endpoints.endpointClasses;
+package application.portfolio.endpoints.endpointClasses.password;
 
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
@@ -7,8 +7,8 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 
-@EndpointInfo(path = "/watch")
-public class WatchEndpoint implements EndpointHandler, HttpHandler {
+@EndpointInfo(path = "/chat")
+public class PasswordEndpoint implements EndpointHandler, HttpHandler {
 
     @Override
     public HttpHandler endpoint() {
