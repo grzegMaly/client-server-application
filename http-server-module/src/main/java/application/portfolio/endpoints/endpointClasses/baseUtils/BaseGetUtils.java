@@ -1,6 +1,6 @@
 package application.portfolio.endpoints.endpointClasses.baseUtils;
 
-import application.portfolio.clientServer.ClientHolder;
+import application.portfolio.requestResponse.Requests.GetRequests;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
 import com.sun.net.httpserver.HttpExchange;
@@ -18,6 +18,6 @@ public class BaseGetUtils {
         String spec = Infrastructure.uriSpecificPart(serverData, endpoint, params);
 
         URI baseUri = Infrastructure.getBaseUri(serverData).resolve(spec);
-        ClientHolder.handleGetRequest(exchange, baseUri);
+        GetRequests.handleGetRequest(exchange, baseUri);
     }
 }

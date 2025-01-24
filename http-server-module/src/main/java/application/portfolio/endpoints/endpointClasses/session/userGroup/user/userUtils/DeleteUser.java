@@ -3,7 +3,7 @@ package application.portfolio.endpoints.endpointClasses.session.userGroup.user.u
 import application.portfolio.endpoints.endpointClasses.baseUtils.BaseDeleteUtils;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.util.Map;

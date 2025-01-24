@@ -1,9 +1,9 @@
 package application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.groupUserUtils;
 
-import application.portfolio.clientServer.ClientHolder;
+import application.portfolio.requestResponse.Requests.GetRequests;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -42,6 +42,6 @@ public class GroupUserGet {
         String spec = Infrastructure.uriSpecificPart(dbData, "group/user", params);
 
         URI baseUri = Infrastructure.getBaseUri(dbData).resolve(spec);
-        ClientHolder.handleGetRequest(exchange, baseUri);
+        GetRequests.handleGetRequest(exchange, baseUri);
     }
 }

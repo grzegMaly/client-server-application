@@ -1,6 +1,7 @@
 package application.portfolio.endpoints.endpointClasses.baseUtils;
 
 import application.portfolio.clientServer.ClientHolder;
+import application.portfolio.requestResponse.Requests.DeleteRequests;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
 import com.sun.net.httpserver.HttpExchange;
@@ -18,6 +19,6 @@ public class BaseDeleteUtils {
         String spec = Infrastructure.uriSpecificPart(serverData, endpoint, params);
 
         URI baseUri = Infrastructure.getBaseUri(serverData).resolve(spec);
-        ClientHolder.handleDeleteRequest(exchange, baseUri);
+        DeleteRequests.handleDeleteRequest(exchange, baseUri);
     }
 }

@@ -5,7 +5,7 @@ import application.portfolio.endpoints.EndpointInfo;
 import application.portfolio.endpoints.endpointClasses.baseUtils.BaseGetUtils;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

@@ -1,0 +1,3 @@
+application.portfolio.endpoints.endpointClasses.files.ListEndpoint
+application.portfolio.endpoints.endpointClasses.files.ResourceEndpoint
+application.portfolio.endpoints.endpointClasses.session.AddUserResource

@@ -1,6 +1,6 @@
 package application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup.groupUserUtils;
 
-import application.portfolio.clientServer.ClientHolder;
+import application.portfolio.requestResponse.Requests.PostRequests;
 import application.portfolio.utils.Infrastructure;
 import com.sun.net.httpserver.HttpExchange;
 
@@ -16,6 +16,6 @@ public class GroupUserPost {
         String spec = Infrastructure.uriSpecificPart(dbData, "group/user");
 
         URI baseUri = Infrastructure.getBaseUri(dbData).resolve(spec);
-        ClientHolder.handlePostRequest(exchange, baseUri);
+        PostRequests.handlePostRequest(exchange, baseUri);
     }
 }

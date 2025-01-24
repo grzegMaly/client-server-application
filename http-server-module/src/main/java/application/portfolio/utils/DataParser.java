@@ -45,13 +45,6 @@ public class DataParser {
         return sj.toString();
     }
 
-    public static Map<String, String> handleMap(Map<String, String> paramsMap) {
-        if (paramsMap == null) {
-            return Map.of("limit", "10", "offset", "0");
-        }
-        return paramsMap;
-    }
-
     public static boolean validateParams(Map<String, String> paramsMap, String... params) {
 
         if (paramsMap != null) {

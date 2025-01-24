@@ -1,9 +1,9 @@
 package application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils;
 
-import application.portfolio.clientServer.ClientHolder;
+import application.portfolio.requestResponse.Requests.PostRequests;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.io.IOException;
@@ -31,6 +31,6 @@ public class PostGroup {
         String spec = Infrastructure.uriSpecificPart(dbData, "group", params);
 
         URI baseUri = Infrastructure.getBaseUri(dbData).resolve(spec);
-        ClientHolder.handlePostRequest(exchange, baseUri);
+        PostRequests.handlePostRequest(exchange, baseUri);
     }
 }

@@ -10,4 +10,5 @@ application.portfolio.endpoints.endpointClasses.chat.ChatHistoryEndpoint
 application.portfolio.endpoints.endpointClasses.notes.NotesEndpoint
 application.portfolio.endpoints.endpointClasses.password.PasswordEndpoint
 application.portfolio.endpoints.endpointClasses.store.StoreListEndpoint
+application.portfolio.endpoints.endpointClasses.store.FilesEndpoint
 application.portfolio.endpoints.endpointClasses.tasks.TasksEndpoint

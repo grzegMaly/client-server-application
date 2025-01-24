@@ -1,11 +1,11 @@
 package application.portfolio.endpoints.endpointClasses.chat;
 
-import application.portfolio.clientServer.ClientHolder;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
+import application.portfolio.requestResponse.Requests.GetRequests;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -18,6 +18,12 @@ import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
 @EndpointInfo(path = "/chat/history")
 public class ChatHistoryEndpoint implements EndpointHandler, HttpHandler {
+
+    private final Map<String, String> dbData;
+
+    {
+        dbData = Infrastructure.getDatabaseData();
+    }
 
     @Override
     public HttpHandler endpoint() {
@@ -34,7 +40,6 @@ public class ChatHistoryEndpoint implements EndpointHandler, HttpHandler {
                     ResponseHandler.handleError(exchange, "Bad Data", HTTP_BAD_REQUEST);
                     return;
                 }
-
                 handleGet(exchange, paramsMap);
             } else {
                 ResponseHandler.handleError(exchange, "Bad Data", HTTP_BAD_REQUEST);
@@ -46,11 +51,10 @@ public class ChatHistoryEndpoint implements EndpointHandler, HttpHandler {
 
     private void handleGet(HttpExchange exchange, Map<String, String> paramsMap) {
 
-        Map<String, String> dbData = Infrastructure.getDatabaseData();
         String params = DataParser.paramsString(paramsMap);
         String spec = Infrastructure.uriSpecificPart(dbData, "chat/history", params);
 
         URI uri = Infrastructure.getBaseUri(dbData).resolve(spec);
-        ClientHolder.handleGetRequest(exchange, uri);
+        GetRequests.handleGetRequest(exchange, uri);
     }
 }

@@ -6,7 +6,7 @@ import application.portfolio.endpoints.endpointClasses.session.userGroup.group.g
 import application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils.GetGroup;
 import application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils.PostGroup;
 import application.portfolio.utils.DataParser;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

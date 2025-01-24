@@ -4,7 +4,7 @@ import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
 import application.portfolio.endpoints.endpointClasses.session.userGroup.user.userUtils.DeleteUser;
 import application.portfolio.endpoints.endpointClasses.session.userGroup.user.userUtils.PostUser;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 

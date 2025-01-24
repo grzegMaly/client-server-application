@@ -1,10 +1,10 @@
 package application.portfolio.endpoints.endpointClasses.session.log;
 
-import application.portfolio.clientServer.ClientHolder;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
+import application.portfolio.requestResponse.Requests.PostRequests;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
@@ -12,7 +12,6 @@ import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpResponse;
 import java.util.Map;
 
 import static java.net.HttpURLConnection.*;
@@ -40,13 +39,8 @@ public class LoginEndpoint implements EndpointHandler, HttpHandler {
                 Map<String, String> authData = Infrastructure.getAuthorizationData();
                 String spec = Infrastructure.uriSpecificPart(authData, "authorization");
                 URI baseUri = Infrastructure.getBaseUri(authData).resolve(spec);
-                byte[] data = exchange.getRequestBody().readAllBytes();
 
-                HttpResponse<byte[]> response = ClientHolder.sendPostRequest(baseUri, data);
-                if (response == null) {
-                    ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
-                }
-                ResponseHandler.sendResponse(response, exchange);
+                PostRequests.handlePostRequest(exchange, baseUri);
             } else {
                 ResponseHandler.handleError(exchange, "Bad Gateway", HTTP_BAD_GATEWAY);
             }

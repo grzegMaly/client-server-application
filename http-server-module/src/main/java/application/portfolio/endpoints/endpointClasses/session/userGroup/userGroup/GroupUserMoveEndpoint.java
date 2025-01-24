@@ -1,11 +1,11 @@
 package application.portfolio.endpoints.endpointClasses.session.userGroup.userGroup;
 
-import application.portfolio.clientServer.ClientHolder;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
+import application.portfolio.requestResponse.Requests.PostRequests;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.Infrastructure;
-import application.portfolio.utils.ResponseHandler;
+import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -47,6 +47,6 @@ public class GroupUserMoveEndpoint implements EndpointHandler, HttpHandler {
         String spec = Infrastructure.uriSpecificPart(dbData, "group/user/move");
 
         URI baseUri = Infrastructure.getBaseUri(dbData).resolve(spec);
-        ClientHolder.handlePostRequest(exchange, baseUri);
+        PostRequests.handlePostRequest(exchange, baseUri);
     }
 }
