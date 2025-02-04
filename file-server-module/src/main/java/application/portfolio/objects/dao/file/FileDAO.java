@@ -22,14 +22,16 @@ public class FileDAO extends FileSystemEntityDAO {
 
     public FileDAO(File file) {
         this.setPath(file.getPath().toString());
-        this.setName(file.getName());
+        String extension = file.getExtension();
+        String name = file.getName().concat(".").concat(extension);
+        this.setName(name);
         this.setSize(file.getSize());
         this.setScale(file.getScale());
         this.setLastModifiedDate(file.getLastModifiedDate().toString());
         this.setDirectory(file.isDirectory());
-        this.setExtension(file.getExtension());
+        this.setExtension(extension);
         this.setHasThumbnail(file.isHasThumbnail());
-        this.setThumbnailString(file.getThumbnailString());
+        this.setThumbnailString(file.getThumbnailString() == null ? "" : file.getThumbnailString());
     }
 
     public String getExtension() {

@@ -3,11 +3,8 @@ package application.portfolio.clientmodule.Model.Request.Notes;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.BaseNoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.DeadlineNoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.RegularNoteRequest;
-import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NoteBinder;
-import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.Notes;
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import application.portfolio.clientmodule.utils.DateUtils;
-import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -16,7 +13,6 @@ import javafx.beans.property.StringProperty;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
 
 public class NotesRequestViewModel {
 

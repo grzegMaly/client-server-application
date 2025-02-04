@@ -6,7 +6,7 @@ import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestVie
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.TeamLinkApp;
 import javafx.application.Platform;
 import javafx.scene.Parent;

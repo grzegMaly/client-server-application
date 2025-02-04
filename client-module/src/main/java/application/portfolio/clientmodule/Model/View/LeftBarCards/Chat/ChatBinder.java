@@ -2,7 +2,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;

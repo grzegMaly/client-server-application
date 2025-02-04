@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Connection;
 
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 
 import java.io.IOException;
 import java.net.URI;
@@ -53,7 +53,7 @@ public class UserSession {
         HttpClient client = ClientHolder.getClient();
         Map<String, String> gData = Infrastructure.getGatewayData();
         String spec = Infrastructure.uriSpecificPart(gData, "ping");
-        URI baseUri = Infrastructure.getBaseUri(gData).resolve(spec);
+        URI baseUri = Infrastructure.getBaseUri(spec);
 
         HttpResponse<String> response;
 

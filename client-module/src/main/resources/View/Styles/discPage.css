@@ -1,3 +1,63 @@
-.discBG {
-    -fx-background-color: #14daa5;
+.baseDisc {
+    -fx-background-color: #5f5d5d;
+    -fx-spacing: 10px;
+}
+
+.discElement {
+    -fx-pref-width: 84;
+    -fx-pref-height: 84;
+    -fx-alignment: center;
+}
+
+.entityLabel, .backBtn, .uploadBtn, .pathLbl {
+    -fx-text-fill: white;
+}
+
+.pathLbl {
+    -fx-alignment: center;
+}
+
+.backBtn, .uploadBtn, .pathLbl {
+    -fx-font-size: 14px;
+}
+
+.backBtn, .uploadBtn {
+    -fx-background-color: #3b3b3b;
+    -fx-background-radius: 15px;
+}
+
+.discElement:hover, .backBtn:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.5);
+}
+
+.stackPaneImage {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+}
+
+.uploadBtn:hover {
+    -fx-background-color: #5474ff;
+}
+
+.discContextMenu {
+    -fx-background-color: #545454;
+    -fx-border-color: #393939;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+}
+
+.discContextMenu .menu-item {
+    -fx-text-fill: white !important;
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+    -fx-background-radius: 10px;
+}
+
+.discContextMenu .menu-item.download:hover {
+    -fx-background-color: #008cba;
+    -fx-text-fill: white !important;
+}
+
+.discContextMenu .menu-item.delete:hover {
+    -fx-background-color: #ff0000;
+    -fx-text-fill: white !important;
 }

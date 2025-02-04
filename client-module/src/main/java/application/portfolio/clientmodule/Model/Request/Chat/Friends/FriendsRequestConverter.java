@@ -1,8 +1,8 @@
 package application.portfolio.clientmodule.Model.Request.Chat.Friends;
 
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequest.FriendsRequest;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
-import application.portfolio.clientmodule.OtherElements.PersonMethods;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.utils.session.PersonMethods;
 import application.portfolio.clientmodule.utils.DataParser;
 import com.fasterxml.jackson.databind.JsonNode;
 

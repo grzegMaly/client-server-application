@@ -99,6 +99,7 @@ public class  LeftBar extends VBox implements Page {
                     btn.getStyleClass().add("leftBarBtn");
             }
 
+            //Todo: Finish
             /*chatBtn.getStyleClass().add("leftBarBtn");
             notesBtn.getStyleClass().add("leftBarBtn");
             discBtn.getStyleClass().add("leftBarBtn");

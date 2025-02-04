@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
 import javafx.scene.Scene;

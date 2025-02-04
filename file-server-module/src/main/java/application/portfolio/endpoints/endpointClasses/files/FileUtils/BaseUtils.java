@@ -30,13 +30,10 @@ public class BaseUtils {
         UUID uId = DataParser.parseId(id);
 
         ObjectNode resultNode = objectMapper.createObjectNode();
-        Path currentRootPath = rootPath.resolve(uId.toString());
-        if (!Files.exists(currentRootPath)) {
+        Path userDirPath = rootPath.resolve(uId.toString());
+        if (!Files.exists(userDirPath)) {
             resultNode.put("response", "Unreachable Resource");
             return ValidationResult.error(HTTP_FORBIDDEN, resultNode);
-        } else {
-            String driveResource = FilesManager.getResourceDriveName();
-            currentRootPath = currentRootPath.resolve(driveResource);
         }
 
         String path = paramsMap.get("path");
@@ -45,15 +42,8 @@ public class BaseUtils {
             return ValidationResult.error(HTTP_FORBIDDEN, resultNode);
         }
 
-        String[] pathElements = path.substring(1).split("/");
-
-        if (pathElements[0].isBlank()) {
-            resultNode.put("response", "Unreachable Resource");
-            return ValidationResult.error(HTTP_FORBIDDEN, resultNode);
-        }
-
-        path = String.join(separator, pathElements);
-        currentRootPath = currentRootPath.resolve(path);
-        return ValidationResult.success(currentRootPath);
+        path = path.replace("+", " ");
+        Path resourcePath = Path.of(path.substring(1));
+        return ValidationResult.success(userDirPath, resourcePath);
     }
 }

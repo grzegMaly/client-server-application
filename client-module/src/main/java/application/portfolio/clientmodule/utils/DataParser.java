@@ -1,22 +1,20 @@
 package application.portfolio.clientmodule.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.StringJoiner;
 import java.util.UUID;
 
 public class DataParser {
     public synchronized static String paramsString(Map<String, String> map) {
-
-        StringBuilder sb = new StringBuilder();
         StringJoiner sj = new StringJoiner("&", "?", "");
 
         for (Map.Entry<String, String> m : map.entrySet()) {
-            sb.append(m.getKey())
-                    .append("=")
-                    .append(m.getValue());
-
-            sj.add(sb.toString());
-            sb.setLength(0);
+            String encodedValue = URLEncoder.encode(m.getValue(), StandardCharsets.UTF_8); // **Encodowanie TYLKO wartości**
+            sj.add(m.getKey() + "=" + encodedValue);
         }
         return sj.toString();
     }
@@ -30,5 +28,14 @@ public class DataParser {
             //Nothing
         }
         return userId;
+    }
+
+    public static boolean validateElements(JsonNode node, String[] keys) {
+        for (String key : keys) {
+            if (!node.hasNonNull(key)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -21,49 +20,37 @@ import static java.net.HttpURLConnection.HTTP_OK;
 
 public class LoadFiles {
 
-    private static final String separator = File.separator;
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final ExecutorService executor = Executors.newCachedThreadPool();
-    private static final Path rootPath;
+    private static final String DRIVE = FilesManager.getResourceDriveName();
 
-    static {
-        rootPath = FilesManager.getUserResourcePath();
-    }
-
-    public static Map.Entry<Integer, JsonNode> loadFilesView(UUID userId) {
-        return loadFilesView(userId, "");
-    }
-
-    public static Map.Entry<Integer, JsonNode> loadFilesView(UUID userId, String... pathElements) {
+    public static Map.Entry<Integer, JsonNode> loadFilesView(ValidationResult validationResult) {
 
         ObjectNode finalNode;
-        Path currentRootPath = rootPath.resolve(userId.toString());
-        if (!Files.exists(currentRootPath)) {
-            finalNode = objectMapper.createObjectNode();
-            finalNode.put("response", "Unreachable Resource");
-            return Map.entry(HTTP_FORBIDDEN, finalNode);
-        } else {
-            String driveResource = FilesManager.getResourceDriveName();
-            currentRootPath = currentRootPath.resolve(driveResource);
-        }
+        Path userPath = validationResult.getUserPath().resolve(DRIVE);
+        Path resourcePath = validationResult.getResourcePath();
+        Path destinationPath = userPath.resolve(resourcePath);
 
-        String elements = String.join(separator, pathElements);
-        Path absolutePath = currentRootPath.resolve(elements);
-
-        if (!Files.exists(absolutePath)) {
+        if (!Files.exists(destinationPath)) {
             finalNode = objectMapper.createObjectNode();
             finalNode.put("response", "Unreachable Resource");
             return Map.entry(HTTP_FORBIDDEN, finalNode);
         }
 
-        Map<Path, Long> filesSizesMap = StatsVisitor.getPathAndSizes(absolutePath);
+        List<FileSystemEntityDAO> daoList = getFileEntityDAOList(userPath, destinationPath);
+        finalNode = objectMapper.createObjectNode();
+        JsonNode node = objectMapper.valueToTree(daoList);
+        finalNode.set("response", node);
+        return Map.entry(HTTP_OK, finalNode);
+    }
+
+    public static List<FileSystemEntityDAO> getFileEntityDAOList(Path userDriverPath, Path destinationPath) {
+
+        Map<Path, Long> filesSizesMap = StatsVisitor.getPathAndSizes(destinationPath);
         if (filesSizesMap.isEmpty()) {
-            finalNode = objectMapper.createObjectNode();
-            finalNode.set("response", objectMapper.createArrayNode());
-            return Map.entry(HTTP_OK, finalNode);
+            return Collections.emptyList();
         }
 
-        Path rPath = currentRootPath;
         List<FileSystemEntity> list = Collections.synchronizedList(new ArrayList<>());
         List<CompletableFuture<Void>> futures = filesSizesMap.entrySet().stream()
                 .map(entry -> CompletableFuture.runAsync(() -> {
@@ -71,7 +58,7 @@ public class LoadFiles {
                     Path p = entry.getKey();
                     long size = entry.getValue();
 
-                    FileSystemEntity entity = FileSystemEntity.createEntity(p, rPath);
+                    FileSystemEntity entity = FileSystemEntity.createEntity(p, userDriverPath);
                     if (entity != null) {
                         entity.setSize(size);
                         list.add(entity);
@@ -86,10 +73,6 @@ public class LoadFiles {
             FileSystemEntityDAO dao = FileSystemEntity.createDAO(e);
             daoList.add(dao);
         });
-
-        finalNode = objectMapper.createObjectNode();
-        JsonNode node = objectMapper.valueToTree(daoList);
-        finalNode.set("response", node);
-        return Map.entry(HTTP_OK, finalNode);
+        return daoList;
     }
 }

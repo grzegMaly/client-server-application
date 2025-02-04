@@ -65,6 +65,7 @@ public class ResponseHandler {
         if (response == null) {
             handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
         } else {
+            copyHeaders(exchange, response);
             if (response.body() instanceof byte[] rByte) {
                 sendResponse(exchange, rByte, response.statusCode());
             } else if (response.body() instanceof InputStream is) {
@@ -74,10 +75,9 @@ public class ResponseHandler {
     }
 
     private static void handleStreamResponse(HttpExchange exchange, InputStream inputStream, int statusCode) {
-
         try (inputStream; OutputStream os = exchange.getResponseBody()) {
-            inputStream.transferTo(os);
             exchange.sendResponseHeaders(statusCode, 0);
+            inputStream.transferTo(os);
         } catch (IOException e) {
             handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
         }
@@ -88,6 +88,15 @@ public class ResponseHandler {
             if (!RESTRICTED_HEADERS.contains(key.toUpperCase())) {
                 String headers = String.join(", ", value);
                 requestBuilder.header(key, headers);
+            }
+        });
+    }
+
+    public static <T> void copyHeaders(HttpExchange exchange, HttpResponse<T> response) {
+        response.headers().map().forEach((key, value) -> {
+            if (!RESTRICTED_HEADERS.contains(key.toUpperCase())) {
+                String headers = String.join(", ", value);
+                exchange.getResponseHeaders().add(key, headers);
             }
         });
     }

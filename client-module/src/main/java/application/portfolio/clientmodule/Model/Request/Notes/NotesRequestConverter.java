@@ -3,7 +3,7 @@ package application.portfolio.clientmodule.Model.Request.Notes;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.BaseNoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.DeadlineNoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.RegularNoteRequest;
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 
 import java.util.HashMap;
 import java.util.Map;

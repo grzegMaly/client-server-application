@@ -3,6 +3,9 @@ package application.portfolio.clientmodule.Connection;
 import application.portfolio.clientmodule.Config.PropertiesLoader;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -12,9 +15,11 @@ public class Infrastructure {
     private static final String PROTOCOL = "http://";
     private static final String WS_PROTOCOL = "ws://";
     private static final Map<String, Map<String, String>> gatewayData;
+    private static final URI baseGatewayURI;
 
     static {
         gatewayData = loadGatewayData();
+        baseGatewayURI = createBaseUri(getGatewayData(), PROTOCOL);
     }
 
     private static Map<String, Map<String, String>> loadGatewayData() {
@@ -61,8 +66,8 @@ public class Infrastructure {
         return createBaseUri(data, WS_PROTOCOL);
     }
 
-    public static URI getBaseUri(Map<String, String> data) {
-        return createBaseUri(data, PROTOCOL);
+    public static URI getBaseUri(String spec) {
+        return baseGatewayURI.resolve(spec);
     }
 
     private static URI createBaseUri(Map<String, String> data, String protocol) {
@@ -79,5 +84,9 @@ public class Infrastructure {
 
     public static Map<String, String> getGatewayChatWSData() {
         return gatewayData.get("gatewayChatWS");
+    }
+
+    public static String encodeParams(String params) {
+        return URLEncoder.encode(params, StandardCharsets.UTF_8);
     }
 }

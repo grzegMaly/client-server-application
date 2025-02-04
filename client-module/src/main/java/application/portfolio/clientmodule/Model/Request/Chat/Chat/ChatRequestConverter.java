@@ -1,8 +1,8 @@
 package application.portfolio.clientmodule.Model.Request.Chat.Chat;
 
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequest.ChatRequest;
-import application.portfolio.clientmodule.OtherElements.MessageDAO;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.DataParser;
 
 import java.util.Map;

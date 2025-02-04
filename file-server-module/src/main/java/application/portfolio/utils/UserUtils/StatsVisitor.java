@@ -63,7 +63,6 @@ public class StatsVisitor implements FileVisitor<Path> {
     @Override
     public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
         Objects.requireNonNull(file);
-        /*throw exc;*/
         return FileVisitResult.CONTINUE;
     }
 

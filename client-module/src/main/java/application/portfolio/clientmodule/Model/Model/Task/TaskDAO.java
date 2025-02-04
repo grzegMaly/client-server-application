@@ -1,5 +1,7 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.Model.Task;
 
+
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 
 import java.time.LocalDate;
 import java.util.UUID;

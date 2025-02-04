@@ -21,14 +21,14 @@ public final class File extends FileSystemEntity {
         THUMBNAIL = FilesManager.getResourceThumbnailName();
     }
 
-    public File(Path path, Path rootPath) {
-        super(path, rootPath);
-        String[] name = path.getFileName().toString().split("\\.");
+    public File(Path absolutePath, Path userDriverPath) {
+        super(absolutePath, userDriverPath);
+        String[] name = absolutePath.getFileName().toString().split("\\.");
         this.name = name[0];
         this.extension = name[1];
 
         if (Arrays.stream(GRAPHICS_EXTENSIONS).anyMatch(e -> e.equals(name[1]))) {
-            handleGraphicView(rootPath);
+            handleGraphicView(userDriverPath);
         }
         this.isDirectory = false;
     }
@@ -57,27 +57,32 @@ public final class File extends FileSystemEntity {
         this.thumbnailString = thumbnailString;
     }
 
-    private void handleGraphicView(Path rootDriverPath) {
+    private void handleGraphicView(Path userDriverPath) {
 
-        Path thumbnailPath = rootDriverPath.getParent().resolve(THUMBNAIL);
+        Path thumbnailPath = userDriverPath.getParent().resolve(THUMBNAIL);
         thumbnailPath = thumbnailPath.resolve(path);
 
         String thumbnailName = this.name.concat("_min.jpg");
         thumbnailPath = thumbnailPath.getParent().resolve(thumbnailName);
 
-        if (!Files.exists(thumbnailPath)) {
-            Path sourcePath = rootDriverPath.resolve(this.path);
+        boolean result = Files.exists(thumbnailPath);
+        if (!result) {
+            Path sourcePath = userDriverPath.resolve(this.path);
             try (InputStream is = Files.newInputStream(sourcePath)) {
-                boolean result = ImageMethods.createImage(thumbnailPath, is, true);
+                result = ImageMethods.createImage(thumbnailPath, is, true);
             } catch (IOException e) {
-                //Ignore
+                result = false;
             }
+        }
+
+        if (!result) {
+            return;
         }
 
         String encodedImage = ImageMethods.encodeToBase64(thumbnailPath);
         if (encodedImage != null) {
-            this.hasThumbnail = true;
-            this.thumbnailString = encodedImage;
+            setHasThumbnail(true);
+            setThumbnailString(encodedImage);
         }
     }
 }

@@ -1,19 +1,11 @@
 package application.portfolio.clientmodule.Model.View.Scenes.LoginPage;
 
-import application.portfolio.clientmodule.Connection.UserSession;
-import application.portfolio.clientmodule.Model.Request.Login.LoginRequest.LoginRequest;
 import application.portfolio.clientmodule.Model.Request.Login.LoginRequestViewModel;
-import application.portfolio.clientmodule.Model.View.Page;
-import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
-import application.portfolio.clientmodule.TeamLinkApp;
-import application.portfolio.clientmodule.utils.PageFactory;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class LoginBinder {

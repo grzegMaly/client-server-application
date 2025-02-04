@@ -1,6 +1,8 @@
 package application.portfolio.utils;
 
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DataParser {
@@ -29,18 +31,13 @@ public class DataParser {
         return paramsMap;
     }
 
-    public synchronized static String paramsString(Map<String, String> map) {
 
-        StringBuilder sb = new StringBuilder();
+    public synchronized static String paramsString(Map<String, String> map) {
         StringJoiner sj = new StringJoiner("&", "?", "");
 
         for (Map.Entry<String, String> m : map.entrySet()) {
-            sb.append(m.getKey())
-                    .append("=")
-                    .append(m.getValue());
-
-            sj.add(sb.toString());
-            sb.setLength(0);
+            String encodedValue = URLEncoder.encode(m.getValue(), StandardCharsets.UTF_8);
+            sj.add(m.getKey() + "=" + encodedValue);
         }
         return sj.toString();
     }

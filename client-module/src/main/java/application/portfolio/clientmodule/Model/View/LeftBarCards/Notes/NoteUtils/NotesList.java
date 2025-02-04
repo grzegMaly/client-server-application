@@ -2,10 +2,9 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUti
 
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteController;
 import application.portfolio.clientmodule.Model.View.Page;
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -14,7 +13,6 @@ import javafx.scene.layout.VBox;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.function.Consumer;
 
 public class NotesList extends VBox implements Page {
 

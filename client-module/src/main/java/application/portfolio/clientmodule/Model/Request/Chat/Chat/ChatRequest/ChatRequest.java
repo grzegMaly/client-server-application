@@ -62,14 +62,4 @@ public class ChatRequest {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
-
-    @Override
-    public String toString() {
-        return "ChatRequest{" +
-                "senderId='" + senderId + '\'' +
-                ", receiverId='" + receiverId + '\'' +
-                ", content='" + content + '\'' +
-                ", timestamp='" + timestamp + '\'' +
-                '}';
-    }
 }

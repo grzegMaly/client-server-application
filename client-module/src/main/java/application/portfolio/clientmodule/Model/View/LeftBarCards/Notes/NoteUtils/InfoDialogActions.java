@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;

@@ -1,8 +1,7 @@
 package application.portfolio.clientmodule.Model.Request.Chat.Friends;
 
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequest.FriendsRequest;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
-import application.portfolio.clientmodule.utils.DataParser;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

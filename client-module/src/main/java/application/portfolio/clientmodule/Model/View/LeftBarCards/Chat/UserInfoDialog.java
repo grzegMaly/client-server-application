@@ -1,10 +1,8 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
-import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequest.FriendsRequest;
-import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestModel;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;

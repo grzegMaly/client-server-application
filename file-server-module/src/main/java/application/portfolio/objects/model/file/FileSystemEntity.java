@@ -19,13 +19,14 @@ public abstract class FileSystemEntity {
     protected LocalDateTime lastModifiedDate;
     protected boolean isDirectory;
 
-    public FileSystemEntity(Path path, Path rootPath) {
-        this.path = rootPath.relativize(path);
-        this.name = path.getFileName().toString();
+    public FileSystemEntity(Path absolutePath, Path userDriverPath) {
+
+        this.path = userDriverPath.relativize(absolutePath);
+        this.name = absolutePath.getFileName().toString();
 
         try {
             this.lastModifiedDate = LocalDateTime.ofInstant(
-                    Files.getLastModifiedTime(path).toInstant(), ZoneId.systemDefault());
+                    Files.getLastModifiedTime(absolutePath).toInstant(), ZoneId.systemDefault());
         } catch (IOException e) {
             this.lastModifiedDate = null;
         }
@@ -90,12 +91,12 @@ public abstract class FileSystemEntity {
         return isDirectory;
     }
 
-    public static FileSystemEntity createEntity(Path path, Path rootPath) {
+    public static FileSystemEntity createEntity(Path absolutePath, Path userDriverPath) {
 
-        if (Files.isRegularFile(path)) {
-            return new File(path, rootPath);
-        } else if (Files.isDirectory(path)) {
-            return new Directory(path, rootPath);
+        if (Files.isRegularFile(absolutePath)) {
+            return new File(absolutePath, userDriverPath);
+        } else if (Files.isDirectory(absolutePath)) {
+            return new Directory(absolutePath, userDriverPath);
         } else {
             return null;
         }
@@ -103,7 +104,6 @@ public abstract class FileSystemEntity {
 
     public static FileSystemEntityDAO createDAO(FileSystemEntity entity) {
 
-        FileSystemEntityDAO dao;
         if (entity instanceof File e) {
             return new FileDAO(e);
         } else if (entity instanceof Directory d) {

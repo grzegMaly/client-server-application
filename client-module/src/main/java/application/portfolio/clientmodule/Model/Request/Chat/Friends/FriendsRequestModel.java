@@ -3,7 +3,7 @@ package application.portfolio.clientmodule.Model.Request.Chat.Friends;
 import application.portfolio.clientmodule.Connection.ClientHolder;
 import application.portfolio.clientmodule.Connection.Infrastructure;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequest.FriendsRequest;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,7 +27,7 @@ public class FriendsRequestModel {
         Map<String, String> gData = Infrastructure.getGatewayData();
         String spec = Infrastructure.uriSpecificPart(gData, "group/user", queryParams);
 
-        URI baseUri = Infrastructure.getBaseUri(gData).resolve(spec);
+        URI baseUri = Infrastructure.getBaseUri(spec);
         HttpRequest httpRequest = HttpRequest.newBuilder(baseUri)
                 .GET()
                 .build();

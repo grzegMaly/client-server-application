@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public interface Page {
 
     default Boolean createScene() {
-
         try {
             Scene scene = new Scene(asParent());
             TeamLinkApp.addScene(this.getClass(), scene);

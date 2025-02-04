@@ -1,4 +1,6 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.Model.Chat;
+
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

@@ -4,6 +4,7 @@ import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
 import application.portfolio.endpoints.endpointClasses.files.FileUtils.*;
 import application.portfolio.utils.DataParser;
+import application.portfolio.utils.FilesManager;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.net.httpserver.HttpExchange;
@@ -61,8 +62,7 @@ public class ResourceEndpoint implements HttpHandler, EndpointHandler {
             return;
         }
 
-        Path resourcePath = validationResult.getValidatedPath();
-        ResourceGetMethods.handleDownload(exchange, resourcePath);
+        ResourceGetMethods.handleDownload(exchange, validationResult);
     }
 
     private void handlePost(HttpExchange exchange, Map<String, String> paramsMap) {
@@ -82,12 +82,11 @@ public class ResourceEndpoint implements HttpHandler, EndpointHandler {
         }
 
         Map.Entry<Integer, JsonNode> resultEntry;
-        Path destinationPath = validationResult.getValidatedPath();
         switch (contentType) {
             case "application/octet-stream" ->
-                    resultEntry = ResourcePostMethods.handleSingleFileUpload(exchange, destinationPath);
+                    resultEntry = ResourcePostMethods.handleSingleFileUpload(exchange, validationResult);
             case "application/zip" ->
-                    resultEntry = ResourcePostMethods.handleZipStreamUpload(exchange, destinationPath);
+                    resultEntry = ResourcePostMethods.handleZipStreamUpload(exchange, validationResult);
             default -> {
                 ResponseHandler.handleError(exchange, "Unknown Content-Type", HTTP_BAD_REQUEST);
                 return;

@@ -1,4 +1,4 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.Model.Person;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;

@@ -3,6 +3,8 @@ package application.portfolio.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DataParser {
@@ -77,7 +79,6 @@ public class DataParser {
     }
 
     public static boolean validateParams(Map<String, String> paramsMap, String... params) {
-
         if (paramsMap != null) {
             return paramsMap.keySet().containsAll(Arrays.asList(params)) && paramsMap.size() == params.length;
         }

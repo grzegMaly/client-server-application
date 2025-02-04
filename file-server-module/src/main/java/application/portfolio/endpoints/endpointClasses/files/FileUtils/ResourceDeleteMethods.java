@@ -1,5 +1,6 @@
 package application.portfolio.endpoints.endpointClasses.files.FileUtils;
 
+import application.portfolio.utils.FilesManager;
 import application.portfolio.utils.PathComparator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import static java.net.HttpURLConnection.*;
 public class ResourceDeleteMethods {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String DRIVE = FilesManager.getResourceDriveName();
 
     public static Map.Entry<Integer, JsonNode> handleDelete(Map<String, String> paramsMap) {
 
@@ -26,10 +28,12 @@ public class ResourceDeleteMethods {
             return Map.entry(statusCode, node);
         }
 
-        System.out.println("elo");
         ObjectNode finalNode = objectMapper.createObjectNode();
-        Path currentRootPath = validationResult.getValidatedPath();
-        boolean result = deleteRecursive(currentRootPath);
+
+        Path userPath = validationResult.getUserPath();
+        Path resourcePath = validationResult.getResourcePath();
+        Path destinationPath = userPath.resolve(DRIVE).resolve(resourcePath);
+        boolean result = deleteRecursive(destinationPath);
         if (!result) {
             finalNode.put("response", "Unknown Error");
             return Map.entry(HTTP_INTERNAL_ERROR, finalNode);
@@ -55,7 +59,6 @@ public class ResourceDeleteMethods {
                     });
             return true;
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             return false;
         }
     }

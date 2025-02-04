@@ -1,4 +1,4 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.Model.Group;
 
 
 import application.portfolio.clientmodule.utils.DataParser;

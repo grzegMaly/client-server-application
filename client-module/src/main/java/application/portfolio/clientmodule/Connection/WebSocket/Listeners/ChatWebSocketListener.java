@@ -1,8 +1,8 @@
 package application.portfolio.clientmodule.Connection.WebSocket.Listeners;
 
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.ChatController;
-import application.portfolio.clientmodule.OtherElements.MessageDAO;
-import application.portfolio.clientmodule.OtherElements.MessageMethods;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
+import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.MessageMethods;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 
 import java.net.http.WebSocket;

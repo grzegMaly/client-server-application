@@ -1,8 +1,9 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
-import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.ChatController;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.DataParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

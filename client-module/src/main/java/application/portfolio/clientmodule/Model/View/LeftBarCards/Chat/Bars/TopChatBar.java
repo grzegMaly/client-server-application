@@ -1,7 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.Bars;
 
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.ChatBinder;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;

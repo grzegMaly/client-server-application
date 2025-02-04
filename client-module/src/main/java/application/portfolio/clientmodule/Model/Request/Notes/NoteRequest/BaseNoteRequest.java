@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.Request.Notes.NoteRequest;
 
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import application.portfolio.clientmodule.utils.DateUtils;
 
 import java.time.LocalDateTime;

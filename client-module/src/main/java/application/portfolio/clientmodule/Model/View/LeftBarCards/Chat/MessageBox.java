@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
-import application.portfolio.clientmodule.OtherElements.MessageDAO;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

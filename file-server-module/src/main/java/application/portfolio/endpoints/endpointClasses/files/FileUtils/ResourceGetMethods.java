@@ -1,5 +1,7 @@
 package application.portfolio.endpoints.endpointClasses.files.FileUtils;
 
+import application.portfolio.utils.FilesManager;
+import application.portfolio.utils.Infrastructure;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -21,13 +23,18 @@ import static java.net.HttpURLConnection.*;
 public class ResourceGetMethods {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final String DRIVE = FilesManager.getResourceDriveName();
 
-    public static void handleDownload(HttpExchange exchange, Path resourcePath) {
+    public static void handleDownload(HttpExchange exchange, ValidationResult validationResult) {
 
-        if (Files.isRegularFile(resourcePath)) {
-            sendFile(exchange, resourcePath);
-        } else if (Files.isDirectory(resourcePath)) {
-            sendDirAsZip(exchange, resourcePath);
+        Path userPath = validationResult.getUserPath();
+        Path resourcePath = validationResult.getResourcePath();
+        Path destinationPath = userPath.resolve(DRIVE).resolve(resourcePath);
+
+        if (Files.isRegularFile(destinationPath)) {
+            sendFile(exchange, destinationPath);
+        } else if (Files.isDirectory(destinationPath)) {
+            sendDirAsZip(exchange, destinationPath);
         } else {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("response", "Unsupported resource type");

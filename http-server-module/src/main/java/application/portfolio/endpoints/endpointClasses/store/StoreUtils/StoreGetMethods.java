@@ -22,7 +22,7 @@ public class StoreGetMethods {
         String params = DataParser.paramsString(paramsMap);
         String spec = Infrastructure.uriSpecificPart(fData, "store/resource", params);
 
-        URI uri = Infrastructure.getBaseUri(paramsMap).resolve(spec);
+        URI uri = Infrastructure.getBaseUri(fData).resolve(spec);
         GetRequests.handleGetRequest(exchange, uri, HttpResponse.BodyHandlers.ofInputStream());
     }
 }

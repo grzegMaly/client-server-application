@@ -39,9 +39,23 @@ public class ImageMethods {
             return false;
         }
 
-        if (isThumbnail) {
+        if (image.getColorModel().hasAlpha()) {
+            BufferedImage newImage = new BufferedImage(
+                    image.getWidth(),
+                    image.getHeight(),
+                    BufferedImage.TYPE_INT_RGB
+            );
 
-            imageToSave = new BufferedImage(64, 64, image.getType());
+            Graphics2D g = newImage.createGraphics();
+            g.setColor(Color.WHITE);
+            g.fillRect(0, 0, newImage.getWidth(), newImage.getHeight());
+            g.drawImage(image, 0, 0, null);
+            g.dispose();
+            image = newImage;
+        }
+
+        if (isThumbnail) {
+            imageToSave = new BufferedImage(64, 64, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = imageToSave.createGraphics();
             Image scaledImage = image.getScaledInstance(64, 64, Image.SCALE_SMOOTH);
             g.drawImage(scaledImage, 0, 0, 64, 64, null);

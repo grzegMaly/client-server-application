@@ -4,8 +4,8 @@ import application.portfolio.clientmodule.Connection.ClientHolder;
 import application.portfolio.clientmodule.Connection.Infrastructure;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Login.LoginRequest.LoginRequest;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
-import application.portfolio.clientmodule.OtherElements.PersonMethods;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.utils.session.PersonMethods;
 import application.portfolio.clientmodule.utils.CustomAlert;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -35,7 +35,7 @@ public class LoginRequestModel {
         HttpClient client = ClientHolder.getClient();
         Map<String, String> gData = Infrastructure.getGatewayData();
         String spec = Infrastructure.uriSpecificPart(gData, "login");
-        URI baseUri = Infrastructure.getBaseUri(gData).resolve(spec);
+        URI baseUri = Infrastructure.getBaseUri(spec);
         JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
 
         JsonNode node = objectMapper.valueToTree(req);

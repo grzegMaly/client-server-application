@@ -6,8 +6,8 @@ import application.portfolio.clientmodule.Connection.WebSocket.Listeners.ChatWeb
 import application.portfolio.clientmodule.Connection.WebSocket.WebSocketClientHolder;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequest.ChatRequest;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.ChatController;
-import application.portfolio.clientmodule.OtherElements.MessageDAO;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.DataParser;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;

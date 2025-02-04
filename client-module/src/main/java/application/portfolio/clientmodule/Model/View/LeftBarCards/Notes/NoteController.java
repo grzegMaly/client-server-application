@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes;
 
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NoteInfoDialog;
-import application.portfolio.clientmodule.OtherElements.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;

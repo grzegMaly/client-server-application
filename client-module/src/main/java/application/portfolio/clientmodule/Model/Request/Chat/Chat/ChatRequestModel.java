@@ -6,20 +6,18 @@ import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Connection.WebSocket.WebSocketClientHolder;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequest.ChatRequest;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
-import application.portfolio.clientmodule.OtherElements.MessageDAO;
-import application.portfolio.clientmodule.OtherElements.MessageMethods;
-import application.portfolio.clientmodule.OtherElements.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
+import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.MessageMethods;
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.WebSocket;
-import java.time.Duration;
 import java.util.*;
 
 public class ChatRequestModel {
@@ -44,17 +42,12 @@ public class ChatRequestModel {
         Map<String, String> gData = Infrastructure.getGatewayData();
         String spec = Infrastructure.uriSpecificPart(gData, "chat/history", params);
 
-        URI baseUri = Infrastructure.getBaseUri(gData).resolve(spec);
-
-        HttpRequest request = HttpRequest.newBuilder(baseUri)
-                .GET()
-                .timeout(Duration.ofSeconds(10))
-                .version(HttpClient.Version.HTTP_2)
-                .header("Accept", "application/json")
-                .build();
+        URI baseUri = Infrastructure.getBaseUri(spec);
 
         ObjectMapper objectMapper = new ObjectMapper();
         JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
+        HttpRequest request = ClientHolder.getRequest(baseUri, "GET",
+                HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<JsonNode> response;
         try {
             response = ClientHolder.getClient().send(request, handler);
@@ -82,7 +75,6 @@ public class ChatRequestModel {
 
         if (node.isArray()) {
             try {
-                System.out.println(node.size());
                 for (JsonNode messageNode : node) {
                     MessageDAO message = MessageMethods.createMessage(messageNode, sender, receiver);
                     messages.add(message);

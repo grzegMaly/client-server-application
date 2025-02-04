@@ -1,4 +1,4 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.Model.Notes;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

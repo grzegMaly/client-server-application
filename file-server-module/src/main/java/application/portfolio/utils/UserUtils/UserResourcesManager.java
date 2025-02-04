@@ -53,7 +53,7 @@ public class UserResourcesManager {
         Path userResourcesPath = driverPath.resolve("users");
         createDirectory(userResourcesPath);
 
-        List<String> dirs = List.of("Drive", "Notes", "Tasks");
+        List<String> dirs = List.of("Drive", "Notes", "Tasks", "Thumbnail");
         for (UUID id : userIds) {
             createDirectories(userResourcesPath, id, dirs);
         }

@@ -2,7 +2,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
-import application.portfolio.clientmodule.OtherElements.MessageDAO;
+import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ListCell;
@@ -78,7 +78,6 @@ public class ChatView extends ListView<MessageDAO> {
                     }
                 }
             });
-
         });
     }
 

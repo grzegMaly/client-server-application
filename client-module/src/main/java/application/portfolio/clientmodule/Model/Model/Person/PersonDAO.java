@@ -1,4 +1,6 @@
-package application.portfolio.clientmodule.OtherElements;
+package application.portfolio.clientmodule.Model.Model.Person;
+
+import application.portfolio.clientmodule.Model.Model.Group.GroupDAO;
 
 import java.util.*;
 
