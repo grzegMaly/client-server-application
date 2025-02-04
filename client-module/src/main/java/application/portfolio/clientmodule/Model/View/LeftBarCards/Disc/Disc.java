@@ -41,13 +41,9 @@ public class Disc extends VBox implements Page {
 
     @Override
     public CompletableFuture<Boolean> initializePage() {
-
         return CompletableFuture.runAsync(this::initializeComponents, executor)
                 .thenApply(v -> true)
-                .exceptionally(ext -> {
-                    ext.printStackTrace();
-                    return false;
-                });
+                .exceptionally(ext -> false);
     }
 
     private void initializeComponents() {
