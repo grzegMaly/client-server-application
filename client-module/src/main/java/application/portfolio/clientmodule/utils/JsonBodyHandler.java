@@ -8,15 +8,8 @@ import java.net.http.HttpResponse;
 
 public class JsonBodyHandler implements HttpResponse.BodyHandler<JsonNode> {
 
-    private final ObjectMapper objectMapper;
-
-    private JsonBodyHandler(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
-
-    public static JsonBodyHandler create(ObjectMapper objectMapper) {
-        return new JsonBodyHandler(objectMapper);
-    }
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static JsonBodyHandler handler;
 
     @Override
     public HttpResponse.BodySubscriber<JsonNode> apply(HttpResponse.ResponseInfo responseInfo) {
@@ -27,5 +20,12 @@ public class JsonBodyHandler implements HttpResponse.BodyHandler<JsonNode> {
                 throw new RuntimeException("Failed to parse JSON, ", e);
             }
         });
+    }
+
+    public static JsonBodyHandler getJsonHandler() {
+        if (handler == null) {
+            handler = new JsonBodyHandler();
+        }
+        return handler;
     }
 }

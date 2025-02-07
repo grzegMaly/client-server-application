@@ -43,14 +43,11 @@ public class ChatRequestModel {
         String spec = Infrastructure.uriSpecificPart(gData, "chat/history", params);
 
         URI baseUri = Infrastructure.getBaseUri(spec);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
         HttpRequest request = ClientHolder.getRequest(baseUri, "GET",
                 HttpRequest.BodyPublishers.noBody()).build();
         HttpResponse<JsonNode> response;
         try {
-            response = ClientHolder.getClient().send(request, handler);
+            response = ClientHolder.getClient().send(request, JsonBodyHandler.getJsonHandler());
         } catch (IOException | InterruptedException e) {
             return Collections.emptyList();
         }

@@ -1,7 +1,11 @@
 package application.portfolio.clientmodule.Model.Request.Notes;
 
+import application.portfolio.clientmodule.Model.Model.Notes.Category;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
+import application.portfolio.clientmodule.Model.Model.Notes.Priority;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.BaseNoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.DeadlineNoteRequest;
+import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.NoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.RegularNoteRequest;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import application.portfolio.clientmodule.utils.DateUtils;
@@ -12,6 +16,8 @@ import javafx.beans.property.StringProperty;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class NotesRequestViewModel {
@@ -131,35 +137,35 @@ public class NotesRequestViewModel {
         setCreatedDate(formatedDate);
         setContent(noteDAO.getContent());
 
-        if (noteDAO.getNoteType().equals(NoteDAO.NoteType.DEADLINE_NOTE)) {
+        if (noteDAO.getNoteType().equals(NoteType.DEADLINE_NOTE)) {
             setDeadline(noteDAO.getDeadline());
         }
     }
 
     private void packData(NoteDAO note) {
 
-        NoteDAO.NoteType type = note.getNoteType();
+        NoteType type = note.getNoteType();
         note.setCreatedDate(LocalDateTime.now());
 
-        if (type.equals(NoteDAO.NoteType.REGULAR_NOTE)) {
-            note.setCategory(NoteDAO.stringToEnum(NoteDAO.Category.class, getCategory()));
-        } else if (type.equals(NoteDAO.NoteType.DEADLINE_NOTE)) {
-            note.setPriority(NoteDAO.stringToEnum(NoteDAO.Priority.class, getPriority()));
+        if (type.equals(NoteType.REGULAR_NOTE)) {
+            note.setCategory(NoteDAO.stringToEnum(Category.class, getCategory()));
+        } else if (type.equals(NoteType.DEADLINE_NOTE)) {
+            note.setPriority(NoteDAO.stringToEnum(Priority.class, getPriority()));
             note.setDeadline(getDeadline());
         }
 
     }
 
-    public void save() {
+    /*public void save() {
 
         NoteDAO note = new NoteDAO(
                 getTitle(),
-                NoteDAO.stringToEnum(NoteDAO.NoteType.class, getNoteType()),
+                NoteDAO.stringToEnum(NoteType.class, getNoteType()),
                 getContent());
 
         packData(note);
         sendRequest(note);
-    }
+    }*/
 
     public void update() {
 
@@ -172,13 +178,13 @@ public class NotesRequestViewModel {
         }
 
         if (getNoteType().equals(NoteDAO.getName(noteDAO.getNoteType()))) {
-            if (noteDAO.getNoteType().equals(NoteDAO.NoteType.REGULAR_NOTE)) {
-                NoteDAO.Category category = NoteDAO.stringToEnum(NoteDAO.Category.class, getCategory());
+            if (noteDAO.getNoteType().equals(NoteType.REGULAR_NOTE)) {
+                Category category = NoteDAO.stringToEnum(Category.class, getCategory());
                 if (!category.equals(noteDAO.getCategory())) {
                     noteDAO.setCategory(category);
                 }
             } else {
-                NoteDAO.Priority priority = NoteDAO.stringToEnum(NoteDAO.Priority.class, getPriority());
+                Priority priority = NoteDAO.stringToEnum(Priority.class, getPriority());
                 if (!priority.equals(noteDAO.getPriority())) {
                     noteDAO.setPriority(priority);
                 }
@@ -189,12 +195,12 @@ public class NotesRequestViewModel {
                 }
             }
         } else {
-            NoteDAO.NoteType type = NoteDAO.stringToEnum(NoteDAO.NoteType.class, getNoteType());
-            if (type.equals(NoteDAO.NoteType.REGULAR_NOTE)) {
-                NoteDAO.Category category = NoteDAO.stringToEnum(NoteDAO.Category.class, getCategory());
+            NoteType type = NoteDAO.stringToEnum(NoteType.class, getNoteType());
+            if (type.equals(NoteType.REGULAR_NOTE)) {
+                Category category = NoteDAO.stringToEnum(Category.class, getCategory());
                 noteDAO.setCategory(category);
             } else {
-                NoteDAO.Priority priority = NoteDAO.stringToEnum(NoteDAO.Priority.class, getPriority());
+                Priority priority = NoteDAO.stringToEnum(Priority.class, getPriority());
                 noteDAO.setPriority(priority);
 
                 System.out.println("Changed date");
@@ -225,5 +231,15 @@ public class NotesRequestViewModel {
     private void clearing() {
         /*CompletableFuture.runAsync(NoteBinder::clearStartFields, executor);
         CompletableFuture.runAsync(NoteBinder::clearChangingBinds, executor);*/
+    }
+
+    public List<NoteDAO> loadNotes() {
+        NoteRequest data = converter.convertToLoadRequest();
+        return model.loadNotes(data);
+    }
+
+    public String loadNoteContent(UUID noteId) {
+        NoteRequest data = converter.convertToNoteContentRequest(noteId);
+        return model.loadContent(data);
     }
 }

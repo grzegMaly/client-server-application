@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
 import javafx.scene.Scene;
@@ -11,6 +12,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -38,11 +40,11 @@ public class NoteInfoDialog extends Stage {
     private NoteDAO noteDAO;
     private OpenOption openOption = null;
 
-    private final NoteBinder noteBinder = new NoteBinder();
+    private NoteBinder noteBinder;
     private final InfoDialogActions actions = new InfoDialogActions();
     private final ExecutorService executor =
             ExecutorServiceManager.createCachedThreadPool(this.getClass().getSimpleName());
-    private static NoteDAO.NoteType type;
+    private NoteType type;
 
     private Pair<Runnable, Boolean> secondInitialization;
     private boolean secondElementInitialized = false;
@@ -58,21 +60,62 @@ public class NoteInfoDialog extends Stage {
         });
     }
 
-    public void useDialog(NoteDAO note, OpenOption option) {
+    public void useDialog(NoteDAO note, OpenOption option, NoteBinder noteBinder) {
 
-        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
-                    this.openOption = option;
-                    noteDAO = note;
-                    type = noteDAO.getNoteType();
+        this.noteBinder = noteBinder;
+        this.openOption = option;
+        this.noteDAO = note;
+        this.type = note.getNoteType();
+
+        CompletableFuture<Boolean> uiFuture = CompletableFuture.supplyAsync(this::initializeUI, executor);
+        CompletableFuture<Optional<String>> contentFuture =
+                CompletableFuture.supplyAsync(() -> loadContentIfNeeded(note), executor);
+
+        uiFuture.thenCombineAsync(contentFuture, (uiInitialized, contentOpt) -> {
+                    if (!uiInitialized) {
+                        System.err.println("Something went wrong");
+                        return false;
+                    }
+
+                    contentOpt.ifPresent(note::setContent);
                     noteBinder.withNoteDAO(noteDAO);
+                    return true;
+                }, executor)
+                .thenRunAsync(() -> {
+                    Platform.runLater(() -> {
+                        if (openOption == OpenOption.WRITE) {
+                            editBtn.fire();
+                        }
+                        this.show();
+                    });
                 })
-                .thenRunAsync(
-                        () -> Platform.runLater(this::initBaseElements), executor)
-                .thenRunAsync(() ->
-                        Platform.runLater(this::boundSizeProperties), executor);
+                .exceptionally(ext -> {
+                    System.err.println("NoteInfoDialog coś poszło nie tak " + ext.getMessage());
+                    return null;
+                });
+    }
 
-        future.join();
-        this.show();
+    private Boolean initializeUI() {
+        try {
+            Platform.runLater(() -> {
+                initBaseElements();
+                boundSizeProperties();
+            });
+            return true;
+        } catch (Exception e) {
+            System.err.println("Błąd w inicjalizacji UI: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private Optional<String> loadContentIfNeeded(NoteDAO note) {
+
+        if (note.getContent() != null && !note.getContent().isBlank()) {
+            return Optional.empty();
+        }
+
+        String content = noteBinder.getContent(note.getId());
+        return Optional.ofNullable(content);
     }
 
     private void initBaseElements() {
@@ -101,7 +144,6 @@ public class NoteInfoDialog extends Stage {
     }
 
     private void loadButtonsActions() {
-
         editBtn.setOnAction(ect -> swapVisible());
     }
 
@@ -136,7 +178,7 @@ public class NoteInfoDialog extends Stage {
         typeCb.setVisible(false);
         noteTypeSp = new StackPane(typeCb, noteTypeLbl2);
 
-        if (type.equals(NoteDAO.NoteType.REGULAR_NOTE)) {
+        if (type.equals(NoteType.REGULAR_NOTE)) {
             loadRegularNoteFields();
         } else {
             loadDeadlineNoteFields();
@@ -205,8 +247,7 @@ public class NoteInfoDialog extends Stage {
         deadlineLbl2.setVisible(!secondInitialization.getValue());
         CompletableFuture.runAsync(() -> actions.setDeadlineLbl(deadlineLbl1));
 
-        DatePicker deadlineDp = new DatePicker();
-        noteBinder.withNoteDeadlineDp(deadlineDp);
+        DatePicker deadlineDp = noteBinder.withNoteDeadlineDp();
         deadlineDp.setDayCellFactory(p -> new DateCell());
         deadlineDp.setVisible(secondInitialization.getValue());
         deadlineSp = new StackPane(deadlineDp, deadlineLbl2);

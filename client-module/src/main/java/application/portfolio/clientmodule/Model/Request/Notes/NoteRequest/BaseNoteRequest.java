@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule.Model.Request.Notes.NoteRequest;
 
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 import application.portfolio.clientmodule.utils.DateUtils;
 
 import java.time.LocalDateTime;
@@ -8,11 +9,11 @@ import java.time.LocalDateTime;
 public abstract class BaseNoteRequest<T extends BaseNoteRequest<T>> {
 
     private String title;
-    private NoteDAO.NoteType type;
+    private NoteType type;
     private String createdDate;
     private String content;
 
-    public BaseNoteRequest(String title, NoteDAO.NoteType type, String content) {
+    public BaseNoteRequest(String title, NoteType type, String content) {
         this.title = title;
         this.type = type;
         this.content = content;
@@ -26,11 +27,11 @@ public abstract class BaseNoteRequest<T extends BaseNoteRequest<T>> {
         this.title = title;
     }
 
-    public NoteDAO.NoteType getType() {
+    public NoteType getType() {
         return type;
     }
 
-    public void setType(NoteDAO.NoteType type) {
+    public void setType(NoteType type) {
         this.type = type;
     }
 

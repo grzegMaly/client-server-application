@@ -1,26 +1,31 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes;
 
+import application.portfolio.clientmodule.Model.Request.Notes.NotesRequestViewModel;
+import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NoteBinder;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NoteInfoDialog;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class NoteController {
 
-    private static ContextMenu lastContextMenu = null;
+    private NotesRequestViewModel viewModel;
+    private NoteBinder noteBinder;
+    private static ContextMenu lastContextMenu;
 
-    public static TableView<NoteDAO> getTableView() {
+    public NoteController() {}
+
+    public TableView<NoteDAO> getTableView() {
 
         TableView<NoteDAO> notesTable = new TableView<>();
 
         TableColumn<NoteDAO, String> titleCol = new TableColumn<>("Title");
         TableColumn<NoteDAO, String> typeCol = new TableColumn<>("Note Type");
         TableColumn<NoteDAO, String> createdDateCol = new TableColumn<>("Created Date");
-        TableColumn<NoteDAO, String> contentCol = new TableColumn<>("Content");
 
         titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
         typeCol.setCellValueFactory(cellData -> {
@@ -29,19 +34,15 @@ public class NoteController {
         });
         createdDateCol.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getCreatedDate().toString()));
-        contentCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getContent()));
 
-        notesTable.getColumns().addAll(List.of(titleCol, typeCol, createdDateCol, contentCol));
+        notesTable.getColumns().addAll(List.of(titleCol, typeCol, createdDateCol));
         notesTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        List<NoteDAO> notes = loadNotes();
-        notesTable.getItems().addAll(notes);
         loadBehavior(notesTable);
-
         return notesTable;
     }
 
-    private static void loadBehavior(TableView<NoteDAO> notesTable) {
+    private void loadBehavior(TableView<NoteDAO> notesTable) {
 
         notesTable.setRowFactory(evt -> {
             TableRow<NoteDAO> row = new TableRow<>();
@@ -51,7 +52,7 @@ public class NoteController {
 
                     NoteDAO note = row.getItem();
                     NoteInfoDialog infoDialog = new NoteInfoDialog();
-                    infoDialog.useDialog(note, NoteInfoDialog.OpenOption.READ);
+                    infoDialog.useDialog(note, NoteInfoDialog.OpenOption.READ, noteBinder);
                 } else if (event.getButton().equals(MouseButton.SECONDARY) && !row.isEmpty()) {
                     showContextMenu(row, event.getScreenX(), event.getScreenY());
                 }
@@ -60,7 +61,7 @@ public class NoteController {
         });
     }
 
-    private static void showContextMenu(TableRow<NoteDAO> row, double xPoint, double yPoint) {
+    private void showContextMenu(TableRow<NoteDAO> row, double xPoint, double yPoint) {
 
         if (lastContextMenu != null) {
             lastContextMenu.hide();
@@ -73,7 +74,7 @@ public class NoteController {
         contextMenu.setOnHidden(evt -> lastContextMenu.hide());
     }
 
-    private static ContextMenu getContextMenu(TableRow<NoteDAO> row) {
+    private ContextMenu getContextMenu(TableRow<NoteDAO> row) {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem details = new MenuItem("Details");
         MenuItem edit = new MenuItem("Edit");
@@ -82,23 +83,33 @@ public class NoteController {
         NoteDAO note = row.getItem();
         details.setOnAction(evt -> {
             NoteInfoDialog infoDialog = new NoteInfoDialog();
-            infoDialog.useDialog(note, NoteInfoDialog.OpenOption.READ);
+            infoDialog.useDialog(note, NoteInfoDialog.OpenOption.READ, noteBinder);
         });
 
         edit.setOnAction(evt -> {
             NoteInfoDialog infoDialog = new NoteInfoDialog();
-            infoDialog.useDialog(note, NoteInfoDialog.OpenOption.WRITE);
+            infoDialog.useDialog(note, NoteInfoDialog.OpenOption.WRITE, noteBinder);
         });
 
-        delete.setOnAction(evt -> {
-            System.out.println("Deleting: " + note);
-        });
+        delete.setOnAction(evt -> noteBinder.delete(note));
 
         contextMenu.getItems().addAll(details, edit, delete);
         return contextMenu;
     }
 
-    public static List<NoteDAO> loadNotes() {
-        return new ArrayList<>();
+    public List<NoteDAO> loadNotes() {
+        return viewModel.loadNotes();
+    }
+
+    public void setViewModel(NotesRequestViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
+    public void setNoteBinder(NoteBinder noteBinder) {
+        this.noteBinder = noteBinder;
+    }
+
+    public String loadNoteContent(UUID noteId) {
+        return viewModel.loadNoteContent(noteId);
     }
 }

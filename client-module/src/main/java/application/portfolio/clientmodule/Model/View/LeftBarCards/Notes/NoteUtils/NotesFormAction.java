@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
@@ -66,14 +67,14 @@ public class NotesFormAction {
     private ChangeListener<String> getListener() {
         return ((observableValue, oldVal, newVal) -> {
             if (newVal != null) {
-                NoteDAO.NoteType type = NoteDAO.stringToEnum(NoteDAO.NoteType.class, newVal);
+                NoteType type = NoteDAO.stringToEnum(NoteType.class, newVal);
                 updateFormVisibility(type);
             }
         });
     }
 
-    private void updateFormVisibility(NoteDAO.NoteType type) {
-        if (type.equals(NoteDAO.NoteType.REGULAR_NOTE)) {
+    private void updateFormVisibility(NoteType type) {
+        if (type.equals(NoteType.REGULAR_NOTE)) {
             deadlineLbl.setVisible(false);
             datePicker.setVisible(false);
             changingCheckBoxes.getChildren().forEach(e -> e.setVisible(e == categoryCb));

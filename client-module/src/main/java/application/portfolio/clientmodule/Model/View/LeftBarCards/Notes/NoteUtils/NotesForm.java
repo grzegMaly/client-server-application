@@ -1,22 +1,19 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.Model.View.Page;
-import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.VPos;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
-public class NotesForm extends GridPane implements Page {
+public class NotesForm extends GridPane {
 
     private final ButtonBar btnBar = new ButtonBar();
     private final Button listBtn = new Button("Notes List");
-    private final Button saveBtn = new Button("Save");
+    private Button saveBtn;
 
     private final Label titleLbl = new Label("Title:");
     private final TextField titleTf = new TextField();
@@ -28,41 +25,46 @@ public class NotesForm extends GridPane implements Page {
     private final ComboBox<String> categoryCb = new ComboBox<>();
     private final ComboBox<String> priorityCb = new ComboBox<>();
 
-    private final DatePicker datePicker = new DatePicker();
+    private DatePicker datePicker;
     private final TextArea contentTa = new TextArea();
 
-    private final ExecutorService executor =
-            ExecutorServiceManager.createCachedThreadPool(this.getClass().getSimpleName());
-    private final NoteBinder noteBinder = new NoteBinder();
+    private ExecutorService executor;
     private final NotesFormAction actions = new NotesFormAction();
 
-    private NotesForm() {
+    private NoteBinder noteBinder;
+
+    public NotesForm() {
     }
 
-    @Override
-    public CompletableFuture<Boolean> initializePage() {
+    public CompletableFuture<Boolean> initPage(NoteBinder noteBinder, ExecutorService executor) {
+
+        this.noteBinder = noteBinder;
+        this.executor = executor;
 
         CompletableFuture<Boolean> checkBoxesFuture = initializeCheckBoxes();
-        CompletableFuture<Void> datePickerFuture =
-                CompletableFuture.runAsync(() -> noteBinder.withNoteDeadlineDp(datePicker), executor);
+        CompletableFuture<Boolean> datePickerFuture = CompletableFuture.supplyAsync(this::setUpDatePicker, executor);
 
-        return CompletableFuture.allOf(checkBoxesFuture, datePickerFuture)
-                .thenCompose(ignored -> checkBoxesFuture)
-                .thenApply(success -> {
-                    if (success) {
-                        Platform.runLater(this::completeGridPane);
-                    }
-                    return CompletableFuture.completedFuture(success);
-                })
-                .thenRunAsync(this::setSaveBtnAction, executor)
-                .thenRun(actions::useListener)
-                .thenApply(v -> true)
-                .exceptionally(e -> {
-                    /*System.out.println("initializePage " + this.getClass().getSimpleName());
-                    e.printStackTrace();
-                    return false;*/
-                    throw new RuntimeException(e);
-                });
+        return checkBoxesFuture.thenCombineAsync(datePickerFuture, (boxesSuccess, pickerSuccess) -> {
+            if (!boxesSuccess || !pickerSuccess) {
+                return false;
+            }
+            Platform.runLater(this::completeGridPane);
+            return true;
+        }, executor).thenApply(success -> {
+            if (!success) return false;
+
+            setSaveBtnAction();
+            actions.useListener();
+            return true;
+        }).exceptionally(ext -> {
+            System.err.println("Błąd inicjalizacji: " + ext.getMessage());
+            return false;
+        });
+    }
+
+    private boolean setUpDatePicker() {
+        datePicker = noteBinder.withNoteDeadlineDp();
+        return datePicker != null;
     }
 
     public void setSwitchVisibility(NotesList notesList) {
@@ -73,37 +75,40 @@ public class NotesForm extends GridPane implements Page {
     }
 
     private void setSaveBtnAction() {
-        saveBtn.setOnAction(evt -> {
-             if (noteBinder.save()) noteBinder.clearFields();
-        });
+        saveBtn = noteBinder.bindSaveBtn();
     }
 
     private CompletableFuture<Boolean> initializeCheckBoxes() {
 
-        CompletableFuture<Void> noteTypeFuture = CompletableFuture.runAsync(
-                () -> {
+        CompletableFuture<Boolean> noteTypeFuture = CompletableFuture.supplyAsync(() -> {
                     noteBinder.withNoteTypeCb(typeCb);
                     actions.setTypeCb(typeCb);
-                }, executor);
-        CompletableFuture<Void> categoryFuture = CompletableFuture.runAsync(
-                () -> {
+                    return true;
+                }, executor).exceptionally(ext -> false);
+        CompletableFuture<Boolean> categoryFuture = CompletableFuture.supplyAsync(() -> {
                     noteBinder.withNoteCategoryCb(categoryCb);
                     actions.setCategoryCb(categoryCb);
-                }, executor);
-        CompletableFuture<Void> priorityFuture = CompletableFuture.runAsync(
-                () -> noteBinder.withNotePriorityCb(priorityCb), executor);
+                    return true;
+                }, executor).exceptionally(ext -> false);
+        CompletableFuture<Boolean> priorityFuture = CompletableFuture.supplyAsync(() -> {
+                    noteBinder.withNotePriorityCb(priorityCb);
+                    return true;
+                }, executor).exceptionally(ext -> false);
 
-        return CompletableFuture.allOf(noteTypeFuture, categoryFuture, priorityFuture)
-                .thenRun(() -> {
-                            Platform.runLater(() ->
-                                    checkBoxes.getChildren().addAll(priorityCb, categoryCb));
-                            actions.setChangingCheckBoxes(checkBoxes);
-                        }
-                )
-                .thenApply(v -> true)
+        return noteTypeFuture.thenCombineAsync(categoryFuture, (typeSuccess, categorySuccess) ->
+                typeSuccess && categorySuccess, executor)
+                .thenCombineAsync(priorityFuture, (prevSuccess, prioritySuccess) ->
+                        prevSuccess && prioritySuccess, executor)
+                .thenCompose(success -> {
+                    if (!success) return CompletableFuture.completedFuture(false);
+
+                    return CompletableFuture.runAsync(() -> {
+                        Platform.runLater(() -> checkBoxes.getChildren().addAll(priorityCb, categoryCb));
+                        actions.setChangingCheckBoxes(checkBoxes);
+                    }).thenApply(v -> true);
+                })
                 .exceptionally(e -> {
-                    System.out.println("initializeCheckBoxes " + this.getClass().getSimpleName());
-                    e.printStackTrace();
+                    System.err.println("Błąd w initializeCheckBoxes: " + this.getClass().getSimpleName() + " -> " + e.getMessage());
                     return false;
                 });
     }
@@ -151,14 +156,12 @@ public class NotesForm extends GridPane implements Page {
     }
 
     private void completeBtnBar() {
-
         btnBar.getButtons().addAll(listBtn, saveBtn);
         this.add(btnBar, 3, 0, 2, 1);
         GridPane.setHalignment(btnBar, HPos.RIGHT);
     }
 
     private void completeTitle() {
-
         noteBinder.withTitleTf(titleTf);
         this.add(titleLbl, 0, 2);
         this.add(titleTf, 1, 2);
@@ -166,7 +169,6 @@ public class NotesForm extends GridPane implements Page {
     }
 
     private void completeBoxes() {
-
         this.add(noteTypeLbl, 0, 3);
         this.add(typeCb, 1, 3);
         this.add(checkBoxes, 2, 3);
@@ -188,14 +190,8 @@ public class NotesForm extends GridPane implements Page {
     }
 
     private void completeContent() {
-
         noteBinder.withContent(contentTa);
         this.add(contentTa, 0, 5, 3, 1);
         contentTa.setMinHeight(350);
-    }
-
-    @Override
-    public Parent asParent() {
-        return this;
     }
 }

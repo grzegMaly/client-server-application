@@ -1,39 +1,62 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteController;
-import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
-import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
-import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
-public class NotesList extends VBox implements Page {
+public class NotesList extends VBox {
 
     protected final Button createNoteBtn = new Button("Create Note");
-    protected final Button reloadBtn = new Button("Reload");
+    protected Button reloadBtn;
     protected final ButtonBar btnBar = new ButtonBar();
 
+    private NoteBinder noteBinder;
     private TableView<NoteDAO> notesTbl = null;
 
-    private final ExecutorService executor =
-            ExecutorServiceManager.createCachedThreadPool(this.getClass().getSimpleName());
+    public CompletableFuture<Boolean> initPage(NoteBinder noteBinder, ExecutorService executor) {
 
-    @Override
-    public CompletableFuture<Boolean> initializePage() {
+        this.noteBinder = noteBinder;
 
-        return CompletableFuture.runAsync(() -> notesTbl = NoteController.getTableView(), executor)
-                .thenRunAsync(() -> Platform.runLater(() -> {
-                    btnBar.getButtons().addAll(createNoteBtn, reloadBtn);
-                    this.getChildren().addAll(btnBar, notesTbl);
-                }), executor)
-                .thenApply(v -> true);
+        CompletableFuture<Boolean> reloadFuture = CompletableFuture.supplyAsync(this::setUpReloadBtn, executor);
+        CompletableFuture<Boolean> tableFuture = CompletableFuture.supplyAsync(this::setUpTable, executor);
+        CompletableFuture<List<NoteDAO>> notesFuture = CompletableFuture.supplyAsync(noteBinder::loadNotes);
+
+        return reloadFuture.thenCombineAsync(tableFuture, (reloadSuccess, tableSuccess) ->
+                        reloadSuccess && tableSuccess, executor)
+                .thenCombineAsync(notesFuture, (prevSuccess, notes) -> {
+
+                    if (!prevSuccess) {
+                        return false;
+                    }
+
+                    Platform.runLater(() -> {
+                        btnBar.getButtons().addAll(createNoteBtn, reloadBtn);
+                        this.getChildren().addAll(btnBar, notesTbl);
+                        notesTbl.getItems().addAll(notes);
+                    });
+                    return true;
+                }, executor)
+                .exceptionally(ex -> {
+                    System.err.println("Błąd inicjalizacji strony: " + ex.getMessage());
+                    return false;
+                });
+    }
+
+    private boolean setUpTable() {
+        notesTbl = noteBinder.loadNotesView();
+        return notesTbl != null;
+    }
+
+    private boolean setUpReloadBtn() {
+        reloadBtn = noteBinder.bindReloadBtn();
+        return reloadBtn != null;
     }
 
     public void setSwitchVisibility(NotesForm notesForm) {
@@ -41,10 +64,5 @@ public class NotesList extends VBox implements Page {
             this.setVisible(false);
             notesForm.setVisible(true);
         });
-    }
-
-    @Override
-    public Parent asParent() {
-        return this;
     }
 }

@@ -1,20 +1,21 @@
 package application.portfolio.clientmodule.Model.Request.Notes.NoteRequest;
 
-import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.Category;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 
 public class RegularNoteRequest extends BaseNoteRequest<RegularNoteRequest> {
 
-    private NoteDAO.Category category;
+    private Category category;
 
-    public RegularNoteRequest(String title, NoteDAO.NoteType type, String content) {
+    public RegularNoteRequest(String title, NoteType type, String content) {
         super(title, type, content);
     }
 
-    public NoteDAO.Category getCategory() {
+    public Category getCategory() {
         return category;
     }
 
-    public RegularNoteRequest withCategory(NoteDAO.Category category) {
+    public RegularNoteRequest withCategory(Category category) {
         this.category = category;
         return this;
     }

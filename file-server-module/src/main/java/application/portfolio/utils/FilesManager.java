@@ -145,4 +145,8 @@ public class FilesManager {
     public static String getResourceThumbnailName() {
         return "Thumbnail";
     }
+
+    public static String getResourceNotesName() {
+        return "Notes";
+    }
 }

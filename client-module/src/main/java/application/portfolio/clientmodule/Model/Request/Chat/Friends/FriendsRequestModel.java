@@ -32,10 +32,8 @@ public class FriendsRequestModel {
                 .GET()
                 .build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
         try {
-            HttpResponse<JsonNode> response = client.send(httpRequest, handler);
+            HttpResponse<JsonNode> response = client.send(httpRequest, JsonBodyHandler.getJsonHandler());
 
             if (response.statusCode() == 200) {
                 JsonNode node = response.body();

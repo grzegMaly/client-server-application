@@ -31,11 +31,10 @@ public class DiscRequestModel {
 
         HttpRequest request = prepareRequest(discRequest, "store/list",
                 "GET", HttpRequest.BodyPublishers.noBody()).build();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
+
         HttpResponse<JsonNode> response;
         try {
-            response = ClientHolder.getClient().send(request, handler);
+            response = ClientHolder.getClient().send(request, JsonBodyHandler.getJsonHandler());
         } catch (IOException | InterruptedException e) {
             return Collections.emptyList();
         }
@@ -87,11 +86,9 @@ public class DiscRequestModel {
         }
 
         HttpRequest request = requestBuilder.build();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
         HttpResponse<JsonNode> response;
         try {
-            response = ClientHolder.getClient().send(request, handler);
+            response = ClientHolder.getClient().send(request, JsonBodyHandler.getJsonHandler());
         } catch (IOException | InterruptedException e) {
             return null;
         }

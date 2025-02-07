@@ -36,7 +36,6 @@ public class LoginRequestModel {
         Map<String, String> gData = Infrastructure.getGatewayData();
         String spec = Infrastructure.uriSpecificPart(gData, "login");
         URI baseUri = Infrastructure.getBaseUri(spec);
-        JsonBodyHandler handler = JsonBodyHandler.create(objectMapper);
 
         JsonNode node = objectMapper.valueToTree(req);
         byte[] data;
@@ -55,7 +54,7 @@ public class LoginRequestModel {
                 .build();
 
         try {
-            response = client.send(request, handler);
+            response = client.send(request, JsonBodyHandler.getJsonHandler());
         } catch (IOException | InterruptedException e) {
             return null;
         }

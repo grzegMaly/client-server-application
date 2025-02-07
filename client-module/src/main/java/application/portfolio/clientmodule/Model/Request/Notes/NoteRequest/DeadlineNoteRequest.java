@@ -1,19 +1,21 @@
 package application.portfolio.clientmodule.Model.Request.Notes.NoteRequest;
 
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
+import application.portfolio.clientmodule.Model.Model.Notes.Priority;
 
 import java.time.LocalDate;
 
 public class DeadlineNoteRequest extends BaseNoteRequest<DeadlineNoteRequest> {
 
-    private NoteDAO.Priority priority;
+    private Priority priority;
     private LocalDate deadline;
 
-    public DeadlineNoteRequest(String title, NoteDAO.NoteType type, String content) {
+    public DeadlineNoteRequest(String title, NoteType type, String content) {
         super(title, type, content);
     }
 
-    public NoteDAO.Priority getPriority() {
+    public Priority getPriority() {
         return priority;
     }
 
@@ -21,7 +23,7 @@ public class DeadlineNoteRequest extends BaseNoteRequest<DeadlineNoteRequest> {
         return deadline;
     }
 
-    public DeadlineNoteRequest withPriority(NoteDAO.Priority priority) {
+    public DeadlineNoteRequest withPriority(Priority priority) {
         this.priority = priority;
         return this;
     }

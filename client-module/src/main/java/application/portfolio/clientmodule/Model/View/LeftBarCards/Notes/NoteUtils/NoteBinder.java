@@ -1,7 +1,11 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
+import application.portfolio.clientmodule.Model.Model.Notes.Category;
+import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
+import application.portfolio.clientmodule.Model.Model.Notes.Priority;
 import application.portfolio.clientmodule.Model.Request.Notes.NotesRequestViewModel;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteController;
 import application.portfolio.clientmodule.utils.DateUtils;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -11,7 +15,9 @@ import javafx.scene.control.*;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public class NoteBinder {
 
@@ -22,12 +28,19 @@ public class NoteBinder {
     private ComboBox<String> typeCb;
     private ComboBox<String> categoryCb;
     private ComboBox<String> priorityCb;
-    private DatePicker datePicker;
     private Label deadlineLbl;
     private TextArea contentTa;
+    private NoteController noteController;
+    private TableView<NoteDAO> notesTbl;
 
     private static final Set<Runnable> startBinds = new HashSet<>();
     private static final Set<Runnable> unbindingSet = new HashSet<>();
+
+    public void bindNoteController(NoteController noteController) {
+        this.noteController = noteController;
+        noteController.setViewModel(viewModel);
+        noteController.setNoteBinder(this);
+    }
 
     public void withNoteDAO(NoteDAO noteDAO) {
 
@@ -86,7 +99,7 @@ public class NoteBinder {
         this.typeCb = typeCb;
         viewModel.noteTypeProperty().bind(this.typeCb.valueProperty());
 
-        ObservableList<String> elements = FXCollections.observableList(NoteDAO.getNames(NoteDAO.NoteType.class));
+        ObservableList<String> elements = FXCollections.observableList(NoteDAO.getNames(NoteType.class));
         this.typeCb.setItems(elements);
 
         if (note != null) {
@@ -114,7 +127,7 @@ public class NoteBinder {
         viewModel.categoryProperty().bind(this.categoryCb.valueProperty());
 
         String CATEGORY = "Category";
-        ObservableList<String> elements = FXCollections.observableArrayList(NoteDAO.getNames(NoteDAO.Category.class));
+        ObservableList<String> elements = FXCollections.observableArrayList(NoteDAO.getNames(Category.class));
         elements.add(0, CATEGORY);
         this.categoryCb.setItems(elements);
 
@@ -148,7 +161,7 @@ public class NoteBinder {
 
         String PRIORITY = "Priority";
         ObservableList<String> elements =
-                FXCollections.observableList(NoteDAO.getNames(NoteDAO.Priority.class));
+                FXCollections.observableList(NoteDAO.getNames(Priority.class));
         elements.add(0, PRIORITY);
         this.priorityCb.setItems(elements);
 
@@ -182,24 +195,25 @@ public class NoteBinder {
         });
     }
 
-    public void withNoteDeadlineDp(DatePicker datePicker) {
+    public DatePicker withNoteDeadlineDp() {
 
-        this.datePicker = datePicker;
-
+        DatePicker datePicker = new DatePicker();
         if (note != null) {
-            this.datePicker.setValue(note.getDeadline());
+            datePicker.setValue(note.getDeadline());
         } else {
-            this.datePicker.setValue(LocalDate.now());
+            datePicker.setValue(LocalDate.now());
         }
-        this.datePicker.valueProperty().bindBidirectional(viewModel.deadlineProperty());
+        datePicker.valueProperty().bindBidirectional(viewModel.deadlineProperty());
 
-        this.datePicker.setEditable(false);
+        datePicker.setEditable(false);
 
         startBinds.add(() -> viewModel.setDeadline(LocalDate.now()));
         unbindingSet.add(() -> {
             viewModel.setDeadline(null);
-            this.datePicker.valueProperty().unbindBidirectional(viewModel.deadlineProperty());
+            datePicker.valueProperty().unbindBidirectional(viewModel.deadlineProperty());
         });
+
+        return datePicker;
     }
 
     public void withContent(TextArea contentTa) {
@@ -235,12 +249,33 @@ public class NoteBinder {
         }
 
         if (note == null) {
-            viewModel.save();
+//            viewModel.save();
         } else {
             viewModel.update();
         }
 
         return true;
+    }
+
+    public List<NoteDAO> loadNotes() {
+        return noteController.loadNotes();
+    }
+
+    public TableView<NoteDAO> loadNotesView() {
+        this.notesTbl = noteController.getTableView();
+        return this.notesTbl;
+    }
+
+    public String getContent(UUID noteId) {
+        return noteController.loadNoteContent(noteId);
+    }
+
+    public void update() {
+
+    }
+
+    public void delete(NoteDAO note) {
+
     }
 
     private boolean validateElements() {
@@ -257,12 +292,12 @@ public class NoteBinder {
             flag = false;
         }
 
-        if (typeCb.getValue().equals(NoteDAO.getName(NoteDAO.NoteType.REGULAR_NOTE))) {
+        if (typeCb.getValue().equals(NoteDAO.getName(NoteType.REGULAR_NOTE))) {
             if (categoryCb.getValue().equals("Category")) {
 //                cbCategory.getStyleClass().add("badElement");
                 flag = false;
             }
-        } else if (typeCb.getValue().equals(NoteDAO.getName(NoteDAO.NoteType.DEADLINE_NOTE))) {
+        } else if (typeCb.getValue().equals(NoteDAO.getName(NoteType.DEADLINE_NOTE))) {
             if (priorityCb.getValue().equals("Priority")) {
 //                cbPriority.getStyleClass().add("badElement");
                 flag = false;
@@ -296,5 +331,23 @@ public class NoteBinder {
         priorityCb.valueProperty().addListener((observable, oldValue, newValue) -> {
 //            cbPriority.getStyleClass().remove("badElement");
         });
+    }
+
+    public Button bindReloadBtn() {
+        Button reloadBtn = new Button("Reload");
+        reloadBtn.setOnAction(evt -> {
+            List<NoteDAO> DAOs = loadNotes();
+            notesTbl.getItems().clear();
+            notesTbl.getItems().addAll(DAOs);
+        });
+        return reloadBtn;
+    }
+
+    public Button bindSaveBtn() {
+        Button saveBtn = new Button("Save");
+        saveBtn.setOnAction(evt -> {
+            if (save()) clearFields();
+        });
+        return saveBtn;
     }
 }
