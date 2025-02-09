@@ -1,3 +1,5 @@
-.notesBG {
-    -fx-background-color: #141eda;
+.badElement {
+    -fx-border-color: red;
+    -fx-border-width: 1;
+    -fx-border-radius: 5;
 }

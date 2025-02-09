@@ -87,7 +87,7 @@ public class Disc extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("baseDisc");
+        this.getStyleClass().addAll("base", "baseBG");
         backBtn.getStyleClass().add("backBtn");
         uploadFileBtn.getStyleClass().add("uploadBtn");
         uploadDirBtn.getStyleClass().add("uploadBtn");

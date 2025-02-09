@@ -1,10 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.Model.Model.Notes.Category;
-import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
-import application.portfolio.clientmodule.Model.Model.Notes.Priority;
+import application.portfolio.clientmodule.Model.Model.Notes.*;
 import application.portfolio.clientmodule.Model.Request.Notes.NotesRequestViewModel;
-import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteController;
 import application.portfolio.clientmodule.utils.DateUtils;
 import javafx.application.Platform;
@@ -21,7 +18,7 @@ import java.util.UUID;
 
 public class NoteBinder {
 
-    private NoteDAO note = null;
+    private Note bindedNote = null;
     private final NotesRequestViewModel viewModel = new NotesRequestViewModel();
 
     private TextField titleTf;
@@ -31,25 +28,24 @@ public class NoteBinder {
     private Label deadlineLbl;
     private TextArea contentTa;
     private NoteController noteController;
-    private TableView<NoteDAO> notesTbl;
+    private TableView<Note> notesTbl;
 
     private static final Set<Runnable> startBinds = new HashSet<>();
     private static final Set<Runnable> unbindingSet = new HashSet<>();
 
     public void bindNoteController(NoteController noteController) {
         this.noteController = noteController;
-        noteController.setViewModel(viewModel);
         noteController.setNoteBinder(this);
     }
 
-    public void withNoteDAO(NoteDAO noteDAO) {
+    public void withNote(Note note) {
 
-        note = noteDAO;
-        viewModel.setNoteDAO(noteDAO);
+        this.bindedNote = note;
+        viewModel.setTempNote(note);
 
         startBinds.add(() -> {
-            note = null;
-            viewModel.setNoteDAO(null);
+            this.bindedNote = null;
+            viewModel.setTempNote(null);
         });
     }
 
@@ -69,7 +65,9 @@ public class NoteBinder {
 
         this.titleTf.textProperty().bindBidirectional(viewModel.titleProperty());
 
-        startBinds.add(() -> viewModel.setTitle(null));
+        startBinds.add(() -> {
+            viewModel.setTitle("");
+        });
         unbindingSet.add(() -> this.titleTf.textProperty().unbindBidirectional(viewModel.titleProperty()));
     }
 
@@ -99,11 +97,11 @@ public class NoteBinder {
         this.typeCb = typeCb;
         viewModel.noteTypeProperty().bind(this.typeCb.valueProperty());
 
-        ObservableList<String> elements = FXCollections.observableList(NoteDAO.getNames(NoteType.class));
+        ObservableList<String> elements = FXCollections.observableList(Note.getNames(NoteType.class));
         this.typeCb.setItems(elements);
 
-        if (note != null) {
-            String type = NoteDAO.getName(note.getNoteType());
+        if (bindedNote != null) {
+            String type = Note.getName(bindedNote.getNoteType());
             if (type != null) this.typeCb.getSelectionModel().select(type);
         } else {
             this.typeCb.getSelectionModel().select(0);
@@ -127,12 +125,12 @@ public class NoteBinder {
         viewModel.categoryProperty().bind(this.categoryCb.valueProperty());
 
         String CATEGORY = "Category";
-        ObservableList<String> elements = FXCollections.observableArrayList(NoteDAO.getNames(Category.class));
+        ObservableList<String> elements = FXCollections.observableArrayList(Note.getNames(Category.class));
         elements.add(0, CATEGORY);
         this.categoryCb.setItems(elements);
 
-        if (note != null) {
-            String category = NoteDAO.getName(note.getCategory());
+        if (bindedNote != null) {
+            String category = Note.getName(bindedNote.getCategory());
             if (category != null) {
                 this.categoryCb.getSelectionModel().select(category);
             } else {
@@ -146,7 +144,6 @@ public class NoteBinder {
     public void withNotePriorityLbl(Label priorityLbl) {
 
         priorityLbl.textProperty().bind(viewModel.priorityProperty());
-
         unbindingSet.add(() -> {
                     priorityLbl.textProperty().unbind();
                     priorityLbl.setText(null);
@@ -161,12 +158,12 @@ public class NoteBinder {
 
         String PRIORITY = "Priority";
         ObservableList<String> elements =
-                FXCollections.observableList(NoteDAO.getNames(Priority.class));
+                FXCollections.observableList(Note.getNames(Priority.class));
         elements.add(0, PRIORITY);
         this.priorityCb.setItems(elements);
 
-        if (note != null) {
-            String priority = NoteDAO.getName(note.getPriority());
+        if (bindedNote != null) {
+            String priority = Note.getName(bindedNote.getPriority());
             if (priority != null) {
                 priorityCb.getSelectionModel().select(priority);
             } else {
@@ -198,8 +195,8 @@ public class NoteBinder {
     public DatePicker withNoteDeadlineDp() {
 
         DatePicker datePicker = new DatePicker();
-        if (note != null) {
-            datePicker.setValue(note.getDeadline());
+        if (bindedNote != null) {
+            datePicker.setValue(bindedNote.getDeadline());
         } else {
             datePicker.setValue(LocalDate.now());
         }
@@ -212,7 +209,6 @@ public class NoteBinder {
             viewModel.setDeadline(null);
             datePicker.valueProperty().unbindBidirectional(viewModel.deadlineProperty());
         });
-
         return datePicker;
     }
 
@@ -223,13 +219,13 @@ public class NoteBinder {
 
         this.contentTa.setWrapText(true);
 
-        startBinds.add(() -> viewModel.setContent(null));
+        startBinds.add(() -> viewModel.setContent(""));
         unbindingSet.add(() -> this.contentTa.textProperty().unbindBidirectional(viewModel.contentProperty()));
     }
 
     public void clearFields() {
 
-        if (note != null) {
+        if (bindedNote != null) {
             Platform.runLater(() -> {
                 startBinds.forEach(Runnable::run);
                 unbindingSet.forEach(Runnable::run);
@@ -244,38 +240,42 @@ public class NoteBinder {
     public boolean save() {
 
         if (!validateElements()) {
-//            addListeners();
+            addListeners();
             return false;
         }
 
-        if (note == null) {
-//            viewModel.save();
+        if (bindedNote == null) {
+            Note note = viewModel.save();
+            if (note != null) {
+                notesTbl.getItems().add(note);
+                return true;
+            }
         } else {
-            viewModel.update();
+            Note note = viewModel.update();
+            if (note != null) {
+                notesTbl.getItems().remove(bindedNote);
+                notesTbl.getItems().add(note);
+                return true;
+            }
         }
-
-        return true;
+        return false;
     }
 
-    public List<NoteDAO> loadNotes() {
-        return noteController.loadNotes();
+    public List<Note> loadNotes() {
+        return viewModel.loadNotes();
     }
 
-    public TableView<NoteDAO> loadNotesView() {
-        this.notesTbl = noteController.getTableView();
+    public TableView<Note> loadNotesView() {
+        setNotesTbl(noteController.getTableView());
         return this.notesTbl;
     }
 
     public String getContent(UUID noteId) {
-        return noteController.loadNoteContent(noteId);
+        return viewModel.loadNoteContent(noteId);
     }
 
-    public void update() {
-
-    }
-
-    public void delete(NoteDAO note) {
-
+    public boolean delete(UUID noteId) {
+        return viewModel.deleteNote(noteId);
     }
 
     private boolean validateElements() {
@@ -283,23 +283,23 @@ public class NoteBinder {
         boolean flag = true;
 
         if (titleTf.getText() == null || titleTf.getText().isBlank()) {
-//            titleTf.getStyleClass().add("badElement");
+            titleTf.getStyleClass().add("badElement");
             flag = false;
         }
 
         if (contentTa.getText() == null || contentTa.getText().isBlank()) {
-//            contentTa.getStyleClass().add("badElement");
+            contentTa.getStyleClass().add("badElement");
             flag = false;
         }
 
-        if (typeCb.getValue().equals(NoteDAO.getName(NoteType.REGULAR_NOTE))) {
+        if (typeCb.getValue().equals(Note.getName(NoteType.REGULAR_NOTE))) {
             if (categoryCb.getValue().equals("Category")) {
-//                cbCategory.getStyleClass().add("badElement");
+                categoryCb.getStyleClass().add("badElement");
                 flag = false;
             }
-        } else if (typeCb.getValue().equals(NoteDAO.getName(NoteType.DEADLINE_NOTE))) {
+        } else if (typeCb.getValue().equals(Note.getName(NoteType.DEADLINE_NOTE))) {
             if (priorityCb.getValue().equals("Priority")) {
-//                cbPriority.getStyleClass().add("badElement");
+                priorityCb.getStyleClass().add("badElement");
                 flag = false;
             }
         }
@@ -309,34 +309,38 @@ public class NoteBinder {
     private void addListeners() {
 
         titleTf.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !newValue.isBlank()) {
-//                titleTf.getStyleClass().remove("badElement");
+            if (!newValue.isBlank()) {
+                titleTf.getStyleClass().remove("badElement");
             }
         });
 
         contentTa.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !newValue.isBlank()) {
-//                contentTa.getStyleClass().remove("badElement");
+            if (!newValue.isBlank()) {
+                contentTa.getStyleClass().remove("badElement");
             }
         });
 
         typeCb.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            cbType.getStyleClass().remove("badElement");
+            typeCb.getStyleClass().remove("badElement");
         });
 
         categoryCb.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            cbCategory.getStyleClass().remove("badElement");
+            categoryCb.getStyleClass().remove("badElement");
         });
 
         priorityCb.valueProperty().addListener((observable, oldValue, newValue) -> {
-//            cbPriority.getStyleClass().remove("badElement");
+            priorityCb.getStyleClass().remove("badElement");
         });
+    }
+
+    public void setNotesTbl(TableView<Note> notesTbl) {
+        this.notesTbl = notesTbl;
     }
 
     public Button bindReloadBtn() {
         Button reloadBtn = new Button("Reload");
         reloadBtn.setOnAction(evt -> {
-            List<NoteDAO> DAOs = loadNotes();
+            List<Note> DAOs = loadNotes();
             notesTbl.getItems().clear();
             notesTbl.getItems().addAll(DAOs);
         });

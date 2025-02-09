@@ -1,39 +1,39 @@
 package application.portfolio.clientmodule.Model.Model.Notes;
 
-import application.portfolio.clientmodule.utils.DataParser;
-import com.fasterxml.jackson.databind.JsonNode;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeParseException;
-import java.util.*;
-import java.util.stream.Collectors;
-
 public class NoteDAO {
 
-    private static final String[] REQUIRED_ATTRIBUTES = {"noteId", "title", "createdDate", "lastModificationDate",
-            "noteType", "category", "priority"};
-
-    private UUID id;
+    private String noteId;
     private String title;
-    private NoteType noteType;
-    private Category category;
-    private Priority priority;
+    private String createdDate;
+    private String lastModificationDate;
     private String content;
-    private LocalDateTime createdDate;
-    private LocalDateTime lastModificationDate;
-    private LocalDate deadline;
+    private int noteType;
+    private int category = -1;
+    private int priority = -1;
+    private String deadline;
 
     public NoteDAO() {
-        setCreatedDate(LocalDateTime.now());
     }
 
-    public UUID getId() {
-        return id;
+    public NoteDAO(String noteId, String title, String createdDate, String lastModificationDate,
+                   String content, int noteType, int category, int priority, String deadline) {
+        this.noteId = noteId;
+        this.title = title;
+        this.createdDate = createdDate;
+        this.lastModificationDate = lastModificationDate;
+        this.content = content;
+        this.noteType = noteType;
+        this.category = category;
+        this.priority = priority;
+        this.deadline = deadline;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public String getNoteId() {
+        return noteId;
+    }
+
+    public void setNoteId(String noteId) {
+        this.noteId = noteId;
     }
 
     public String getTitle() {
@@ -44,28 +44,20 @@ public class NoteDAO {
         this.title = title;
     }
 
-    public NoteType getNoteType() {
-        return noteType;
+    public String getCreatedDate() {
+        return createdDate;
     }
 
-    public void setNoteType(NoteType noteType) {
-        this.noteType = noteType;
+    public void setCreatedDate(String createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Category getCategory() {
-        return category;
+    public String getLastModificationDate() {
+        return lastModificationDate;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
-    }
-
-    public Priority getPriority() {
-        return priority;
-    }
-
-    public void setPriority(Priority priority) {
-        this.priority = priority;
+    public void setLastModificationDate(String lastModificationDate) {
+        this.lastModificationDate = lastModificationDate;
     }
 
     public String getContent() {
@@ -76,118 +68,35 @@ public class NoteDAO {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public int getNoteType() {
+        return noteType;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
+    public void setNoteType(int noteType) {
+        this.noteType = noteType;
     }
 
-    public LocalDateTime getLastModificationDate() {
-        return lastModificationDate;
+    public int getCategory() {
+        return category;
     }
 
-    public void setLastModificationDate(LocalDateTime lastModificationDate) {
-        this.lastModificationDate = lastModificationDate;
+    public void setCategory(int category) {
+        this.category = category;
     }
 
-    public LocalDate getDeadline() {
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
+
+    public String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDate deadline) {
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
-    }
-
-    public static <T extends Enum<T>> T stringToEnum(Class<T> classClass, String val) {
-        return Enum.valueOf(classClass, val.replaceAll(" ", "_").toUpperCase());
-    }
-
-    public static <T extends Enum<T>> String enumToString(T val) {
-        return Arrays.stream(val.name().split("_"))
-                .map(s -> s.charAt(0) + s.substring(1).toLowerCase())
-                .collect(Collectors.joining(" "));
-    }
-
-    public static <T extends Enum<T>> List<String> getNames(Class<T> classClass) {
-        return EnumSet.allOf(classClass)
-                .stream()
-                .map(NoteDAO::enumToString)
-                .collect(Collectors.toList());
-    }
-
-    public static <T extends Enum<T>> String getName(T val) {
-        return val != null ? enumToString(val) : null;
-    }
-
-    public static NoteDAO createDAO(JsonNode node) {
-
-        if (!DataParser.validateElements(node, REQUIRED_ATTRIBUTES)) {
-            return null;
-        }
-
-        NoteDAO dao = new NoteDAO();
-        Iterator<Map.Entry<String, JsonNode>> it = node.fields();
-        try {
-            while (it.hasNext()) {
-                Map.Entry<String, JsonNode> entry = it.next();
-                String key = entry.getKey();
-                JsonNode value = entry.getValue();
-                switch (key) {
-                    case "noteId" -> {
-                        String id = value.asText();
-                        UUID nId = DataParser.parseId(id);
-                        if (nId == null) break;
-                        dao.setId(nId);
-                    }
-                    case "title" -> {
-                        String title = value.asText();
-                        dao.setTitle(title);
-                    }
-                    case "createdDate" -> {
-                        String createdDateString = value.asText();
-                        LocalDateTime cD = LocalDateTime.parse(createdDateString);
-                        dao.setCreatedDate(cD);
-                    }
-                    case "lastModificationDate" -> {
-                        String lastModificationDate = value.asText();
-                        LocalDateTime lMD = LocalDateTime.parse(lastModificationDate);
-                        dao.setLastModificationDate(lMD);
-                    }
-                    case "noteType" -> {
-                        int noteType = value.asInt();
-                        NoteType nt = NoteType.fromValue(noteType);
-                        dao.setNoteType(nt);
-                    }
-                    case "category" -> {
-                        int category = value.asInt();
-                        if (category >= 0) {
-                            Category ct = Category.fromValue(category);
-                            dao.setCategory(ct);
-                        }
-                    }
-                    case "priority" -> {
-                        int priority = value.asInt();
-                        if (priority >= 0) {
-                            Priority pt = Priority.fromValue(priority);
-                            dao.setPriority(pt);
-                        }
-                    }
-                    case "deadline" -> {
-                        if (!value.isNull()) {
-                            String deadline = value.asText();
-                            if (deadline != null) {
-                                LocalDate dl = LocalDate.parse(deadline);
-                                dao.setDeadline(dl);
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (IllegalArgumentException | DateTimeParseException e) {
-            return null;
-        }
-        return dao;
     }
 }

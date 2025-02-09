@@ -1,15 +1,14 @@
 package application.portfolio.objects.model.note;
 
 import application.portfolio.objects.dao.note.NoteDAO;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.Collection;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class Note {
 
@@ -110,45 +109,74 @@ public class Note {
 
                 String key = keyVal[0].trim();
                 String val = keyVal[1].trim();
-
-                switch (key) {
-                    case "noteId" -> {
-                        UUID id = UUID.fromString(val);
-                        note.setNoteId(id);
-                    }
-                    case "title" -> note.setTitle(val);
-                    case "createdDate" -> {
-                        LocalDateTime ldt = LocalDateTime.parse(val).withNano(0);
-                        note.setCreatedDate(ldt);
-                    }
-                    case "lastModifiedDate" -> {
-                        LocalDateTime ldt = LocalDateTime.parse(val).withNano(0);
-                        note.setLastModificationDate(ldt);
-                    }
-                    case "noteType" -> {
-                        NoteType nt = NoteType.valueOf(val);
-                        note.setNoteType(nt);
-                    }
-                    case "category" -> {
-                        Category ct = Category.valueOf(val);
-                        note.setCategory(ct);
-                    }
-                    case "priority" -> {
-                        Priority pt = Priority.valueOf(val);
-                        note.setPriority(pt);
-                    }
-                    case "deadline" -> {
-                        LocalDate ld = LocalDate.parse(val);
-                        note.setDeadline(ld);
-                    }
-                }
+                createNote(note, key, val);
             }
         } catch (IOException | IllegalArgumentException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
-            System.err.println("DUPA");
             return null;
         }
         return note;
+    }
+
+    public static Note createNote(JsonNode node) {
+
+        Note note = new Note();
+        Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
+
+        try {
+            while (iterator.hasNext()) {
+                Map.Entry<String, JsonNode> entry = iterator.next();
+                String key = entry.getKey();
+                String val = entry.getValue().asText();
+                createNote(note, key, val);
+            }
+        } catch (IllegalArgumentException | DateTimeParseException e) {
+            return null;
+        }
+        return note;
+    }
+
+    private static void createNote(Note note, String key, String val) {
+        switch (key) {
+            case "noteId" -> {
+                UUID id = UUID.fromString(val);
+                note.setNoteId(id);
+            }
+            case "title" -> note.setTitle(val);
+            case "createdDate" -> {
+                LocalDateTime ldt = LocalDateTime.parse(val).withNano(0);
+                note.setCreatedDate(ldt);
+            }
+            case "lastModificationDate" -> {
+                LocalDateTime ldt = LocalDateTime.parse(val).withNano(0);
+                note.setLastModificationDate(ldt);
+            }
+            case "content" -> note.setContent(val);
+            case "noteType" -> {
+                int v = Integer.parseInt(val);
+                NoteType nt = NoteType.fromValue(v);
+                note.setNoteType(nt);
+            }
+            case "category" -> {
+                int v = Integer.parseInt(val);
+                if (v >= 0) {
+                    Category ct = Category.fromValue(v);
+                    note.setCategory(ct);
+                }
+            }
+            case "priority" -> {
+                int v = Integer.parseInt(val);
+                if (v >= 0) {
+                    Priority pt = Priority.fromValue(v);
+                    note.setPriority(pt);
+                }
+            }
+            case "deadline" -> {
+                if (!val.isBlank() && !val.equals("null")) {
+                    LocalDate dl = LocalDate.parse(val);
+                    note.setDeadline(dl);
+                }
+            }
+        }
     }
 
     public static NoteDAO createDAO(Note note) {
@@ -176,5 +204,20 @@ public class Note {
         return collection.stream()
                 .map(Note::createDAO)
                 .toList();
+    }
+
+    @Override
+    public String toString() {
+        return "Note{" +
+                "noteId=" + noteId +
+                ", title='" + title + '\'' +
+                ", createdDate=" + createdDate +
+                ", lastModificationDate=" + lastModificationDate +
+                ", content='" + content + '\'' +
+                ", noteType=" + noteType +
+                ", category=" + category +
+                ", priority=" + priority +
+                ", deadline=" + deadline +
+                '}';
     }
 }

@@ -2,11 +2,12 @@ package application.portfolio.clientmodule.Model.Request.Notes;
 
 import application.portfolio.clientmodule.Connection.ClientHolder;
 import application.portfolio.clientmodule.Connection.Infrastructure;
+import application.portfolio.clientmodule.Model.Model.Notes.Note;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
-import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.BaseNoteRequest;
 import application.portfolio.clientmodule.Model.Request.Notes.NoteRequest.NoteRequest;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,20 +22,18 @@ import java.util.function.Consumer;
 public class NoteRequestModel {
 
     private final Map<String, String> gData;
+    private final ObjectMapper objectMapper;
 
     {
         gData = Infrastructure.getGatewayData();
+        objectMapper = new ObjectMapper();
     }
 
-    public void save(BaseNoteRequest req) {
-        System.out.println("Saving " + req);
-    }
-
-    public List<NoteDAO> loadNotes(NoteRequest noteRequest) {
+    public List<Note> loadNotes(NoteRequest noteRequest) {
 
         String params = NotesRequestConverter.toQueryLoadParams(noteRequest);
-        HttpRequest request = prepareRequest(params, "notes/list",
-                "GET", HttpRequest.BodyPublishers.noBody()).build();
+        HttpRequest request = prepareRequest(params, "GET",
+                HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<JsonNode> response;
         try {
@@ -49,11 +48,11 @@ public class NoteRequestModel {
         return Collections.emptyList();
     }
 
-    public String loadContent(NoteRequest data) {
+    public String loadContent(NoteRequest noteRequest) {
 
-        String params = NotesRequestConverter.toQueryContentRequest(data);
-        HttpRequest request = prepareRequest(params, "notes",
-                "GET", HttpRequest.BodyPublishers.noBody()).build();
+        String params = NotesRequestConverter.toQueryContentRequest(noteRequest);
+        HttpRequest request = prepareRequest(params, "GET",
+                HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<JsonNode> response;
         try {
@@ -66,6 +65,55 @@ public class NoteRequestModel {
             return parseContent(response);
         }
         return null;
+    }
+
+    public boolean save(NoteRequest noteRequest, NoteDAO dao) {
+        String params = NotesRequestConverter.toRegularUserQuery(noteRequest);
+        return save(params, dao, "POST");
+    }
+
+    public boolean update(NoteRequest noteRequest, NoteDAO dao) {
+        String params = NotesRequestConverter.toQueryWithNoteId(noteRequest);
+        return save(params, dao, "PUT");
+    }
+
+    public boolean save(String params, NoteDAO dao, String method) {
+
+        byte[] data;
+        try {
+            data = objectMapper.writeValueAsBytes(dao);
+        } catch (IOException e) {
+            System.out.println("Problem w save");
+            return false;
+        }
+
+        HttpRequest request = prepareRequest(params, method,
+                HttpRequest.BodyPublishers.ofByteArray(data)).build();
+
+        HttpResponse<String> response;
+        try {
+            response = ClientHolder.getClient().send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+        return response.statusCode() == 200;
+    }
+
+    public boolean delete(NoteRequest noteRequest) {
+
+        String params = NotesRequestConverter.toQueryWithNoteId(noteRequest);
+        HttpRequest request = prepareRequest(params, "DELETE",
+                HttpRequest.BodyPublishers.noBody()).build();
+
+        HttpResponse<Void> response;
+        try {
+             response = ClientHolder.getClient().send(request, HttpResponse.BodyHandlers.discarding());
+        } catch (IOException | InterruptedException e) {
+            return false;
+        }
+
+        return response.statusCode() == 200;
     }
 
     private String parseContent(HttpResponse<JsonNode> response) {
@@ -81,15 +129,15 @@ public class NoteRequestModel {
         return null;
     }
 
-    private HttpRequest.Builder prepareRequest(String params, String endpoint, String method,
+    private HttpRequest.Builder prepareRequest(String params, String method,
                                                HttpRequest.BodyPublisher bodyPublisher) {
-        String spec = Infrastructure.uriSpecificPart(gData, endpoint, params);
+        String spec = Infrastructure.uriSpecificPart(gData, "notes", params);
 
         URI baseUri = Infrastructure.getBaseUri(spec);
         return ClientHolder.getRequest(baseUri, method, bodyPublisher);
     }
 
-    private List<NoteDAO> parseEntities(HttpResponse<JsonNode> response) {
+    private List<Note> parseEntities(HttpResponse<JsonNode> response) {
 
         JsonNode node = response.body();
         node = node.get("response");
@@ -98,10 +146,10 @@ public class NoteRequestModel {
             return Collections.emptyList();
         }
 
-        List<NoteDAO> noteDAOS = new ArrayList<>();
+        List<Note> noteDAOS = new ArrayList<>();
 
         Consumer<JsonNode> consumer = n -> {
-            NoteDAO dao = NoteDAO.createDAO(n);
+            Note dao = Note.createNote(n);
             if (dao != null) {
                 noteDAOS.add(dao);
             }

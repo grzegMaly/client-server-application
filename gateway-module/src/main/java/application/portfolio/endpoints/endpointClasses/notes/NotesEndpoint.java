@@ -42,7 +42,7 @@ public class NotesEndpoint implements EndpointHandler, HttpHandler {
                 if ("GET".equals(method)) {
                     NotesGetMethods.handleGet(exchange, paramsMap);
                 } else if ("POST".equals(method)) {
-                    NotesPostMethods.handlePost(exchange);
+                    NotesPostMethods.handlePost(exchange, paramsMap);
                 } else if (notesIdValidation(paramsMap)) {
                     switch (method) {
                         case "PUT" -> NotesPutMethods.handlePut(exchange, paramsMap);

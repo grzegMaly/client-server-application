@@ -133,7 +133,7 @@ public class Chat extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("chatBG");
+        this.getStyleClass().add("baseBG");
         friendsList.getStyleClass().add("chatFriendsList");
     }
 

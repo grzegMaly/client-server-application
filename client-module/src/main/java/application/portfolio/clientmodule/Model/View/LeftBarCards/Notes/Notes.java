@@ -1,9 +1,12 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes;
 
+import application.portfolio.clientmodule.Config.LoadStyles;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NoteBinder;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NotesForm;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils.NotesList;
 import application.portfolio.clientmodule.Model.View.Page;
+import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
+import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -76,6 +79,16 @@ public class Notes extends StackPane implements Page {
             System.err.println("Błąd inicjalizacji komponentów: " + ex.getMessage());
             return false;
         }).join();
+    }
+
+    @Override
+    public Boolean loadStyleClass() {
+        return LoadStyles.loadNotesSceneStyle(TeamLinkApp.getScene(MainScene.class));
+    }
+
+    @Override
+    public void loadStyles() {
+        this.getStyleClass().add("baseBG");
     }
 
     @Override

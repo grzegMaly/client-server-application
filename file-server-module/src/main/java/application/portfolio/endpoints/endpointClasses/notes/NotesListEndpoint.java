@@ -46,7 +46,6 @@ public class NotesListEndpoint implements EndpointHandler, HttpHandler {
                 ResponseHandler.handleError(exchange, "Bad Method", HTTP_BAD_METHOD);
                 return;
             }
-
             Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
             String USER_ID_KEY = "userId";
             if (paramsMap == null || !paramsMap.containsKey(USER_ID_KEY) || paramsMap.size() != 1) {
@@ -91,7 +90,13 @@ public class NotesListEndpoint implements EndpointHandler, HttpHandler {
         }
 
         CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
-        JsonNode node = objectMapper.valueToTree(Note.convertToDAOCollection(notesQueue));
+
+        JsonNode node = null;
+        try {
+            node = objectMapper.valueToTree(Note.convertToDAOCollection(notesQueue));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         finalNode.set("response", node);
         return Map.entry(HTTP_OK, finalNode);
     }

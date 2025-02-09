@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.Note;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -18,7 +18,7 @@ public class NotesList extends VBox {
     protected final ButtonBar btnBar = new ButtonBar();
 
     private NoteBinder noteBinder;
-    private TableView<NoteDAO> notesTbl = null;
+    private TableView<Note> notesTbl = null;
 
     public CompletableFuture<Boolean> initPage(NoteBinder noteBinder, ExecutorService executor) {
 
@@ -26,7 +26,7 @@ public class NotesList extends VBox {
 
         CompletableFuture<Boolean> reloadFuture = CompletableFuture.supplyAsync(this::setUpReloadBtn, executor);
         CompletableFuture<Boolean> tableFuture = CompletableFuture.supplyAsync(this::setUpTable, executor);
-        CompletableFuture<List<NoteDAO>> notesFuture = CompletableFuture.supplyAsync(noteBinder::loadNotes);
+        CompletableFuture<List<Note>> notesFuture = CompletableFuture.supplyAsync(noteBinder::loadNotes);
 
         return reloadFuture.thenCombineAsync(tableFuture, (reloadSuccess, tableSuccess) ->
                         reloadSuccess && tableSuccess, executor)

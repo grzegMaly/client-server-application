@@ -121,7 +121,7 @@ public class MainScene extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        welcome.getStyleClass().add("template");
+        welcome.getStyleClass().add("baseBG");
     }
 
     @Override

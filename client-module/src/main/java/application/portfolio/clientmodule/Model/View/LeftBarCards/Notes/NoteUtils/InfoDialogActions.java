@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.Note;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 import javafx.beans.value.ChangeListener;
 import javafx.scene.control.ComboBox;
@@ -73,7 +73,7 @@ public class InfoDialogActions {
     private ChangeListener<String> getListener() {
         return ((observableValue, oldVal, newVal) -> {
             if (newVal != null) {
-                NoteType type = NoteDAO.stringToEnum(NoteType.class, newVal);
+                NoteType type = Note.stringToEnum(NoteType.class, newVal);
                 if (type.equals(NoteType.REGULAR_NOTE)) {
                     swapForListener(categoryLbl, categoryCb);
                     deadlineLbl.setVisible(false);

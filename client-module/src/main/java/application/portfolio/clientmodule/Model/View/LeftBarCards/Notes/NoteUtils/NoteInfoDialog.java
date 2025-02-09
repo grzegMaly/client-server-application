@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUtils;
 
-import application.portfolio.clientmodule.Model.Model.Notes.NoteDAO;
+import application.portfolio.clientmodule.Model.Model.Notes.Note;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
@@ -37,10 +37,10 @@ public class NoteInfoDialog extends Stage {
     private StackPane deadlineSp;
     private final TextArea contentTa = new TextArea();
 
-    private NoteDAO noteDAO;
+    private Note noteDAO;
     private OpenOption openOption = null;
 
-    private NoteBinder noteBinder;
+    private final NoteBinder noteBinder = new NoteBinder();
     private final InfoDialogActions actions = new InfoDialogActions();
     private final ExecutorService executor =
             ExecutorServiceManager.createCachedThreadPool(this.getClass().getSimpleName());
@@ -60,9 +60,10 @@ public class NoteInfoDialog extends Stage {
         });
     }
 
-    public void useDialog(NoteDAO note, OpenOption option, NoteBinder noteBinder) {
+    public void useDialog(Note note, OpenOption option, TableView<Note> notesTbl) {
 
-        this.noteBinder = noteBinder;
+        noteBinder.setNotesTbl(notesTbl);
+
         this.openOption = option;
         this.noteDAO = note;
         this.type = note.getNoteType();
@@ -78,17 +79,15 @@ public class NoteInfoDialog extends Stage {
                     }
 
                     contentOpt.ifPresent(note::setContent);
-                    noteBinder.withNoteDAO(noteDAO);
+                    noteBinder.withNote(note);
                     return true;
                 }, executor)
-                .thenRunAsync(() -> {
-                    Platform.runLater(() -> {
-                        if (openOption == OpenOption.WRITE) {
-                            editBtn.fire();
-                        }
-                        this.show();
-                    });
-                })
+                .thenRunAsync(() -> Platform.runLater(() -> {
+                    if (openOption == OpenOption.WRITE) {
+                        editBtn.fire();
+                    }
+                    this.show();
+                }))
                 .exceptionally(ext -> {
                     System.err.println("NoteInfoDialog coś poszło nie tak " + ext.getMessage());
                     return null;
@@ -108,13 +107,13 @@ public class NoteInfoDialog extends Stage {
         }
     }
 
-    private Optional<String> loadContentIfNeeded(NoteDAO note) {
+    private Optional<String> loadContentIfNeeded(Note note) {
 
         if (note.getContent() != null && !note.getContent().isBlank()) {
             return Optional.empty();
         }
 
-        String content = noteBinder.getContent(note.getId());
+        String content = noteBinder.getContent(note.getNoteId());
         return Optional.ofNullable(content);
     }
 
@@ -128,7 +127,10 @@ public class NoteInfoDialog extends Stage {
                     Region spacer = new Region();
                     HBox.setHgrow(spacer, Priority.ALWAYS);
                     saveBtn.setOnAction(evt -> {
-                        if (noteBinder.save()) noteBinder.clearFields();
+                        if (noteBinder.save()) {
+                            noteBinder.clearFields();
+                            swapVisible();
+                        }
                     });
                     saveBtn.setVisible(false);
                     btnBar.getChildren().addAll(cancelBtn, spacer, editBtn, saveBtn);
@@ -269,7 +271,7 @@ public class NoteInfoDialog extends Stage {
             secondInitialization.getKey().run();
             actions.useListener();
         } else if (!secondElementInitialized) {
-            typeCb.getSelectionModel().select(NoteDAO.getName(noteDAO.getNoteType()));
+            typeCb.getSelectionModel().select(Note.getName(noteDAO.getNoteType()));
         }
         swap();
     }

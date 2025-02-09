@@ -98,7 +98,7 @@ public class Tasks extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("tasksBG");
+        this.getStyleClass().add("baseBG");
     }
 
     @Override

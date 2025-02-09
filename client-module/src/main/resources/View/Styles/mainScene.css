@@ -1,4 +1,3 @@
-.template {
-    -fx-border-color: green;
-    -fx-background-color: pink;
+.baseBG {
+   -fx-background-color: #5f5d5d;
 }
