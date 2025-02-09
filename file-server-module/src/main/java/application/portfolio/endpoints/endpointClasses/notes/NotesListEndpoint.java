@@ -94,8 +94,7 @@ public class NotesListEndpoint implements EndpointHandler, HttpHandler {
         JsonNode node = null;
         try {
             node = objectMapper.valueToTree(Note.convertToDAOCollection(notesQueue));
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (Exception ignored) {
         }
         finalNode.set("response", node);
         return Map.entry(HTTP_OK, finalNode);

@@ -30,7 +30,6 @@ public class WebSocketClientHolder {
     public void connect(URI uri, WebSocket.Listener listener) {
 
         if (webSocket != null) {
-            System.out.println("Websocket already Connected.");
             return;
         }
 

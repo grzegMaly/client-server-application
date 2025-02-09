@@ -47,7 +47,6 @@ public class ClientHolder {
             return false;
         }
 
-        System.out.println(response.statusCode());
         return response.statusCode() == HTTP_OK;
     }
 }

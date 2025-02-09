@@ -54,8 +54,6 @@ public class TeamLinkApp extends Application {
         }).thenAccept(loginPage -> {
             if (loginPage != null) {
                 useScene(loginPage.getClass());
-            } else {
-                System.out.println("Login Page is null");
             }
         }).exceptionally(ex -> null);
     }
@@ -94,7 +92,6 @@ public class TeamLinkApp extends Application {
         StartImage startImage = PageFactory.getInstance(StartImage.class);
         setUpStageSize();
         if (startImage == null) {
-            System.out.println("Error w runStartImage");
             throw new RuntimeException();
         }
         useScene(startImage.getClass());

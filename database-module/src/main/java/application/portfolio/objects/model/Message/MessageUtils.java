@@ -38,7 +38,6 @@ public class MessageUtils {
 
             return new Message(noteId, suId, ruId, content, lTimestamp);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return null;
         }
     }

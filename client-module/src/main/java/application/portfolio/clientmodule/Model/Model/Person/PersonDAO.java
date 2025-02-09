@@ -123,18 +123,4 @@ public class PersonDAO {
     public int hashCode() {
         return getId().hashCode();
     }
-
-    @Override
-    public String toString() {
-        return "PersonDAO{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", role=" + role +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", groups=" + groups +
-                ", ownedGroups=" + ownedGroups +
-                '}';
-    }
 }

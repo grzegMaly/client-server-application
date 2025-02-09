@@ -25,15 +25,14 @@ public class ChatController {
         loadChatHistory(chatView, personDAO);
         addScrollListener(chatView, personDAO);
 
-        chatView.skinProperty().addListener((obs, oldVal, newVal) -> {
-            Platform.runLater(() -> {
-                for (ScrollBar scrollBar : chatView.lookupAll(".scroll-bar").toArray(new ScrollBar[0])) {
-                    if (scrollBar.getOrientation().equals(Orientation.VERTICAL)) {
-                        scrollBar.setVisible(false);
+        chatView.skinProperty().addListener((obs, oldVal, newVal) ->
+                Platform.runLater(() -> {
+                    for (ScrollBar scrollBar : chatView.lookupAll(".scroll-bar").toArray(new ScrollBar[0])) {
+                        if (scrollBar.getOrientation().equals(Orientation.VERTICAL)) {
+                            scrollBar.setVisible(false);
+                        }
                     }
-                }
-            });
-        });
+                }));
 
         List<MessageDAO> messages = chatView.getItems();
         Platform.runLater(() -> {
@@ -48,19 +47,18 @@ public class ChatController {
     }
 
     private static void addSmoothScrolling(ChatView chatView) {
-        chatView.skinProperty().addListener((obs, oldVal, newVal) -> {
-            Platform.runLater(() -> {
-                for (ScrollBar scrollBar : chatView.lookupAll(".scroll-bar").toArray(new ScrollBar[0])) {
-                    if (scrollBar.getOrientation().equals(Orientation.VERTICAL)) {
-                        scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
-                            if (Math.abs(newValue.doubleValue() - oldValue.doubleValue()) > 0.1) {
-                                smoothScroll(scrollBar, newValue.doubleValue());
-                            }
-                        });
+        chatView.skinProperty().addListener((obs, oldVal, newVal) ->
+                Platform.runLater(() -> {
+                    for (ScrollBar scrollBar : chatView.lookupAll(".scroll-bar").toArray(new ScrollBar[0])) {
+                        if (scrollBar.getOrientation().equals(Orientation.VERTICAL)) {
+                            scrollBar.valueProperty().addListener((observable, oldValue, newValue) -> {
+                                if (Math.abs(newValue.doubleValue() - oldValue.doubleValue()) > 0.1) {
+                                    smoothScroll(scrollBar, newValue.doubleValue());
+                                }
+                            });
+                        }
                     }
-                }
-            });
-        });
+                }));
     }
 
     private static void smoothScroll(ScrollBar scrollBar, double newValue) {
@@ -90,7 +88,6 @@ public class ChatController {
         viewModel.setReceiver(receiver);
 
         List<MessageDAO> messages = viewModel.loadChatHistory(chatView.getOffset(), ChatView.LIMIT);
-        System.out.println(messages);
 
         if (messages == null || messages.isEmpty()) {
             chatView.setHasMoreMessages(false);

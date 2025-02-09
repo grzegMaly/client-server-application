@@ -239,19 +239,4 @@ public class Note {
                 getDeadline()
         );
     }
-
-    @Override
-    public String toString() {
-        return "Note{" +
-                "noteId=" + noteId +
-                ", title='" + title + '\'' +
-                ", noteType=" + noteType +
-                ", category=" + category +
-                ", priority=" + priority +
-                ", content='" + content + '\'' +
-                ", createdDate=" + createdDate +
-                ", lastModificationDate=" + lastModificationDate +
-                ", deadline=" + deadline +
-                '}';
-    }
 }

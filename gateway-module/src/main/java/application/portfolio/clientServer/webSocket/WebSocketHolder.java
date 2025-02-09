@@ -26,7 +26,6 @@ public class WebSocketHolder {
 
                 Map<String, String> curResourceMap = Infrastructure.getData(currentResource, 1);
                 WebSocketPair pair = server.initialize(curResourceMap);
-                System.out.println(pair.client() != null);
                 servers.put(server.getName(), pair);
             });
             futures.add(future);

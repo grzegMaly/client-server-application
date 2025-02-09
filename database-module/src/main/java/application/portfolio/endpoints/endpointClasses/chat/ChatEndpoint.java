@@ -31,7 +31,6 @@ public class ChatEndpoint implements EndpointHandler, HttpHandler {
                 ResponseHandler.handleError(exchange, "Bad Request", HTTP_BAD_REQUEST);
                 return;
             }
-            System.out.println("POŚCIK");
             handlePost(exchange);
         } catch (Exception e) {
             ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
@@ -45,7 +44,6 @@ public class ChatEndpoint implements EndpointHandler, HttpHandler {
             return;
         }
 
-        System.out.println("DUPA");
         byte[] data = exchange.getRequestBody().readAllBytes();
         MessageResponse messageResponse = ChatPostMethods.sendMessage(data);
         Map.Entry<Integer, JsonNode> entry = messageResponse.toJsonResponse();

@@ -64,7 +64,6 @@ public class NotesPutMethods {
             return Map.entry(HTTP_FORBIDDEN, finalNode);
         }
 
-        System.out.println("Czysta egzystencja");
         boolean success = NotesPostMethods.writeToFile(noteFilePath, note,
                 StandardOpenOption.TRUNCATE_EXISTING, exceptionFunction);
         if (!success) {

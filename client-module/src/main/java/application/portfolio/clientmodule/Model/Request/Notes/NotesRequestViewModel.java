@@ -132,7 +132,6 @@ public class NotesRequestViewModel {
         Note note = packData();
         NoteDAO dao = Note.createDAO(note);
         if (dao == null) {
-            System.out.println("Dupeeeerka");
             return null;
         }
 

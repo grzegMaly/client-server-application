@@ -6,7 +6,6 @@ import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequ
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.net.URI;
@@ -42,7 +41,6 @@ public class FriendsRequestModel {
                 return Collections.emptyList();
             }
         } catch (InterruptedException e) {
-            System.out.println(e.getMessage());
             Thread.currentThread().interrupt();
             return Collections.emptyList();
         }

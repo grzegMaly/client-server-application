@@ -35,8 +35,6 @@ public class StartImage extends StackPane implements Page {
 
             image = i;
             if (image == null) {
-                //ToDo: Make it custom
-                System.out.println("Error Loading ImageView");
                 return false;
             }
 
@@ -47,10 +45,7 @@ public class StartImage extends StackPane implements Page {
                 bindSizeProperties();
             });
             return true;
-        }).exceptionally(ex -> {
-            System.out.println("Error in StartImage, loginPage");
-            return false;
-        });
+        }).exceptionally(ex -> false);
     }
 
     @Override
@@ -72,14 +67,11 @@ public class StartImage extends StackPane implements Page {
         try {
             URL resource = StartImage.class.getResource(imageLoc);
             if (resource == null) {
-                //ToDo: Make it custom
                 throw new IllegalAccessException("resource not found " + imageLoc);
             }
 
             return new Image(resource.toExternalForm(), 0, 0, true, false);
-        } catch (IllegalAccessException e) {
-            //ToDo: Make it custom
-            System.out.println("Cannot find start image");
+        } catch (IllegalAccessException ignored) {
         }
         return null;
     }

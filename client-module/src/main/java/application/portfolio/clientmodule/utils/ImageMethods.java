@@ -24,8 +24,7 @@ public class ImageMethods {
                 Image image = new Image(is);
                 return new ImageView(image);
             }
-        } catch (IOException e) {
-            System.out.println("Dupa, coś poszło nie tak");
+        } catch (IOException ignored) {
         }
         return new ImageView();
     }

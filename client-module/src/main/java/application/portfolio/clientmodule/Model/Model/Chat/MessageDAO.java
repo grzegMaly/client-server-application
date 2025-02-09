@@ -75,16 +75,4 @@ public class MessageDAO {
     public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
-
-    @Override
-    public String toString() {
-        return "MessageDAO{" +
-                "tempId=" + tempId +
-                ", id=" + id +
-                ", sender=" + sender +
-                ", receiver=" + receiver +
-                ", content='" + content + '\'' +
-                ", timestamp=" + timestamp +
-                '}';
-    }
 }

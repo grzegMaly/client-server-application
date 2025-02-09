@@ -48,13 +48,4 @@ public class GroupDAO {
     public void setOwner(UUID owner) {
         this.ownerId = owner;
     }
-
-    @Override
-    public String toString() {
-        return "GroupDAO{" +
-                "groupId=" + groupId +
-                ", groupName='" + groupName + '\'' +
-                ", owner=" + ownerId +
-                '}';
-    }
 }

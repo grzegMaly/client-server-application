@@ -205,19 +205,4 @@ public class Note {
                 .map(Note::createDAO)
                 .toList();
     }
-
-    @Override
-    public String toString() {
-        return "Note{" +
-                "noteId=" + noteId +
-                ", title='" + title + '\'' +
-                ", createdDate=" + createdDate +
-                ", lastModificationDate=" + lastModificationDate +
-                ", content='" + content + '\'' +
-                ", noteType=" + noteType +
-                ", category=" + category +
-                ", priority=" + priority +
-                ", deadline=" + deadline +
-                '}';
-    }
 }

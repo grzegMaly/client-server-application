@@ -52,9 +52,6 @@ public class DBConnectionHolder {
                     props.getProperty("login"),
                     props.getProperty("password")
             );
-
-            System.out.println("Connection success");
-
             return true;
         } catch (SQLException e) {
             return false;

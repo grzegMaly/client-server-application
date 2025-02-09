@@ -83,7 +83,6 @@ public class NoteRequestModel {
         try {
             data = objectMapper.writeValueAsBytes(dao);
         } catch (IOException e) {
-            System.out.println("Problem w save");
             return false;
         }
 
@@ -94,7 +93,6 @@ public class NoteRequestModel {
         try {
             response = ClientHolder.getClient().send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            System.out.println(e.getMessage());
             return false;
         }
         return response.statusCode() == 200;

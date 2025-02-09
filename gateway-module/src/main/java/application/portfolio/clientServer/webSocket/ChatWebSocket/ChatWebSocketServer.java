@@ -57,7 +57,6 @@ public class ChatWebSocketServer extends WebSocketServer implements WebSocketSer
     public void onOpen(WebSocket webSocket, ClientHandshake clientHandshake) {
 
         String requestURI = webSocket.getResourceDescriptor();
-        System.out.println(webSocket.getRemoteSocketAddress());
         String[] chatUri = requestURI.split("\\?");
         var params = DataParser.getParams(chatUri[1]);
 
@@ -77,15 +76,7 @@ public class ChatWebSocketServer extends WebSocketServer implements WebSocketSer
     @Override
     public void onClose(WebSocket webSocket, int i, String s, boolean b) {
 
-        System.out.println("Connection closed. Reason: " + s);
-
-        UUID result = activeConnections.remove(webSocket.getRemoteSocketAddress());
-        if (result != null) {
-            System.out.println("Closed");
-        } else {
-            System.out.println("Some problem");
-        }
-
+        activeConnections.remove(webSocket.getRemoteSocketAddress());
         webSocket.close();
     }
 
@@ -114,7 +105,6 @@ public class ChatWebSocketServer extends WebSocketServer implements WebSocketSer
 
     @Override
     public void onStart() {
-        System.out.println("WebSocket server started successfully!");
     }
 
     private void forwardMessageToWebSocketServer(String message) {

@@ -2,7 +2,6 @@ package application.portfolio.endpoints.endpointClasses.chat.chatUtils;
 
 import application.portfolio.clientServer.DBConnectionHolder;
 import application.portfolio.clientServer.response.MessageResponse;
-import application.portfolio.objects.dao.Message.MessageDAO;
 import application.portfolio.objects.model.Message.Message;
 import application.portfolio.objects.model.Message.MessageUtils;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,15 +22,12 @@ public class ChatPostMethods {
 
     public static MessageResponse sendMessage(byte[] data) throws IOException {
 
-        System.out.println("ELOOOOOOOOOO");
         JsonNode node = objectMapper.readTree(data);
         if (!validateMessageNode(node)) {
-            System.out.println("No i dupa");
             return new MessageResponse("Bad Data", HTTP_FORBIDDEN);
         }
 
         Message message = MessageUtils.createMessage(node);
-        System.out.println(message);
         if (message == null) {
             return new MessageResponse("Bad Data", HTTP_FORBIDDEN);
         }

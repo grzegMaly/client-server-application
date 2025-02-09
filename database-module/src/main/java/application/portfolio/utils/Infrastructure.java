@@ -55,8 +55,6 @@ public class Infrastructure {
         String trustedIp = address.getAddress().getHostAddress();
         int trustedPort = address.getPort();
 
-        System.out.println(trustedIp + ": " + trustedPort);
-
         for (Map<String, String> data : infrastructureData.values()) {
 
             String tempHost = getHost(data);
@@ -66,10 +64,7 @@ public class Infrastructure {
             tempHost = tempSocket.getAddress().getHostAddress();
             temPort = tempSocket.getPort();
 
-            System.out.println(tempHost + ": " + temPort);
-
             if (trustedIp.equals(tempHost) && trustedPort == temPort) {
-                System.out.println(tempSocket);
                 return true;
             }
         }

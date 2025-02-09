@@ -44,7 +44,6 @@ public class MyWebSocketServer extends WebSocketServer {
         if (connections[0] != conn.getRemoteSocketAddress()) {
             return;
         }
-        System.out.println(message);
 
         JsonNode node = parseMessage(message);
         if (node == null) {
@@ -53,7 +52,6 @@ public class MyWebSocketServer extends WebSocketServer {
 
         if (!PostMessageMethods.postMessageToDataBase(message)) {
             message = generateErrorResponse(node, "Error");
-            System.out.println(message);
         } else {
             message = prepareMessageForRecipient(node);
             if (message == null) {
