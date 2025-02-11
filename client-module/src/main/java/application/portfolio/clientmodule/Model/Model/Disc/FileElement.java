@@ -56,7 +56,7 @@ public class FileElement extends DiscElement {
     }
 
     public static FileElement completeElement(JsonNode node) {
-        if (DataParser.validateElements(node, FILE_KEYS)) {
+        if (DataParser.validateNode(node, FILE_KEYS)) {
             FileElement element = new FileElement();
             boolean thumbnail = node.get(FILE_KEYS[1]).asBoolean();
             element.setHasThumbnail(thumbnail);

@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.net.HttpURLConnection.*;
@@ -65,7 +64,7 @@ public class NotesPostMethods {
             return Map.entry(HTTP_INTERNAL_ERROR, finalNode);
         }
 
-        Note note = Note.createNote(node);
+        Note note = Note.completeNote(node);
         if (note == null) {
             finalNode.put(RESPONSE, "Invalid Note Data");
             return Map.entry(HTTP_BAD_REQUEST, finalNode);

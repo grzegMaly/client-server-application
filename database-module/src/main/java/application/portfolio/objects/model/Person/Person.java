@@ -64,8 +64,8 @@ public class Person implements DAOConverter<Person, PersonDAO> {
         this.lastName = lastName;
     }
 
-    public int getRole() {
-        return role.getId();
+    public Role getRole() {
+        return role;
     }
 
     public void setRole(Role role) {
@@ -90,10 +90,10 @@ public class Person implements DAOConverter<Person, PersonDAO> {
 
     @Override
     public PersonDAO toDAO() {
-        return new PersonDAO(this.getId(), this.getFirstName(), this.getLastName(), Role.fromId(this.getRole()));
+        return new PersonDAO(this.getId(), this.getFirstName(), this.getLastName(), this.getRole().getValue());
     }
 
     public static Person fromDAO(PersonDAO p) {
-        return new Person(p.getId(), p.getFirstName(), p.getLastName(), p.getRole());
+        return new Person(p.getId(), p.getFirstName(), p.getLastName(), Role.fromValue(p.getRole()));
     }
 }

@@ -90,7 +90,7 @@ public class UserPostMethods {
                 SQLServerDataTable userDataTable = getUserDataTable();
 
                 for (Person p : persons) {
-                    userDataTable.addRow(null, p.getFirstName(), p.getLastName(), p.getRole(), p.getEmail(), p.getPassword());
+                    userDataTable.addRow(null, p.getFirstName(), p.getLastName(), p.getRole().getValue(), p.getEmail(), p.getPassword());
                 }
                 cs.setStructured(1, "UserData", userDataTable);
                 cs.registerOutParameter(2, Types.INTEGER);

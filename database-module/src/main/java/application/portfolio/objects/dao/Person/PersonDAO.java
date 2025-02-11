@@ -8,9 +8,9 @@ public class PersonDAO {
     private UUID id;
     private String firstName;
     private String lastName;
-    private Role role;
+    private int role;
 
-    public PersonDAO(UUID id, String firstName, String lastName, Role role) {
+    public PersonDAO(UUID id, String firstName, String lastName, int role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -41,11 +41,11 @@ public class PersonDAO {
         this.lastName = lastName;
     }
 
-    public Role getRole() {
+    public int getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(int role) {
         this.role = role;
     }
 }

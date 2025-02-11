@@ -138,6 +138,7 @@ public class Response<T extends DAOConverter<T, D>, D> implements IResponse {
                 response = new Response<>(cs, HTTP_OK);
             }
         } catch (SQLException e) {
+            System.out.println(e.getMessage());
             throw new SQLException();
         }
         return response;

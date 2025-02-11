@@ -150,4 +150,26 @@ public class DBConnectionHolder {
     public static String saveMessage() {
         return statements.get("saveMessage");
     }
+
+    //--------------------------------------------------------------------
+
+    public static String loadReceivedTasks() {
+        return statements.get("loadReceivedTasks");
+    }
+
+    public static String loadCreatedTasks() {
+        return statements.get("loadCreatedTasks");
+    }
+
+    public static String createTask() {
+        return statements.get("createTask");
+    }
+
+    public static String updateTask() {
+        return statements.get("updateTask");
+    }
+
+    public static String deleteTask() {
+        return statements.get("deleteTask");
+    }
 }

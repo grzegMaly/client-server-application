@@ -16,14 +16,14 @@ public class PersonUtils {
     private static final List<String> existingPersonKeys = List.of("id", "firstName", "lastName", "role");
     private static final List<String> newPersonKeys = List.of("firstName", "lastName", "role", "email", "password");
 
-    public static Person  createPerson(ResultSet rs) {
+    public static Person createPerson(ResultSet rs) {
         try {
             String id = rs.getString(1);
             UUID uId = UUID.fromString(id);
             String fName = rs.getString(2);
             String lName = rs.getString(3);
             int role = rs.getInt(4);
-            return new Person(uId, fName, lName, Role.fromId(role));
+            return new Person(uId, fName, lName, Role.fromValue(role));
         } catch (Exception e) {
             return null;
         }
@@ -125,7 +125,7 @@ public class PersonUtils {
         if (DataParser.isNullOrEmpty(person.getFirstName()) || DataParser.isNullOrEmpty(person.getLastName())) {
             return false;
         }
-        return person.getRole() <= 2 && person.getRole() >= 0;
+        return person.getRole().getValue() <= 2 && person.getRole().getValue() >= 0;
     }
 
     private static Person createPerson(JsonNode personNode, String[] keysArr) {
@@ -156,7 +156,7 @@ public class PersonUtils {
 
         UUID uId = UUID.fromString(id);
         int iRole = Integer.parseInt(role);
-        return new Person(uId, fName, lName, Role.fromId(iRole));
+        return new Person(uId, fName, lName, Role.fromValue(iRole));
     }
 
     private static Person createNewPerson(String[] data) {
@@ -167,6 +167,7 @@ public class PersonUtils {
         String password = data[4].trim();
 
         int iRole = Integer.parseInt(role);
-        return new Person(fName, lName, Role.fromId(iRole), email, password);
+
+        return new Person(fName, lName, Role.fromValue(iRole), email, password);
     }
 }

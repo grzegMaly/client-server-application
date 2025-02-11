@@ -124,7 +124,7 @@ public class Note {
 
     public static Note createNote(JsonNode node) {
 
-        if (!DataParser.validateElements(node, REQUIRED_ATTRIBUTES)) {
+        if (!DataParser.validateNode(node, REQUIRED_ATTRIBUTES)) {
             return null;
         }
 

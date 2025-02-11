@@ -37,11 +37,6 @@ public class RegisterUser implements EndpointHandler, HttpHandler {
                 return;
             }
 
-            if (!validateRequest()) {
-                ResponseHandler.handleError(exchange, "Invalid Credentials", HTTP_UNAUTHORIZED);
-                return;
-            }
-
             var body = exchange.getRequestBody();
             JsonNode node = objectMapper.readTree(body);
             PersonResponse personResponse = handleAdding(node);
@@ -60,10 +55,5 @@ public class RegisterUser implements EndpointHandler, HttpHandler {
             return new PersonResponse("Bad Data", HTTP_BAD_REQUEST);
         }
         return UserPostMethods.addPerson(persons);
-    }
-
-    //TODO: TEMP
-    private boolean validateRequest() {
-        return true;
     }
 }

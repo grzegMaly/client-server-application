@@ -51,7 +51,7 @@ public class NotesPutMethods {
             return Map.entry(HTTP_INTERNAL_ERROR, finalNode);
         }
 
-        Note note = Note.createNote(node);
+        Note note = Note.completeNote(node);
         if (note == null) {
             finalNode.put(RESPONSE, "Invalid Note Data");
             return Map.entry(HTTP_BAD_REQUEST, finalNode);

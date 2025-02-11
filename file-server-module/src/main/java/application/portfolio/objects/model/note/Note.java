@@ -109,7 +109,7 @@ public class Note {
 
                 String key = keyVal[0].trim();
                 String val = keyVal[1].trim();
-                createNote(note, key, val);
+                completeNote(note, key, val);
             }
         } catch (IOException | IllegalArgumentException | DateTimeParseException e) {
             return null;
@@ -117,7 +117,7 @@ public class Note {
         return note;
     }
 
-    public static Note createNote(JsonNode node) {
+    public static Note completeNote(JsonNode node) {
 
         Note note = new Note();
         Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
@@ -127,7 +127,7 @@ public class Note {
                 Map.Entry<String, JsonNode> entry = iterator.next();
                 String key = entry.getKey();
                 String val = entry.getValue().asText();
-                createNote(note, key, val);
+                completeNote(note, key, val);
             }
         } catch (IllegalArgumentException | DateTimeParseException e) {
             return null;
@@ -135,7 +135,7 @@ public class Note {
         return note;
     }
 
-    private static void createNote(Note note, String key, String val) {
+    private static void completeNote(Note note, String key, String val) {
         switch (key) {
             case "noteId" -> {
                 UUID id = UUID.fromString(val);

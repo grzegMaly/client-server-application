@@ -73,7 +73,7 @@ public class DiscElement extends VBox {
 
     public static DiscElement createElement(JsonNode node) {
 
-        if (!DataParser.validateElements(node, REQUIRED_KEYS)) {
+        if (!DataParser.validateNode(node, REQUIRED_KEYS)) {
             return null;
         }
 

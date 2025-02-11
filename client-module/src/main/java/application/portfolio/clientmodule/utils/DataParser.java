@@ -30,7 +30,7 @@ public class DataParser {
         return userId;
     }
 
-    public static boolean validateElements(JsonNode node, String[] keys) {
+    public static boolean validateNode(JsonNode node, String[] keys) {
         for (String key : keys) {
             if (!node.hasNonNull(key)) {
                 return false;

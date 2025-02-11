@@ -72,6 +72,25 @@ Create Table ChatRegistry
 	createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
 )
 
+Create Table TaskStatus (
+	statusId tinyInt PRIMARY KEY IDENTITY(0, 1),
+	statusName NVARCHAR(50) UNIQUE NOT NULL
+)
+
+Create Table Tasks (
+	taskId uniqueidentifier default NEWID() Primary Key,
+	title NVARCHAR(50) NOT NULL,
+	description NVARCHAR(MAX) NULL,
+	createdBy uniqueidentifier NOT NULL,
+	assignedTo uniqueidentifier NOT NULL,
+	createdAt DATETIME2(3) DEFAULT SYSDATETIME(),
+	deadline DATE NULL,
+	statusId tinyInt NOT NULL,
+	CONSTRAINT FK_Task_CreatedBy Foreign Key (createdBy) References Employees(id),
+	CONSTRAINT FK_Task_AssignedTo Foreign Key (assignedTo) References Employees(id),
+	CONSTRAINT FK_Task_TaskStatus Foreign Key (statusId) References TaskStatus(statusId)
+)
+
 Create Type UserData AS Table
 (
     id       uniqueidentifier,
@@ -100,4 +119,16 @@ Create Type MoveData AS TABLE
     userId uniqueidentifier,
     fromGroup uniqueidentifier,
     toGroup uniqueidentifier
+);
+
+Create Type TaskData AS TABLE
+(
+	taskId uniqueidentifier,
+	title NVARCHAR(50),
+	description NVARCHAR(MAX),
+	createdBy uniqueidentifier,
+	assignedTo uniqueidentifier,
+	createdAt DATETIME2(3),
+	deadline DATE,
+	statusId tinyInt
 );

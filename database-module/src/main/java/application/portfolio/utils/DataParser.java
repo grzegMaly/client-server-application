@@ -83,4 +83,13 @@ public class DataParser {
         }
         return false;
     }
+
+    public static boolean validateNode(JsonNode node, String[] keys) {
+        for (String key : keys) {
+            if (!node.hasNonNull(key)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
