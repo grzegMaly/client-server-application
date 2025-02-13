@@ -87,6 +87,20 @@ public class TaskDAO {
         return taskStatus;
     }
 
+    @Override
+    public String toString() {
+        return "TaskDAO{" +
+                "taskId='" + taskId + '\'' +
+                ", title='" + title + '\'' +
+                ", description='" + description + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", assignedTo='" + assignedTo + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", deadline='" + deadline + '\'' +
+                ", taskStatus=" + taskStatus +
+                '}';
+    }
+
     public void setTaskStatus(int taskStatus) {
         this.taskStatus = taskStatus;
     }

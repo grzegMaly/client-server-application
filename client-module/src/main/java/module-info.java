@@ -24,4 +24,6 @@ module application.portfolio.clientmodule {
     exports application.portfolio.clientmodule.Model.Model.Person;
     exports application.portfolio.clientmodule.Model.Model.Group;
     exports application.portfolio.clientmodule.utils.session;
+    exports application.portfolio.clientmodule.Model.Request.Task.TaskRequest;
+    exports application.portfolio.clientmodule.Model.Request.Task;
 }

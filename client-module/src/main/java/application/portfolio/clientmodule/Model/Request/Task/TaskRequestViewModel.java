@@ -1,13 +1,19 @@
 package application.portfolio.clientmodule.Model.Request.Task;
 
+import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Task.Task;
+import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequest.TaskRequest;
 import javafx.beans.property.SimpleStringProperty;
+
+import java.util.List;
+import java.util.UUID;
 
 public class TaskRequestViewModel {
 
     private final SimpleStringProperty title = new SimpleStringProperty();
-    private final SimpleStringProperty assignedById = new SimpleStringProperty();
-    private final SimpleStringProperty assignedToId = new SimpleStringProperty();
+    private final SimpleStringProperty assignedTo = new SimpleStringProperty();
+    private final SimpleStringProperty createdBy = new SimpleStringProperty();
     private final SimpleStringProperty createdDate = new SimpleStringProperty();
     private final SimpleStringProperty deadline = new SimpleStringProperty();
     private final SimpleStringProperty description = new SimpleStringProperty();
@@ -27,28 +33,28 @@ public class TaskRequestViewModel {
         this.title.set(title);
     }
 
-    public String getAssignedById() {
-        return assignedById.get();
+    public String getCreatedBy() {
+        return createdBy.get();
     }
 
-    public SimpleStringProperty assignedByIdProperty() {
-        return assignedById;
+    public SimpleStringProperty createdByProperty() {
+        return createdBy;
     }
 
-    public void setAssignedById(String assignedById) {
-        this.assignedById.set(assignedById);
+    public void setCreatedBy(String createdBy) {
+        this.createdBy.set(createdBy);
     }
 
-    public String getAssignedToId() {
-        return assignedToId.get();
+    public String getAssignedTo() {
+        return assignedTo.get();
     }
 
-    public SimpleStringProperty assignedToIdProperty() {
-        return assignedToId;
+    public SimpleStringProperty assignedToProperty() {
+        return assignedTo;
     }
 
-    public void setAssignedToId(String assignedToId) {
-        this.assignedToId.set(assignedToId);
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo.set(assignedTo);
     }
 
     public String getCreatedDate() {
@@ -84,11 +90,26 @@ public class TaskRequestViewModel {
     }
 
     public void setDescription(String description) {
+
         this.description.set(description);
     }
 
     public void save() {
-        TaskRequest data = converter.toTaskRequest(this);
-        model.save(data);
+
+        TaskDAO task = Task.createTaskDAO(this);
+        model.save(task);
+    }
+
+    public List<Task> loadReceivedTasks(PersonDAO loggedInUser) {
+        UUID userId = loggedInUser.getId();
+        TaskRequest data = converter.toUserRequest(userId);
+        return model.loadTasks(data, "assignedTo");
+    }
+
+    public List<Task> loadCreatedTasks(PersonDAO loggedInUser) {
+
+        UUID userId = loggedInUser.getId();
+        TaskRequest data = converter.toUserRequest(userId);
+        return model.loadTasks(data, "createdBy");
     }
 }

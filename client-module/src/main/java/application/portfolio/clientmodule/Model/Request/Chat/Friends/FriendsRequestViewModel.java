@@ -1,5 +1,6 @@
 package application.portfolio.clientmodule.Model.Request.Chat.Friends;
 
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequest.FriendsRequest;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import javafx.application.Platform;
@@ -11,8 +12,9 @@ import java.util.UUID;
 
 public class FriendsRequestViewModel {
 
-    private final FriendsRequestModel model = new FriendsRequestModel();
+    private static final FriendsRequestModel model = new FriendsRequestModel();
     private static final ObservableList<PersonDAO> friends = FXCollections.observableArrayList();
+    private static final UUID actualUserId = UserSession.getInstance().getLoggedInUser().getId();
 
     public static ObservableList<PersonDAO> getFriends() {
         return friends;
@@ -25,13 +27,14 @@ public class FriendsRequestViewModel {
                 .orElse(null);
     }
 
-    public void loadFriends(UUID userId) {
-        try {
-            List<PersonDAO> friendsList = model.getFriends(new FriendsRequest(userId));
+    public static List<PersonDAO> loadFriends() {
+
+        if (friends.isEmpty()) {
+            List<PersonDAO> friendsList = model.getFriends(new FriendsRequest(actualUserId));
             Platform.runLater(() -> friends.setAll(friendsList));
-        } catch (Exception ignored) {
-            //Nothing
+            return friendsList;
         }
+        return friends;
     }
 
 }

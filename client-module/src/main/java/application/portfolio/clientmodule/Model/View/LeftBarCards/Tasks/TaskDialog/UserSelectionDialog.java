@@ -1,7 +1,6 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog;
 
 import application.portfolio.clientmodule.Connection.UserSession;
-import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 import application.portfolio.clientmodule.Model.Model.Group.GroupDAO;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 public class UserSelectionDialog extends Stage {
 
     private PersonDAO selectedPerson = null;
-    private final PersonDAO loggedInUser = UserSession.getInstance().getLoggedInUser();
     private TableView<PersonDAO> tableView = new TableView<>();
     private ObservableList<PersonDAO> usersData = FXCollections.observableArrayList();
     private final ExecutorService executor =
@@ -51,13 +49,11 @@ public class UserSelectionDialog extends Stage {
 
         configureTableView();
         loadUsers().thenAccept(users -> Platform.runLater(() -> {
-                    usersData.addAll(users);
+                    usersData.setAll(users);
                     tableView.setItems(usersData);
                 })
         ).exceptionally(e -> {
-            //Todo: Make it Custom
             System.out.println("Error in " + this.getClass().getSimpleName() + ", initializePage");
-            e.printStackTrace();
             return null;
         });
 
@@ -98,12 +94,7 @@ public class UserSelectionDialog extends Stage {
     }
 
     private CompletableFuture<List<PersonDAO>> loadUsers() {
-
-        return CompletableFuture.supplyAsync(() -> {
-            List<PersonDAO> persons = FriendsRequestViewModel.getFriends();
-            persons.add(loggedInUser);
-            return persons;
-        }, executor);
+        return CompletableFuture.supplyAsync(UserSession::getUsersFromGroups, executor);
     }
 
     @Override
@@ -111,6 +102,7 @@ public class UserSelectionDialog extends Stage {
 
         tableView = null;
         usersData = null;
+
 
         ExecutorServiceManager.shutDownThis(this.getClass().getSimpleName());
         super.close();

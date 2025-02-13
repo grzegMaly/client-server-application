@@ -47,6 +47,7 @@ public class LoginRequestViewModel {
 
         if (person != null) {
             UserSession.getInstance().setLoggedInUser(person);
+            UserSession.loadFriends();
             Page mainScene = PageFactory.getInstance(MainScene.class);
             TeamLinkApp.useScene(mainScene.getClass());
         } else {

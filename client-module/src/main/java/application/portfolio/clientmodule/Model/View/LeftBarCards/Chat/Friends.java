@@ -21,7 +21,6 @@ import java.util.concurrent.CompletableFuture;
 
 public class Friends extends ListView<PersonDAO> implements Page {
 
-    private final FriendsRequestViewModel friendsRequestViewModel = new FriendsRequestViewModel();
     private static ChatBinder chatBinder = null;
 
     private Friends() {
@@ -71,8 +70,11 @@ public class Friends extends ListView<PersonDAO> implements Page {
     }
 
     private void loadFriends() {
-        UUID uuid = UserSession.getInstance().getLoggedInUser().getId();
-        friendsRequestViewModel.loadFriends(uuid);
+
+        if (UserSession.getPersonObjects().isEmpty()) {
+            List<PersonDAO> friendsList = FriendsRequestViewModel.loadFriends();
+            CompletableFuture.runAsync(() -> friendsList.forEach(UserSession::addPerson));
+        }
     }
 
     public void setChatBinder(ChatBinder chatBinder) {

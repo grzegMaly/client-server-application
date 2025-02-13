@@ -15,19 +15,4 @@ public class FriendsRequestConverter {
         String uuid = request.getUserId().toString();
         return DataParser.paramsString(Map.of("userId", uuid, "friends", "true"));
     }
-
-    public static List<PersonDAO> fromJson(JsonNode node) {
-        List<PersonDAO> friends = new ArrayList<>();
-        node = node.get("response");
-        if (node.isArray()) {
-            for (JsonNode friendNode : node) {
-                PersonDAO friend = PersonMethods.createPersonFromNode(friendNode);
-                friends.add(friend);
-            }
-        } else if (node.isObject()) {
-            PersonDAO friend = PersonMethods.createPersonFromNode(node);
-            friends.add(friend);
-        }
-        return friends;
-    }
 }

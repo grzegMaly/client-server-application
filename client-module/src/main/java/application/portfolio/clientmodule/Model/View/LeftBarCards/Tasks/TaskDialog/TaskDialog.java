@@ -3,7 +3,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDia
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.Model.Model.Person.Role;
-import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
+import application.portfolio.clientmodule.Model.Model.Task.Task;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -24,11 +24,11 @@ public class TaskDialog extends Stage {
     public enum Operation {
         READ, READ_MODIFY, CREATE;
 
-        public static Operation determineOperation(TaskDAO task) {
+        public static Operation determineOperation(Task task) {
             PersonDAO person = UserSession.getInstance().getLoggedInUser();
             if (task == null) return CREATE;
             return person.getRole().equals(Role.EMPLOYEE) ? READ :
-                    (person.getId().equals(task.getAssignedBy().getId()) ? READ_MODIFY : READ);
+                    (person.getId().equals(task.getCreatedBy().getId()) ? READ_MODIFY : READ);
         }
     }
 
@@ -39,8 +39,6 @@ public class TaskDialog extends Stage {
     private Button editBtn = null;
     private Button saveBtn = null;
     private TextField titleTf = null;
-    private TextField searchTf = null;
-    private Button searchBtn = null;
     private HBox searchStruct = null;
     private final DatePicker deadlineDp = new DatePicker();
 
@@ -87,12 +85,12 @@ public class TaskDialog extends Stage {
         useDialog(null, Operation.CREATE);
     }
 
-    public void useDialog(TaskDAO task, Operation operation) {
+    public void useDialog(Task task, Operation operation) {
 
         this.openOperation = operation;
 
         taskBinder.withOpenOperation(openOperation);
-        taskBinder.withTaskDAO(task);
+        taskBinder.withTask(task);
 
         initGP();
         boundSizeProperties();
@@ -188,9 +186,9 @@ public class TaskDialog extends Stage {
         titleTf = new TextField();
         taskBinder.withTitle(titleTf);
 
-        searchTf = new TextField();
+        TextField searchTf = new TextField();
         searchTf.setEditable(false);
-        searchBtn = new Button("≡");
+        Button searchBtn = new Button("≡");
         searchStruct = new HBox(searchTf, searchBtn);
         taskBinder.withAssignedTo(searchTf, searchBtn);
 

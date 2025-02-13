@@ -6,7 +6,7 @@ import java.util.*;
 
 public class PersonDAO {
 
-    private UUID id = UUID.randomUUID();
+    private UUID id;
     private String firstName;
     private String lastName;
     private Role role;
@@ -16,6 +16,10 @@ public class PersonDAO {
     private Set<GroupDAO> ownedGroups = null;
 
     public PersonDAO() {
+    }
+
+    public PersonDAO(UUID id) {
+        this.id = id;
     }
 
     public PersonDAO(String email, String password) {

@@ -8,6 +8,7 @@ import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static java.net.HttpURLConnection.HTTP_OK;
@@ -42,14 +43,15 @@ public class TaskResponse extends Response<Task, TaskDAO> {
 
         int cCount = rs.getMetaData().getColumnCount();
         if (!rs.next()) {
-            throw new SQLException();
+            setStatusCode(HTTP_OK);
+            setItems(Collections.emptyList());
+            return;
         }
 
         if (cCount == 1) {
             String message = rs.getString(1);
             setMessage(message);
             setStatusCode(HTTP_UNAUTHORIZED);
-
         } else if (cCount > 1) {
             List<Task> tasks = new ArrayList<>();
             do {

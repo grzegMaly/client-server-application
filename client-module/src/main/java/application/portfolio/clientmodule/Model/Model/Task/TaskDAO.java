@@ -1,37 +1,39 @@
 package application.portfolio.clientmodule.Model.Model.Task;
 
 
+import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Request.Task.TaskRequestViewModel;
+import application.portfolio.clientmodule.utils.DataParser;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.UUID;
 
 public class TaskDAO {
 
-    private UUID id = UUID.randomUUID();
+    private String taskId;
     private String title;
-    private PersonDAO assignedTo;
-    private PersonDAO assignedBy;
-    private LocalDate createdDate;
-    private LocalDate deadline;
     private String description;
+    private String createdBy;
+    private String assignedTo;
+    private String createdAt;
+    private String deadline;
+    private int taskStatus;
 
-    public TaskDAO(String title, PersonDAO assignedTo, PersonDAO assignedBy, LocalDate createdDate,
-                   LocalDate deadline, String description) {
-        this.title = title;
-        this.assignedTo = assignedTo;
-        this.assignedBy = assignedBy;
-        this.createdDate = createdDate;
-        this.deadline = deadline;
-        this.description = description;
+    public TaskDAO() {
     }
 
-    public UUID getId() {
-        return id;
+    public String getTaskId() {
+        return taskId;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public String getTitle() {
@@ -42,34 +44,6 @@ public class TaskDAO {
         this.title = title;
     }
 
-    public PersonDAO getAssignedTo() {
-        return assignedTo;
-    }
-
-    public void setAssignedTo(PersonDAO assignedTo) {
-        this.assignedTo = assignedTo;
-    }
-
-    public PersonDAO getAssignedBy() {
-        return assignedBy;
-    }
-
-    public void setAssignedBy(PersonDAO assignedBy) {
-        this.assignedBy = assignedBy;
-    }
-
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public LocalDate getDeadline() {
-        return deadline;
-    }
-
-    public void setDeadline(LocalDate deadline) {
-        this.deadline = deadline;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -78,16 +52,57 @@ public class TaskDAO {
         this.description = description;
     }
 
-    //Todo: Delete in the Future
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public String getAssignedTo() {
+        return assignedTo;
+    }
+
+    public void setAssignedTo(String assignedTo) {
+        this.assignedTo = assignedTo;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(String deadline) {
+        this.deadline = deadline;
+    }
+
+    public int getTaskStatus() {
+        return taskStatus;
+    }
+
+    public void setTaskStatus(int taskStatus) {
+        this.taskStatus = taskStatus;
+    }
+
     @Override
     public String toString() {
         return "TaskDAO{" +
-                "id=" + id +
+                "taskId='" + taskId + '\'' +
                 ", title='" + title + '\'' +
-                ", assignedTo=" + assignedTo +
-                ", assignedBy=" + assignedBy +
-                ", deadline=" + deadline +
                 ", description='" + description + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", assignedTo='" + assignedTo + '\'' +
+                ", createdAt='" + createdAt + '\'' +
+                ", deadline='" + deadline + '\'' +
+                ", taskStatus=" + taskStatus +
                 '}';
     }
 }

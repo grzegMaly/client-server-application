@@ -1,31 +1,41 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks;
 
+import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog.TaskDialog;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
 import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.ObservableList;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.MouseButton;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
 
 public class TaskController {
 
-    public static TableView<TaskDAO> getTaskTable() {
+    private TableView<Task> tasksTable;
+    private final TaskManager taskManager = new TaskManager();
+    private ExecutorService executor;
 
-        TableView<TaskDAO> tasksTable = new TableView<>();
+    public void setExecutor(ExecutorService executor) {
+        this.executor = executor;
+    }
 
-        TableColumn<TaskDAO, String> titleCol = new TableColumn<>("Title");
-        TableColumn<TaskDAO, String> authorCol = new TableColumn<>("Author");
-        TableColumn<TaskDAO, String> deadlineCol = new TableColumn<>("Deadline");
-        TableColumn<TaskDAO, String> descriptionCol = new TableColumn<>("Description");
+    public TableView<Task> getTasksTable() {
+
+        tasksTable = new TableView<>();
+        TableColumn<Task, String> titleCol = new TableColumn<>("Title");
+        TableColumn<Task, String> authorCol = new TableColumn<>("Author");
+        TableColumn<Task, String> deadlineCol = new TableColumn<>("Deadline");
+        TableColumn<Task, String> descriptionCol = new TableColumn<>("Description");
 
         titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
         authorCol.setCellValueFactory(cellData -> {
-            PersonDAO author = cellData.getValue().getAssignedBy();
+            PersonDAO author = cellData.getValue().getCreatedBy();
             String fullName = author.getFirstName() + " " + author.getLastName();
             return new SimpleStringProperty(fullName);
         });
@@ -35,20 +45,19 @@ public class TaskController {
         tasksTable.getColumns().addAll(List.of(titleCol, authorCol, deadlineCol, descriptionCol));
         tasksTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        loadBehavior(tasksTable);
-
+        CompletableFuture.runAsync(this::loadBehavior, executor);
         return tasksTable;
     }
 
-    private static void loadBehavior(TableView<TaskDAO> tasksTable) {
+    private void loadBehavior() {
 
         tasksTable.setRowFactory(evt -> {
-            TableRow<TaskDAO> row = new TableRow<>();
+            TableRow<Task> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() > 1 &&
                         (!row.isEmpty())) {
 
-                    TaskDAO task = row.getItem();
+                    Task task = row.getItem();
                     TaskDialog.Operation operation = TaskDialog.Operation.determineOperation(task);
                     TaskDialog taskDialog = new TaskDialog();
                     taskDialog.useDialog(task, operation);
@@ -58,17 +67,17 @@ public class TaskController {
         });
     }
 
-    public static void loadReceivedTasks(TableView<TaskDAO> tasksTable) {
+    public CompletableFuture<Void> loadReceivedTasks() {
 
-        tasksTable.getItems().clear();
-        ObservableList<TaskDAO> tasks = TaskManager.loadReceivedTasks();
-        tasksTable.getItems().addAll(tasks);
+        return CompletableFuture.supplyAsync(taskManager::loadReceivedTasks, executor)
+                .thenAccept(tasks -> Platform.runLater(() ->
+                        tasksTable.getItems().setAll(tasks)));
     }
 
-    public static void loadWroteTasks(TableView<TaskDAO> tasksTable) {
+    public void loadWroteTasks() {
 
-        tasksTable.getItems().clear();
-        ObservableList<TaskDAO> tasks = TaskManager.loadWroteTasks();
-        tasksTable.getItems().addAll(tasks);
+        CompletableFuture.supplyAsync(taskManager::loadWroteTasks, executor)
+                .thenAccept(tasks -> Platform.runLater(() ->
+                        tasksTable.getItems().setAll(tasks)));
     }
 }

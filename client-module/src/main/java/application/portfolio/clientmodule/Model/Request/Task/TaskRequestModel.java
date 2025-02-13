@@ -1,10 +1,102 @@
 package application.portfolio.clientmodule.Model.Request.Task;
 
+import application.portfolio.clientmodule.Connection.ClientHolder;
+import application.portfolio.clientmodule.Connection.Infrastructure;
+import application.portfolio.clientmodule.Model.Model.Task.Task;
+import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequest.TaskRequest;
+import application.portfolio.clientmodule.utils.JsonBodyHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
 
 public class TaskRequestModel {
 
-    public void save(TaskRequest req) {
-        System.out.println("Saving " + req);
+    private final Map<String, String> gData;
+    private final ObjectMapper objectMapper;
+
+    {
+        gData = Infrastructure.getGatewayData();
+        objectMapper = new ObjectMapper();
+    }
+
+    public void save(TaskDAO task) {
+
+        byte[] data;
+        try {
+            data = objectMapper.writeValueAsBytes(task);
+        } catch (JsonProcessingException e) {
+            return;
+        }
+        HttpRequest request = ClientHolder.prepareRequest("", "tasks", "POST",
+                HttpRequest.BodyPublishers.ofByteArray(data)).build();
+
+        HttpResponse<String> response;
+        try {
+            response = ClientHolder.getClient().send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(response.statusCode());
+        System.out.println(response.body());
+    }
+
+    public List<Task> loadTasks(TaskRequest taskRequest, String key) {
+
+        String params = TaskRequestConverter.toQueryLoadParams(taskRequest, key);
+        HttpRequest request = ClientHolder.prepareRequest(params, "tasks", "GET",
+                HttpRequest.BodyPublishers.noBody()).build();
+
+        HttpResponse<JsonNode> response;
+        try {
+            response = ClientHolder.getClient().send(request, JsonBodyHandler.getJsonHandler());
+        } catch (IOException | InterruptedException e) {
+            return Collections.emptyList();
+        }
+
+        if (response.statusCode() == 200) {
+            return parseEntities(response);
+        }
+        return Collections.emptyList();
+    }
+
+    private List<Task> parseEntities(HttpResponse<JsonNode> response) {
+
+        JsonNode node = response.body();
+        node = node.get("response");
+
+        if (node == null) {
+            return Collections.emptyList();
+        }
+
+        List<Task> taskDAOS = new ArrayList<>();
+        Consumer<JsonNode> taskConsumer = n -> {
+            Task dao = Task.createTaskDAO(n);
+            if (dao != null) {
+                taskDAOS.add(dao);
+            }
+        };
+
+        if (node.isArray()) {
+            for (JsonNode n : node) {
+                taskConsumer.accept(n);
+            }
+        } else if (node.isObject()) {
+            taskConsumer.accept(node);
+        } else {
+            return Collections.emptyList();
+        }
+
+        return taskDAOS;
     }
 }

@@ -2,37 +2,35 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks;
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
+import application.portfolio.clientmodule.Model.Request.Task.TaskRequestViewModel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TaskManager {
 
-    private static final PersonDAO loggedInUser;
+    private final PersonDAO loggedInUser;
+    private final TaskRequestViewModel viewModel = new TaskRequestViewModel();
 
-    static {
+    {
         loggedInUser = UserSession.getInstance().getLoggedInUser();
     }
 
-    //Todo: Connect to server in the Future
-    public static ObservableList<TaskDAO> loadReceivedTasks() {
-        /*return FXCollections.observableArrayList(
-                Objects.getTasks().stream()
-                        .filter(t -> t.getAssignedTo().equals(loggedInUser))
-                        .toList()
-        );*/
-
-        return FXCollections.emptyObservableList();
+    public TaskManager() {
     }
 
-    //Todo: Connect to server in the Future
-    public static ObservableList<TaskDAO> loadWroteTasks() {
-        /*return FXCollections.observableArrayList(
-                Objects.getTasks().stream()
-                        .filter(t -> t.getAssignedBy().equals(loggedInUser))
-                        .toList()
-        );*/
+    public ObservableList<Task> loadReceivedTasks() {
 
-        return FXCollections.emptyObservableList();
+        List<Task> daoList = viewModel.loadReceivedTasks(loggedInUser);
+        return FXCollections.observableList(daoList);
+    }
+
+    public ObservableList<Task> loadWroteTasks() {
+        List<Task> daoList = viewModel.loadCreatedTasks(loggedInUser);
+        return FXCollections.observableList(daoList);
     }
 }

@@ -43,8 +43,7 @@ public class GroupResponse extends Response<Group, GroupDAO> {
 
     private void handleResultSet(ResultSet rs) throws SQLException {
 
-        int cCount;
-        cCount = rs.getMetaData().getColumnCount();
+        int cCount = rs.getMetaData().getColumnCount();
         if (!rs.next()) {
             throw new SQLException();
         }

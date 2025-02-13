@@ -1,21 +1,23 @@
 package application.portfolio.clientmodule.Connection;
 
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Map;
+import java.util.*;
 
 import static java.net.HttpURLConnection.HTTP_OK;
 
 public class UserSession {
 
     private static UserSession instance;
-    private PersonDAO loggedInUser;
+    private static PersonDAO loggedInUser;
     private String token;
+    private static final Map<UUID, PersonDAO> personObjects = new HashMap<>();
 
     private UserSession() {
     }
@@ -28,8 +30,13 @@ public class UserSession {
         return instance;
     }
 
+    public static void loadFriends() {
+        List<PersonDAO> friends = FriendsRequestViewModel.loadFriends();
+        friends.forEach(f -> personObjects.put(f.getId(), f));
+    }
+
     public void setLoggedInUser(PersonDAO user) {
-        this.loggedInUser = user;
+        loggedInUser = user;
     }
 
     public PersonDAO getLoggedInUser() {
@@ -45,7 +52,7 @@ public class UserSession {
     }
 
     public void clearSession() {
-        this.loggedInUser = null;
+        loggedInUser = null;
     }
 
     public static Boolean ping() {
@@ -56,7 +63,6 @@ public class UserSession {
         URI baseUri = Infrastructure.getBaseUri(spec);
 
         HttpResponse<String> response;
-
         HttpRequest request = HttpRequest.newBuilder(baseUri)
                 .GET()
                 .build();
@@ -68,5 +74,23 @@ public class UserSession {
         } catch (IOException | InterruptedException e) {
             return false;
         }
+    }
+
+    public static List<PersonDAO> getPersonObjects() {
+        return new ArrayList<>(personObjects.values());
+    }
+
+    public static PersonDAO getPerson(UUID personId) {
+        return personObjects.get(personId);
+    }
+
+    public static void addPerson(PersonDAO personDAO) {
+        personObjects.put(personDAO.getId(), personDAO);
+    }
+
+    public static List<PersonDAO> getUsersFromGroups() {
+        return getPersonObjects().stream()
+                .filter(p -> p.getRole().getId() < loggedInUser.getRole().getId())
+                .toList();
     }
 }

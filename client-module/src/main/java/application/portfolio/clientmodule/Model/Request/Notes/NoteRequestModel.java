@@ -21,18 +21,16 @@ import java.util.function.Consumer;
 
 public class NoteRequestModel {
 
-    private final Map<String, String> gData;
     private final ObjectMapper objectMapper;
 
     {
-        gData = Infrastructure.getGatewayData();
         objectMapper = new ObjectMapper();
     }
 
     public List<Note> loadNotes(NoteRequest noteRequest) {
 
         String params = NotesRequestConverter.toQueryLoadParams(noteRequest);
-        HttpRequest request = prepareRequest(params, "GET",
+        HttpRequest request = ClientHolder.prepareRequest(params, "notes", "GET",
                 HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<JsonNode> response;
@@ -51,7 +49,7 @@ public class NoteRequestModel {
     public String loadContent(NoteRequest noteRequest) {
 
         String params = NotesRequestConverter.toQueryContentRequest(noteRequest);
-        HttpRequest request = prepareRequest(params, "GET",
+        HttpRequest request = ClientHolder.prepareRequest(params, "notes", "GET",
                 HttpRequest.BodyPublishers.noBody()).build();
 
         HttpResponse<JsonNode> response;
@@ -86,7 +84,7 @@ public class NoteRequestModel {
             return false;
         }
 
-        HttpRequest request = prepareRequest(params, method,
+        HttpRequest request = ClientHolder.prepareRequest(params, "notes", method,
                 HttpRequest.BodyPublishers.ofByteArray(data)).build();
 
         HttpResponse<String> response;
@@ -101,12 +99,13 @@ public class NoteRequestModel {
     public boolean delete(NoteRequest noteRequest) {
 
         String params = NotesRequestConverter.toQueryWithNoteId(noteRequest);
-        HttpRequest request = prepareRequest(params, "DELETE",
-                HttpRequest.BodyPublishers.noBody()).build();
+        HttpRequest request = ClientHolder.prepareRequest(params, "notes", "DELETE",
+                        HttpRequest.BodyPublishers.noBody())
+                .build();
 
         HttpResponse<Void> response;
         try {
-             response = ClientHolder.getClient().send(request, HttpResponse.BodyHandlers.discarding());
+            response = ClientHolder.getClient().send(request, HttpResponse.BodyHandlers.discarding());
         } catch (IOException | InterruptedException e) {
             return false;
         }
@@ -127,14 +126,6 @@ public class NoteRequestModel {
         return null;
     }
 
-    private HttpRequest.Builder prepareRequest(String params, String method,
-                                               HttpRequest.BodyPublisher bodyPublisher) {
-        String spec = Infrastructure.uriSpecificPart(gData, "notes", params);
-
-        URI baseUri = Infrastructure.getBaseUri(spec);
-        return ClientHolder.getRequest(baseUri, method, bodyPublisher);
-    }
-
     private List<Note> parseEntities(HttpResponse<JsonNode> response) {
 
         JsonNode node = response.body();
@@ -146,7 +137,7 @@ public class NoteRequestModel {
 
         List<Note> noteDAOS = new ArrayList<>();
 
-        Consumer<JsonNode> consumer = n -> {
+        Consumer<JsonNode> noteConsumer = n -> {
             Note dao = Note.createNote(n);
             if (dao != null) {
                 noteDAOS.add(dao);
@@ -155,11 +146,14 @@ public class NoteRequestModel {
 
         if (node.isArray()) {
             for (JsonNode n : node) {
-                consumer.accept(n);
+                noteConsumer.accept(n);
             }
         } else if (node.isObject()) {
-            consumer.accept(node);
+            noteConsumer.accept(node);
+        } else {
+            return Collections.emptyList();
         }
+
         return noteDAOS;
     }
 }

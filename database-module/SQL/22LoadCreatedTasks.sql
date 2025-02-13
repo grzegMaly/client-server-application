@@ -1,7 +1,6 @@
 Use TeamLinkDB;
 GO
 
-
 Create or Alter Procedure LoadCreatedTasks
 	@UserId uniqueidentifier
 AS

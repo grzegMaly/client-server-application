@@ -15,11 +15,9 @@ import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 public class NotesDeleteMethods {
 
     private static final Map<String, String> fData;
-    private static final String NOTE_ID_KEY;
 
     static {
         fData = Infrastructure.getFileServerData();
-        NOTE_ID_KEY = "noteId";
     }
 
     public static void handleDelete(HttpExchange exchange, Map<String, String> paramsMap) {

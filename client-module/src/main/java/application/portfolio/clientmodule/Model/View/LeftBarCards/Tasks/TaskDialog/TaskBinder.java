@@ -1,12 +1,13 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog;
 
 import application.portfolio.clientmodule.Connection.UserSession;
+import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequestViewModel;
 import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
-import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
 import javafx.scene.control.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.List;
@@ -17,19 +18,21 @@ public class TaskBinder {
 
     private TaskDialog.Operation operation;
     private PersonDAO selectedUser;
-    PersonDAO actualUser = UserSession.getInstance().getLoggedInUser();
-    private TaskDAO taskDAO;
+    private final PersonDAO actualUser = UserSession.getInstance().getLoggedInUser();
+    private Task task;
     private Button saveBtn;
 
     private final TaskRequestViewModel viewModel = new TaskRequestViewModel();
     private final Set<Runnable> binds = new HashSet<>();
     private final Set<Runnable> clearSet = new HashSet<>();
+    private TextField titleTf;
+    private TextArea descriptionTa;
 
     public TaskBinder() {
     }
 
-    public void withTaskDAO(TaskDAO task) {
-        this.taskDAO = task;
+    public void withTask(Task task) {
+        this.task = task;
     }
 
     public void withOpenOperation(TaskDialog.Operation operation) {
@@ -40,7 +43,7 @@ public class TaskBinder {
 
         binds.add(() -> {
 
-            titleLbl.setText(taskDAO.getTitle());
+            titleLbl.setText(task.getTitle());
             clearSet.add(() -> titleLbl.setText(null));
 
             if (operation == TaskDialog.Operation.READ_MODIFY) {
@@ -51,21 +54,24 @@ public class TaskBinder {
     }
 
     public void withTitle(TextField titleTf) {
-        binds.add(() -> titleTf.textProperty().bindBidirectional(viewModel.titleProperty()));
-        clearSet.add(() -> titleTf.textProperty().unbindBidirectional(viewModel.titleProperty()));
+
+        this.titleTf = titleTf;
+
+        binds.add(() -> this.titleTf.textProperty().bindBidirectional(viewModel.titleProperty()));
+        clearSet.add(() -> this.titleTf.textProperty().unbindBidirectional(viewModel.titleProperty()));
     }
 
     public void withAuthor(Label authorLbl) {
 
         binds.add(() -> {
 
-            authorLbl.setText(taskDAO != null ?
-                    taskDAO.getAssignedBy().getName() : actualUser.getName());
+            authorLbl.setText(task != null ?
+                    task.getCreatedBy().getName() : actualUser.getName());
             clearSet.add(() -> authorLbl.setText(null));
 
             if (operation != TaskDialog.Operation.READ) {
-                viewModel.setAssignedById(actualUser.getId().toString());
-                clearSet.add(() -> viewModel.setAssignedById(null));
+                viewModel.setCreatedBy(actualUser.getId().toString());
+                clearSet.add(() -> viewModel.setCreatedBy(null));
             }
         });
     }
@@ -74,7 +80,7 @@ public class TaskBinder {
 
         binds.add(() -> {
 
-            selectedUser = taskDAO.getAssignedTo();
+            selectedUser = task.getAssignedTo();
             assignedToLbl.setText(selectedUser.getName());
             clearSet.add(() -> assignedToLbl.setText(null));
         });
@@ -92,8 +98,8 @@ public class TaskBinder {
                 if (personDAO != null) {
                     selectedUser = personDAO;
                     searchTf.setText(selectedUser.getName());
-                    viewModel.setAssignedToId(selectedUser.getId().toString());
-                    clearSet.add(() -> viewModel.setAssignedById(null));
+                    viewModel.setAssignedTo(selectedUser.getId().toString());
+                    clearSet.add(() -> viewModel.setCreatedBy(null));
                 }
             });
         });
@@ -104,14 +110,14 @@ public class TaskBinder {
         binds.add(() -> {
 
             if (operation != TaskDialog.Operation.CREATE) {
-                createdDateLbl.setText(taskDAO.getCreatedDate().toString());
+                createdDateLbl.setText(task.getCreatedAt().toString());
                 clearSet.add(() -> createdDateLbl.setText(null));
             }
 
             if (operation != TaskDialog.Operation.READ) {
 
-                viewModel.setCreatedDate(taskDAO != null ?
-                        taskDAO.getCreatedDate().toString() : LocalDate.now().toString());
+                viewModel.setCreatedDate(task != null ?
+                        task.getCreatedAt().toString() : LocalDateTime.now().withNano(0).toString());
                 createdDateLbl.textProperty().bindBidirectional(viewModel.createdDateProperty());
                 clearSet.addAll(List.of(() -> viewModel.setCreatedDate(null),
                         () -> createdDateLbl.textProperty().unbindBidirectional(viewModel.createdDateProperty())));
@@ -143,50 +149,59 @@ public class TaskBinder {
 
     public void withDeadline(Label deadline) {
 
-        binds.add(() -> deadline.setText(taskDAO.getDeadline().toString()));
+        binds.add(() -> deadline.setText(task.getDeadline().toString()));
     }
 
     public void withDescription(TextArea descriptionTa) {
 
+        this.descriptionTa = descriptionTa;
+
         binds.add(() -> {
 
             if (operation != TaskDialog.Operation.CREATE) {
-                descriptionTa.setText(taskDAO.getDescription());
+                this.descriptionTa.setText(task.getDescription());
             }
 
             if (operation != TaskDialog.Operation.READ) {
 
-                if (taskDAO != null) {
-                    viewModel.setDescription(taskDAO.getDescription());
+                if (task != null) {
+                    viewModel.setDescription(task.getDescription());
                     clearSet.add(() -> viewModel.setDescription(null));
                 }
-                descriptionTa.textProperty().bindBidirectional(viewModel.descriptionProperty());
+                this.descriptionTa.textProperty().bindBidirectional(viewModel.descriptionProperty());
             }
 
-            clearSet.addAll(List.of(descriptionTa::clear,
-                    () -> descriptionTa.textProperty().unbindBidirectional(viewModel.descriptionProperty())));
+            clearSet.addAll(List.of(this.descriptionTa::clear,
+                    () -> this.descriptionTa.textProperty().unbindBidirectional(viewModel.descriptionProperty())));
         });
     }
 
     public void withSaveBtn(Button saveBtn, Runnable saveAction) {
 
         this.saveBtn = saveBtn;
-        this.saveBtn.setOnMouseClicked(evt -> saveAction.run());
-
         binds.add(() -> this.saveBtn.setOnAction(evt -> {
-            if (validate()) {
-                viewModel.save();
+            if (!validateElements()) {
+                return;
             }
+            viewModel.save();
+            saveAction.run();
         }));
     }
 
-    private boolean validate() {
+    private boolean validateElements() {
 
+        if (titleTf.getText() == null || titleTf.getText().isBlank()) {
+            return false;
+        }
+
+        if (descriptionTa.getText() == null || descriptionTa.getText().isBlank()) {
+            descriptionTa.getStyleClass().add("badElement");
+            return false;
+        }
         return true;
     }
 
     public void bind() {
-
         binds.forEach(Runnable::run);
     }
 
