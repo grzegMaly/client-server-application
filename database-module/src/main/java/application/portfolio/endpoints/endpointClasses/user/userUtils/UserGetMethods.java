@@ -97,4 +97,17 @@ public class UserGetMethods {
             return new PersonResponse("Unknown Error", HTTP_INTERNAL_ERROR);
         }
      }
+
+    public static PersonResponse getAllUsers() {
+        Connection conn = DBConnectionHolder.getConnection();
+        try (CallableStatement cs = conn.prepareCall(
+                DBConnectionHolder.getAllUsers()
+        )) {
+
+            return new PersonResponse()
+                    .personResponseFromDB(cs, null);
+        } catch (SQLException e) {
+            return new PersonResponse("Unknown Error", HTTP_INTERNAL_ERROR);
+        }
+    }
 }

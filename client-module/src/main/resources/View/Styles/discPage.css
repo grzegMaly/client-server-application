@@ -1,5 +1,5 @@
 .base {
-    -fx-spacing: 10px;
+    -fx-spacing: 10;
 }
 
 .discElement {
@@ -17,12 +17,12 @@
 }
 
 .backBtn, .uploadBtn, .pathLbl {
-    -fx-font-size: 14px;
+    -fx-font-size: 14;
 }
 
 .backBtn, .uploadBtn {
     -fx-background-color: #3b3b3b;
-    -fx-background-radius: 15px;
+    -fx-background-radius: 15;
 }
 
 .discElement:hover, .backBtn:hover {
@@ -40,15 +40,15 @@
 .discContextMenu {
     -fx-background-color: #545454;
     -fx-border-color: #393939;
-    -fx-border-radius: 10px;
-    -fx-background-radius: 10px;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
 }
 
 .discContextMenu .menu-item {
     -fx-text-fill: white !important;
     -fx-background-color: transparent;
-    -fx-padding: 10px;
-    -fx-background-radius: 10px;
+    -fx-padding: 10;
+    -fx-background-radius: 10;
 }
 
 .discContextMenu .menu-item.download:hover {

@@ -33,7 +33,17 @@ public class ResourceDeleteMethods {
         Path userPath = validationResult.getUserPath();
         Path resourcePath = validationResult.getResourcePath();
         Path destinationPath = userPath.resolve(DRIVE).resolve(resourcePath);
-        boolean result = deleteRecursive(destinationPath);
+
+
+        boolean result;
+
+        try {
+            deleteRecursive(destinationPath);
+            result = true;
+        } catch (IOException e) {
+            result = false;
+        }
+
         if (!result) {
             finalNode.put("response", "Unknown Error");
             return Map.entry(HTTP_INTERNAL_ERROR, finalNode);
@@ -43,9 +53,9 @@ public class ResourceDeleteMethods {
         return Map.entry(HTTP_OK, finalNode);
     }
 
-    private static boolean deleteRecursive(Path path) {
+    public static void deleteRecursive(Path path) throws IOException {
         if (!Files.exists(path)) {
-            return false;
+            return;
         }
 
         try (Stream<Path> stream = Files.walk(path)) {
@@ -54,12 +64,10 @@ public class ResourceDeleteMethods {
                         try {
                             Files.delete(p);
                         } catch (IOException e) {
+                            System.out.println(e.getMessage());
                             //Ignore
                         }
                     });
-            return true;
-        } catch (IOException e) {
-            return false;
         }
     }
 }

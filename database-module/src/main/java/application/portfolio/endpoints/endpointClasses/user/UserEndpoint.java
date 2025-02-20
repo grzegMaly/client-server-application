@@ -6,6 +6,7 @@ import application.portfolio.endpoints.endpointClasses.user.userUtils.UserDelete
 import application.portfolio.endpoints.endpointClasses.user.userUtils.UserGetMethods;
 import application.portfolio.endpoints.endpointClasses.user.userUtils.UserPostMethods;
 import application.portfolio.clientServer.response.PersonResponse;
+import application.portfolio.endpoints.endpointClasses.user.userUtils.UserPutMethods;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,6 +21,7 @@ import static java.net.HttpURLConnection.*;
 
 @EndpointInfo(path = "/user")
 public class UserEndpoint implements EndpointHandler, HttpHandler {
+
     @Override
     public HttpHandler endpoint() {
         return this;
@@ -32,8 +34,8 @@ public class UserEndpoint implements EndpointHandler, HttpHandler {
             PersonResponse personResponse;
             String method = exchange.getRequestMethod();
             if (params == null) {
-                if ("POST".equals(method)) {
-                    personResponse = handlePost(exchange);
+                if ("PUT".equals(method)) {
+                    personResponse = handlePut(exchange);
                 } else {
                     ResponseHandler.handleError(exchange, "Bad Data", HTTP_BAD_REQUEST);
                     return;
@@ -66,7 +68,20 @@ public class UserEndpoint implements EndpointHandler, HttpHandler {
             return handleGetWithPagination(params.get("offset"), params.get("limit"));
         }
 
+        if (DataParser.validateParams(params, "all")) {
+            return handleGetAll(params.get("all"));
+        }
+
         return new PersonResponse("Bad Data", HTTP_FORBIDDEN);
+    }
+
+    private PersonResponse handleGetAll(String value) {
+
+        if (!value.equalsIgnoreCase("true")) {
+            return new PersonResponse("Invalid Params", HTTP_FORBIDDEN);
+        }
+
+        return UserGetMethods.getAllUsers();
     }
 
     private PersonResponse handleGetById(String id) {
@@ -97,7 +112,7 @@ public class UserEndpoint implements EndpointHandler, HttpHandler {
         return UserGetMethods.getPersonsFromDatabase(iOffset, iLimit);
     }
 
-    private PersonResponse handlePost(HttpExchange exchange) {
+    private PersonResponse handlePut(HttpExchange exchange) {
 
         byte[] data;
         try {
@@ -105,7 +120,7 @@ public class UserEndpoint implements EndpointHandler, HttpHandler {
         } catch (IOException e) {
             return new PersonResponse("Unknown Error", HTTP_FORBIDDEN);
         }
-        return UserPostMethods.modifyPerson(data);
+        return UserPutMethods.modifyPerson(data);
     }
 
     private PersonResponse handleDelete(Map<String, String> params) {

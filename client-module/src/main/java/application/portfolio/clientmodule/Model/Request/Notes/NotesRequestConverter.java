@@ -35,7 +35,7 @@ public class NotesRequestConverter {
     }
 
     public NoteRequest convertToWithUserIdRequest() {
-        UUID id = UserSession.getInstance().getLoggedInUser().getId();
+        UUID id = UserSession.getInstance().getLoggedInUser().getUserId();
         return new NoteRequest(id);
     }
 

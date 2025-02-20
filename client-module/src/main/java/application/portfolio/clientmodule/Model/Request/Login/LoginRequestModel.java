@@ -4,7 +4,7 @@ import application.portfolio.clientmodule.Connection.ClientHolder;
 import application.portfolio.clientmodule.Connection.Infrastructure;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Login.LoginRequest.LoginRequest;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.utils.session.PersonMethods;
 import application.portfolio.clientmodule.utils.CustomAlert;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
@@ -27,7 +27,7 @@ import static java.net.HttpURLConnection.HTTP_UNAUTHORIZED;
 
 public class LoginRequestModel {
 
-    public PersonDAO login(LoginRequest req) {
+    public Person login(LoginRequest req) {
 
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -62,7 +62,7 @@ public class LoginRequestModel {
         return handlePersonResponse(response);
     }
 
-    private PersonDAO handlePersonResponse(HttpResponse<JsonNode> response) {
+    private Person handlePersonResponse(HttpResponse<JsonNode> response) {
 
         JsonNode node = response.body();
 
@@ -85,7 +85,7 @@ public class LoginRequestModel {
         }
 
         node = node.get("response");
-        PersonDAO personDAO = PersonMethods.createPersonFromNode(node);
+        Person personDAO = PersonMethods.createPersonFromNode(node);
         if (personDAO != null) {
             String token = response.headers().map().get("Authorization").get(0);
             UserSession.getInstance().setToken(token);

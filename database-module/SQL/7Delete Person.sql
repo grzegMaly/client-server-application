@@ -14,6 +14,10 @@ BEGIN
 		END
 
 	BEGIN TRAN
+
+		Delete From Tasks
+		Where assignedTo = @id OR createdBy = @id
+
 		DELETE FROM Employees
 		Where id = @id
 

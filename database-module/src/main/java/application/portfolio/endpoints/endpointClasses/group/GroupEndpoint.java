@@ -6,20 +6,20 @@ import application.portfolio.endpoints.endpointClasses.group.groupUtils.GroupDel
 import application.portfolio.endpoints.endpointClasses.group.groupUtils.GroupGetMethod;
 import application.portfolio.clientServer.response.GroupResponse;
 import application.portfolio.endpoints.endpointClasses.group.groupUtils.GroupPostMethods;
+import application.portfolio.endpoints.endpointClasses.group.groupUtils.GroupPutMethods;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
-import java.io.IOException;
 import java.util.Map;
 
 import static java.net.HttpURLConnection.*;
 
 @EndpointInfo(path = "/group")
 public class GroupEndpoint implements EndpointHandler, HttpHandler {
+
     @Override
     public HttpHandler endpoint() {
         return this;
@@ -29,20 +29,24 @@ public class GroupEndpoint implements EndpointHandler, HttpHandler {
     public void handle(HttpExchange exchange) {
         try (exchange) {
 
-            GroupResponse groupResponse = null;
-            if ("GET".equals(exchange.getRequestMethod())) {
-                groupResponse = handleGet(exchange);
-            } else if ("POST".equals(exchange.getRequestMethod())) {
-                groupResponse = handlePost(exchange);
-            } else if ("DELETE".equals(exchange.getRequestMethod())) {
-                groupResponse = handleDelete(exchange);
-            } else {
-                groupResponse = new GroupResponse("Bad Gateway", HTTP_BAD_GATEWAY);
-            }
+            String method = exchange.getRequestMethod();
+            GroupResponse groupResponse = switch (method) {
+                case "GET" -> handleGet(exchange);
+                case "POST" -> {
+                    JsonNode node = DataParser.convertToNode(exchange);
+                    yield GroupPostMethods.addGroup(node);
+                }
+                case "PUT" -> {
+                    JsonNode node = DataParser.convertToNode(exchange);
+                    yield GroupPutMethods.modifyGroup(node);
+                }
+                case "DELETE" -> handleDelete(exchange);
+                default -> new GroupResponse("Bad Gateway", HTTP_BAD_GATEWAY);
+            };
 
             Map.Entry<Integer, JsonNode> entry = groupResponse.toJsonResponse();
             ResponseHandler.sendResponse(exchange, entry);
-        } catch (IOException e) {
+        } catch (Exception e) {
             ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);
         }
     }
@@ -54,39 +58,21 @@ public class GroupEndpoint implements EndpointHandler, HttpHandler {
             return new GroupResponse("Bad Data", HTTP_BAD_REQUEST);
         }
 
-        GroupResponse groupResponse = null;
+        GroupResponse groupResponse;
         if (paramsMap.containsKey("id")) {
             groupResponse = GroupGetMethod.getGroupFromDatabase(paramsMap.get("id"));
         } else if (paramsMap.containsKey("limit") && paramsMap.containsKey("offset")) {
             String offset = paramsMap.get("offset");
             String limit = paramsMap.get("limit");
             groupResponse = GroupGetMethod.getGroupFromDatabase(offset, limit);
+        } else if (paramsMap.containsKey("all")) {
+            if (paramsMap.get("all").equalsIgnoreCase("true")) {
+                groupResponse = GroupGetMethod.getAllGroupsFromDatabase();
+            } else {
+                groupResponse = new GroupResponse("Forbidden", HTTP_FORBIDDEN);
+            }
         } else {
             groupResponse = new GroupResponse("Forbidden", HTTP_FORBIDDEN);
-        }
-        return groupResponse;
-    }
-
-    private GroupResponse handlePost(HttpExchange exchange) throws IOException {
-
-        Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
-
-        if (paramsMap == null || !paramsMap.containsKey("option")) {
-            return new GroupResponse("Bad Data", HTTP_FORBIDDEN);
-        }
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] data = exchange.getRequestBody().readAllBytes();
-        JsonNode node = objectMapper.readTree(data);
-        GroupResponse groupResponse;
-
-        String option = paramsMap.get("option");
-        if (option.equals("modify")) {
-            groupResponse = GroupPostMethods.modifyGroup(node);
-        } else if (option.equals("add")) {
-            groupResponse = GroupPostMethods.addGroup(node);
-        } else {
-            groupResponse = new GroupResponse("Bad Request", HTTP_BAD_REQUEST);
         }
         return groupResponse;
     }
@@ -98,10 +84,8 @@ public class GroupEndpoint implements EndpointHandler, HttpHandler {
             return new GroupResponse("Bad Data", HTTP_FORBIDDEN);
         }
 
-        GroupResponse groupResponse;
         String id = paramsMap.get("id");
-        groupResponse = GroupDeleteMethod.deleteGroup(id);
-        return groupResponse;
+        return GroupDeleteMethod.deleteGroup(id);
     }
 }
 

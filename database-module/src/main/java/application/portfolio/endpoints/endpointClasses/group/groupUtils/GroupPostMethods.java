@@ -22,63 +22,22 @@ import static java.net.HttpURLConnection.HTTP_INTERNAL_ERROR;
 
 public class GroupPostMethods {
 
-    private static final List<Map.Entry<String, Integer>> GROUP_PARAMS = List.of(
+    protected static final List<Map.Entry<String, Integer>> GROUP_PARAMS = List.of(
             Map.entry("id", Types.NVARCHAR),
             Map.entry("groupName", Types.NVARCHAR),
             Map.entry("ownerId", Types.NVARCHAR)
     );
 
-    private static final List<Map.Entry<String, Integer>> USER_GROUP_PARAMS = List.of(
+    protected static final List<Map.Entry<String, Integer>> USER_GROUP_PARAMS = List.of(
             Map.entry("groupId", Types.NVARCHAR),
             Map.entry("ownerId", Types.NVARCHAR)
     );
 
-    private static final List<Map.Entry<String, Integer>> USER_MOVE_PARAMS = List.of(
+    protected static final List<Map.Entry<String, Integer>> USER_MOVE_PARAMS = List.of(
             Map.entry("userId", Types.NVARCHAR),
             Map.entry("fromGroup", Types.NVARCHAR),
             Map.entry("toGroup", Types.NVARCHAR)
     );
-
-    public static GroupResponse modifyGroup(JsonNode node) {
-
-        List<Group> groups = GroupUtils.createGroup(node);
-        if (groups.isEmpty()) {
-            return new GroupResponse("Unknown Error", HTTP_INTERNAL_ERROR);
-        }
-
-        Connection conn = DBConnectionHolder.getConnection();
-        try {
-            conn.setAutoCommit(false);
-            try (SQLServerCallableStatement cs = (SQLServerCallableStatement) conn.prepareCall(
-                    DBConnectionHolder.modifyGroupById()
-            )) {
-
-                SQLServerDataTable groupDataTable = getGroupDataTable(GROUP_PARAMS);
-                for (Group g : groups) {
-                    groupDataTable.addRow(g.getGroupId(), g.getGroupName(), g.getOwnerId());
-                }
-
-                cs.setStructured(1, "GroupData", groupDataTable);
-                cs.registerOutParameter(2, Types.INTEGER);
-                GroupResponse groupResponse = new GroupResponse()
-                        .groupResponseFromDB(cs, 2);
-
-                conn.commit();
-                return groupResponse;
-            } catch (SQLException e) {
-                conn.rollback();
-                throw e;
-            }
-        } catch (SQLException e) {
-            return new GroupResponse("Unknown Error", HTTP_INTERNAL_ERROR);
-        } finally {
-            try {
-                conn.setAutoCommit(true);
-            } catch (SQLException e) {
-                //Nothing
-            }
-        }
-    }
 
     public static GroupResponse addGroup(JsonNode node) {
 
@@ -101,9 +60,8 @@ public class GroupPostMethods {
                 }
 
                 cs.setStructured(1, "GroupData", groupDataTable);
-                cs.registerOutParameter(2, Types.INTEGER);
                 GroupResponse groupResponse = new GroupResponse()
-                        .groupResponseFromDB(cs, 2);
+                        .groupResponseFromDB(cs, null);
 
                 conn.commit();
                 return groupResponse;
@@ -126,7 +84,7 @@ public class GroupPostMethods {
 
         Map<UUID, Set<UUID>> ids = new HashMap<>();
         Consumer<JsonNode> gpConsumer = n -> {
-            if (n.size() == 2 && n.hasNonNull("groupId") && n.hasNonNull  ("userId")) {
+            if (n.size() == 2 && n.hasNonNull("groupId") && n.hasNonNull("userId")) {
                 UUID groupId = DataParser.parseId(n.get("groupId").asText());
                 UUID userId = DataParser.parseId(n.get("userId").asText());
 
@@ -251,7 +209,9 @@ public class GroupPostMethods {
         return ids.isEmpty();
     }
 
-    private static SQLServerDataTable getGroupDataTable(List<Map.Entry<String, Integer>> params) throws SQLServerException {
+    protected static SQLServerDataTable getGroupDataTable(List<Map.Entry<String, Integer>> params)
+            throws SQLServerException {
+
         SQLServerDataTable groupDataTable = new SQLServerDataTable();
         for (Map.Entry<String, Integer> entry : params) {
             groupDataTable.addColumnMetadata(entry.getKey(), entry.getValue());

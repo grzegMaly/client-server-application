@@ -1,5 +1,6 @@
 application.portfolio.endpoints.endpointClasses.files.ListEndpoint
 application.portfolio.endpoints.endpointClasses.files.ResourceEndpoint
 application.portfolio.endpoints.endpointClasses.session.AddUserResource
+application.portfolio.endpoints.endpointClasses.session.RemoveUserResource
 application.portfolio.endpoints.endpointClasses.notes.NotesEndpoint
 application.portfolio.endpoints.endpointClasses.notes.NotesListEndpoint

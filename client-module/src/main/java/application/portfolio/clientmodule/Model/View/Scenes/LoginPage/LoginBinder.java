@@ -20,6 +20,7 @@ public class LoginBinder {
 
         this.emailTf = emailTf;
         emailTf.setPromptText("example@company.com");
+        emailTf.setText("MiTy@teamLink.com");
         viewModel.emailProperty().bind(emailTf.textProperty());
         clearFields.add(() -> {
             emailTf.setText(null);
@@ -30,6 +31,7 @@ public class LoginBinder {
     public void withPasswordTf(PasswordField passPf) {
 
         this.passPf = passPf;
+        passPf.setText("Password123@");
         viewModel.passwordProperty().bind(passPf.textProperty());
         clearFields.add(() -> {
             passPf.setText(null);

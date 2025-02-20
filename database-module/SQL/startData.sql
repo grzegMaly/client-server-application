@@ -7,18 +7,11 @@ Insert Into StatusCodes Values
 (4, 'Missing Required Parameters'),
 (5, 'Duplicate Found'),
 (6, 'Chat Not Found'),
-(7, 'Task Not Found')
+(7, 'Task Not Found'),
+(8, 'Group Not Found')
 
 Insert Into TaskStatus (statusName) Values
 ('PENDING'),
 ('IN_PROGRESS'),
 ('COMPLETED'),
 ('CANCELLED')
-
-Select * From Employees e
-	JOIN EmployeesLoginData eld ON e.id = eld.id
-Where role = 1;
-
-Select * From Groups
-Delete From ChatRegistry
-Select * From GroupMembers

@@ -1,11 +1,27 @@
 package application.portfolio.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpExchange;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class DataParser {
+
+    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    public static JsonNode convertToNode(HttpExchange exchange) {
+
+        try {
+            return objectMapper.readTree(exchange.getRequestBody());
+        } catch (IOException e) {
+            return null;
+        }
+    }
 
     public static String parseElement(JsonNode node, String key) throws IllegalArgumentException {
         JsonNode valueNode = node.get(key);
@@ -91,5 +107,15 @@ public class DataParser {
             }
         }
         return true;
+    }
+
+    public synchronized static String paramsString(Map<String, String> map) {
+        StringJoiner sj = new StringJoiner("&", "?", "");
+
+        for (Map.Entry<String, String> m : map.entrySet()) {
+            String encodedValue = URLEncoder.encode(m.getValue(), StandardCharsets.UTF_8);
+            sj.add(m.getKey() + "=" + encodedValue);
+        }
+        return sj.toString();
     }
 }

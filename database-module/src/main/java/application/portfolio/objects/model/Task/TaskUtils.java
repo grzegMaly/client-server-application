@@ -65,7 +65,6 @@ public class TaskUtils {
                 completeTask(task, key, val);
             }
         } catch (IllegalArgumentException | DateTimeParseException e) {
-            System.out.println(e.getMessage());
             return null;
         }
         return task;

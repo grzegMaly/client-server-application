@@ -74,6 +74,13 @@ public class LoginScene extends GridPane implements Page {
             GridPane.setHalignment(loginBtn, HPos.CENTER);
             loginBtn.setMaxWidth(Double.MAX_VALUE);
             loginBtn.requestFocus();
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            loginBtn.fire();
     }
 
     @Override

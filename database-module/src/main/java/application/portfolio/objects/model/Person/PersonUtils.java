@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 
 public class PersonUtils {
 
-    private static final List<String> existingPersonKeys = List.of("id", "firstName", "lastName", "role");
+    private static final List<String> existingPersonKeys = List.of("userId", "firstName", "lastName", "role");
     private static final List<String> newPersonKeys = List.of("firstName", "lastName", "role", "email", "password");
 
     public static Person createPerson(ResultSet rs) {

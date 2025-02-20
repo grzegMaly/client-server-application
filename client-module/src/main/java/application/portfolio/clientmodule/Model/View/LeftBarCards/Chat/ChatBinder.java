@@ -2,7 +2,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -15,11 +15,11 @@ public class ChatBinder {
     private static final ChatRequestViewModel viewModel = new ChatRequestViewModel();
     private final Set<Runnable> clearFields = new HashSet<>();
 
-    {
+    static {
         viewModel.setSender(UserSession.getInstance().getLoggedInUser());
     }
 
-    public void withReceiver(PersonDAO personDAO) {
+    public void withReceiver(Person personDAO) {
 
         viewModel.setReceiver(personDAO);
         clearFields.add(() -> viewModel.setReceiver(null));
@@ -35,10 +35,9 @@ public class ChatBinder {
 
                     moreInfoBtn.setDisable(true);
 
-                    UserInfoDialog dialog = UserInfoDialog.getInstance();
-                    dialog.showDialog(newVal);
-
-                    dialog.setOnHidden(e -> moreInfoBtn.setDisable(false));
+                    UserInfoDialog dialog = new UserInfoDialog(newVal);
+                    dialog.showDialog();
+                    dialog.setOnHidden(moreInfoBtn);
                 });
             } else {
                 nameLbl.setText(null);

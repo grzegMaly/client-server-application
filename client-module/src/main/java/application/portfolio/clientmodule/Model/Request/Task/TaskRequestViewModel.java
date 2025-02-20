@@ -1,6 +1,7 @@
 package application.portfolio.clientmodule.Model.Request.Task;
 
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Connection.UserSession;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequest.TaskRequest;
@@ -100,16 +101,23 @@ public class TaskRequestViewModel {
         model.save(task);
     }
 
-    public List<Task> loadReceivedTasks(PersonDAO loggedInUser) {
-        UUID userId = loggedInUser.getId();
+    public List<Task> loadReceivedTasks(Person loggedInUser) {
+        UUID userId = loggedInUser.getUserId();
         TaskRequest data = converter.toUserRequest(userId);
         return model.loadTasks(data, "assignedTo");
     }
 
-    public List<Task> loadCreatedTasks(PersonDAO loggedInUser) {
+    public List<Task> loadCreatedTasks(Person loggedInUser) {
 
-        UUID userId = loggedInUser.getId();
+        UUID userId = loggedInUser.getUserId();
         TaskRequest data = converter.toUserRequest(userId);
         return model.loadTasks(data, "createdBy");
+    }
+
+    public void deleteTask(UUID taskId) {
+
+        UUID userId = UserSession.getInstance().getLoggedInUser().getUserId();
+        TaskRequest data = converter.toUserTaskRequest(userId, taskId);
+        model.deleteTask(data);
     }
 }

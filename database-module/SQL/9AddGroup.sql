@@ -2,11 +2,11 @@ Use TeamLinkDB
 GO
 
 Create Or Alter Procedure AddGroup
-	@GroupData GroupData READONLY,
-	@statusCode int OUTPUT
+	@GroupData GroupData READONLY
 AS
 BEGIN
 
+	SET NOCOUNT ON;
 	SET XACT_ABORT OFF;
 
 	BEGIN TRAN
@@ -27,8 +27,9 @@ BEGIN
 
 		    IF NOT EXISTS(Select 1 From @ValidGroups)
 		        BEGIN
-                    SET @statusCode = 5;
-                    ROLLBACK;
+					Select description AS Message
+					From StatusCodes
+					Where id = 5;
                     RETURN;
                 end
 
@@ -46,12 +47,18 @@ BEGIN
 
 			COMMIT;
 			SET XACT_ABORT ON;
-			SET @statusCode = 0;
+			Select g.id,
+				   g.groupName,
+				   g.ownerId
+			From Groups g
+			Join @InsertedIds iid ON g.id = iid.id;
 			RETURN;
 		END TRY
 		BEGIN CATCH
 			ROLLBACK;
-			SET @statusCode = 3;
+			Select description AS Message
+			From StatusCodes
+			Where id = 3;
 		END CATCH;
 	SET XACT_ABORT ON;
 END

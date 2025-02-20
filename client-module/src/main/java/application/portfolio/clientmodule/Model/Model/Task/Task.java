@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule.Model.Model.Task;
 
 import application.portfolio.clientmodule.Connection.UserSession;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequestViewModel;
 import application.portfolio.clientmodule.utils.DataParser;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,8 +21,8 @@ public class Task {
     private UUID taskId;
     private String title;
     private String description;
-    private PersonDAO createdBy;
-    private PersonDAO assignedTo;
+    private Person createdBy;
+    private Person assignedTo;
     private LocalDateTime createdAt;
     private LocalDate deadline;
     private TaskStatus taskStatus;
@@ -51,19 +51,19 @@ public class Task {
         this.description = description;
     }
 
-    public PersonDAO getCreatedBy() {
+    public Person getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(PersonDAO createdBy) {
+    public void setCreatedBy(Person createdBy) {
         this.createdBy = createdBy;
     }
 
-    public PersonDAO getAssignedTo() {
+    public Person getAssignedTo() {
         return assignedTo;
     }
 
-    public void setAssignedTo(PersonDAO assignedTo) {
+    public void setAssignedTo(Person assignedTo) {
         this.assignedTo = assignedTo;
     }
 
@@ -100,8 +100,8 @@ public class Task {
         Task task = new Task();
         Iterator<Map.Entry<String, JsonNode>> iterator = node.fields();
         try {
-            PersonDAO actualUser = UserSession.getInstance().getLoggedInUser();
-            PersonDAO anotherPerson;
+            Person actualUser = UserSession.getInstance().getLoggedInUser();
+            Person anotherPerson;
             while (iterator.hasNext()) {
                 Map.Entry<String, JsonNode> entry = iterator.next();
                 String key = entry.getKey();
@@ -117,14 +117,14 @@ public class Task {
                     case "description" -> task.setDescription(value.asText());
                     case "createdBy", "assignedTo" -> {
                         UUID userId = UUID.fromString(value.asText());
-                        PersonDAO person;
+                        Person person;
 
-                        if (userId.equals(actualUser.getId())) {
+                        if (userId.equals(actualUser.getUserId())) {
                             person = actualUser;
                         } else {
                             person = UserSession.getPerson(userId);
                             if (person == null) {
-                                person = new PersonDAO(userId);
+                                person = new Person(userId);
                                 UserSession.addPerson(person);
                             }
                         }
@@ -171,7 +171,6 @@ public class Task {
         taskDAO.setDeadline(viewModel.getDeadline());
         taskDAO.setTaskStatus(1);
 
-        System.out.println(taskDAO);
         return taskDAO;
     }
 }

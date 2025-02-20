@@ -49,25 +49,20 @@ public class Infrastructure {
     public static Map<String, String> getCurrentServerData() {
         return getData("currentServer");
     }
+    public static Map<String, String> getFileServerData() {
+        return getData("fileServer");
+    }
 
-    public static boolean isKnown(InetSocketAddress address) {
+    public static String uriSpecificPart(Map<String, String> data, String endpoint) {
+        return uriSpecificPart(data, endpoint, "");
+    }
 
-        String trustedIp = address.getAddress().getHostAddress();
-        int trustedPort = address.getPort();
+    public static String uriSpecificPart(Map<String, String> data, String endpoint, String params) {
 
-        for (Map<String, String> data : infrastructureData.values()) {
-
-            String tempHost = getHost(data);
-            int temPort = Integer.parseInt(getPort(data));
-            var tempSocket = new InetSocketAddress(tempHost, temPort);
-
-            tempHost = tempSocket.getAddress().getHostAddress();
-            temPort = tempSocket.getPort();
-
-            if (trustedIp.equals(tempHost) && trustedPort == temPort) {
-                return true;
-            }
+        String point = data.get(endpoint);
+        if (point == null) {
+            return "";
         }
-        return false;
+        return point.concat(params);
     }
 }

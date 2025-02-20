@@ -3,7 +3,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import javafx.application.Platform;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ScrollBar;
@@ -15,12 +15,12 @@ import java.util.stream.Stream;
 
 public class ChatController {
 
-    private static PersonDAO actualUser;
+    private static Person actualUser;
     private static ChatView actualChat;
 
-    public static ChatView createChat(PersonDAO personDAO, ChatRequestViewModel viewModel) {
+    public static ChatView createChat(Person personDAO, ChatRequestViewModel viewModel) {
 
-        ChatView chatView = new ChatView(personDAO.getId(), viewModel);
+        ChatView chatView = new ChatView(personDAO.getUserId(), viewModel);
 
         loadChatHistory(chatView, personDAO);
         addScrollListener(chatView, personDAO);
@@ -77,7 +77,7 @@ public class ChatController {
         return (int) (chatViewHeight / cellHeight);
     }
 
-    private static void loadChatHistory(ChatView chatView, PersonDAO receiver) {
+    private static void loadChatHistory(ChatView chatView, Person receiver) {
 
         if (!chatView.hasMoreMessages()) {
             return;
@@ -102,7 +102,7 @@ public class ChatController {
         });
     }
 
-    private static void addScrollListener(ChatView chatView, PersonDAO personDAO) {
+    private static void addScrollListener(ChatView chatView, Person personDAO) {
         chatView.skinProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 for (ScrollBar scrollBar : chatView.lookupAll(".scroll-bar").toArray(new ScrollBar[0])) {
@@ -131,10 +131,10 @@ public class ChatController {
 
     public static void addMessageToChat(MessageDAO messageDAO) {
 
-        PersonDAO sender = messageDAO.getSender();
-        UUID id = sender.getId();
+        Person sender = messageDAO.getSender();
+        UUID id = sender.getUserId();
 
-        if (id.equals(UserSession.getInstance().getLoggedInUser().getId())) {
+        if (id.equals(UserSession.getInstance().getLoggedInUser().getUserId())) {
             Platform.runLater(() -> actualChat.getItems().add(messageDAO));
         } else {
             if (actualChat != null && id.equals(actualChat.getChatId())) {
@@ -163,11 +163,11 @@ public class ChatController {
                 .map(c -> (ChatView) c);
     }
 
-    public static PersonDAO getActualUser() {
+    public static Person getActualUser() {
         return actualUser;
     }
 
-    public static void setActualUser(PersonDAO actualUser) {
+    public static void setActualUser(Person actualUser) {
         ChatController.actualUser = actualUser;
     }
 

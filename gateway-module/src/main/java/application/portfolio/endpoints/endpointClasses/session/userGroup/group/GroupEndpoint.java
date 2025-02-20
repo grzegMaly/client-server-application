@@ -5,13 +5,12 @@ import application.portfolio.endpoints.EndpointInfo;
 import application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils.DeleteGroup;
 import application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils.GetGroup;
 import application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils.PostGroup;
-import application.portfolio.utils.DataParser;
+import application.portfolio.endpoints.endpointClasses.session.userGroup.group.groupUtils.PutGroup;
 import application.portfolio.requestResponse.ResponseHandler;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static java.net.HttpURLConnection.*;
 
@@ -28,20 +27,12 @@ public class GroupEndpoint implements EndpointHandler, HttpHandler {
         try (exchange) {
             String method = exchange.getRequestMethod();
 
-            Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
-            if (paramsMap == null) {
-                ResponseHandler.handleError(exchange, "Forbidden", HTTP_FORBIDDEN);
-                return;
-            }
-
-            if ("GET".equals(method)) {
-                GetGroup.handleGet(exchange, paramsMap);
-            } else if ("POST".equals(method)) {
-                PostGroup.handlePost(exchange, paramsMap);
-            } else if ("DELETE".equals(method)) {
-                DeleteGroup.handleDelete(exchange, paramsMap);
-            } else {
-                ResponseHandler.handleError(exchange, "Bad Gateway", HTTP_BAD_GATEWAY);
+            switch (method) {
+                case "GET" -> GetGroup.handleGet(exchange);
+                case "POST" -> PostGroup.handlePost(exchange);
+                case "PUT" -> PutGroup.handlePut(exchange);
+                case "DELETE" -> DeleteGroup.handleDelete(exchange);
+                default -> ResponseHandler.handleError(exchange, "Bad Gateway", HTTP_BAD_GATEWAY);
             }
         } catch (IOException e) {
             ResponseHandler.handleError(exchange, "Unknown Error", HTTP_INTERNAL_ERROR);

@@ -15,7 +15,7 @@ public class DiscRequestConverter {
     }
 
     public DiscRequest convertToRequest(Path path, boolean isFile) {
-        UUID userId = UserSession.getInstance().getLoggedInUser().getId();;
+        UUID userId = UserSession.getInstance().getLoggedInUser().getUserId();;
         return new DiscRequest(userId, path, isFile);
     }
 

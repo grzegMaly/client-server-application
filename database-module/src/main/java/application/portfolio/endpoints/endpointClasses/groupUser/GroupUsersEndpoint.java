@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Map;
@@ -111,10 +112,7 @@ public class GroupUsersEndpoint implements EndpointHandler, HttpHandler {
 
     private Map.Entry<Integer, JsonNode> handlePost(HttpExchange exchange) throws IOException {
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        byte[] data = exchange.getRequestBody().readAllBytes();
-        JsonNode node = objectMapper.readTree(data);
-
+        JsonNode node = DataParser.convertToNode(exchange);
         GroupResponse groupResponse = GroupPostMethods.addUserToGroup(node);
         return groupResponse.toJsonResponse();
     }

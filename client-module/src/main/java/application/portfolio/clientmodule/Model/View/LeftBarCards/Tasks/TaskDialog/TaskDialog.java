@@ -1,7 +1,7 @@
 package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog;
 
 import application.portfolio.clientmodule.Connection.UserSession;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.Model.Model.Person.Role;
 import application.portfolio.clientmodule.Model.Model.Task.Task;
 import javafx.geometry.HPos;
@@ -25,10 +25,10 @@ public class TaskDialog extends Stage {
         READ, READ_MODIFY, CREATE;
 
         public static Operation determineOperation(Task task) {
-            PersonDAO person = UserSession.getInstance().getLoggedInUser();
+            Person person = UserSession.getInstance().getLoggedInUser();
             if (task == null) return CREATE;
             return person.getRole().equals(Role.EMPLOYEE) ? READ :
-                    (person.getId().equals(task.getCreatedBy().getId()) ? READ_MODIFY : READ);
+                    (person.getUserId().equals(task.getCreatedBy().getUserId()) ? READ_MODIFY : READ);
         }
     }
 
@@ -36,6 +36,7 @@ public class TaskDialog extends Stage {
 
     private final ButtonBar buttons = new ButtonBar();
     private final Button cancelBtn = new Button("Cancel");
+    private Button deleteBtn = null;
     private Button editBtn = null;
     private Button saveBtn = null;
     private TextField titleTf = null;
@@ -199,9 +200,14 @@ public class TaskDialog extends Stage {
         if (openOperation == Operation.READ_MODIFY) {
 
             swapVisible(false);
+            deleteBtn = new Button("Delete");
             editBtn = new Button("Edit");
             saveBtn.setVisible(false);
-            buttons.getButtons().addAll(editBtn, saveBtn);
+            buttons.getButtons().addAll(deleteBtn, editBtn, saveBtn);
+
+            Runnable deleteAction = this::close;
+
+            taskBinder.withDeleteBtn(deleteBtn, deleteAction);
 
             saveAction = () -> {
                 swapVisible(false);

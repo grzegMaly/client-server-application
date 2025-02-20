@@ -47,8 +47,8 @@ public final class StyleProps {
         return getProperty("tasksPage");
     }
 
-    public static String getWatchPageStylesPath() {
-        return getProperty("watchPage");
+    public static String getManagementPageStylesPath() {
+        return getProperty("managementPage");
     }
 
     public static String getLeftBarStylesPath() {

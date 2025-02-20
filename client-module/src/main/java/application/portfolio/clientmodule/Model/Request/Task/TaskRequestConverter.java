@@ -14,7 +14,21 @@ public class TaskRequestConverter {
         return DataParser.paramsString(Map.of(userType, userId.toString()));
     }
 
+    public static String toQueryDeleteParams(TaskRequest taskRequest) {
+
+        UUID userId = taskRequest.getUserId();
+        UUID taskId = taskRequest.getTaskId();
+        return DataParser.paramsString(Map.of(
+                "userId", userId.toString(),
+                "taskId", taskId.toString()
+        ));
+    }
+
     public TaskRequest toUserRequest(UUID userId) {
         return new TaskRequest(userId);
+    }
+
+    public TaskRequest toUserTaskRequest(UUID userId, UUID taskId) {
+        return new TaskRequest(taskId, userId);
     }
 }

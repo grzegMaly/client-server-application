@@ -11,8 +11,9 @@ import java.util.function.Consumer;
 
 public class GroupUtils {
 
-    private static final List<String> existingGroupKeys = List.of("id", "groupName", "ownerId");
+    private static final List<String> existingGroupKeys = List.of("groupId", "groupName", "ownerId");
     private static final List<String> newGroupKeys = List.of("groupName", "ownerId");
+
     public static Group createGroup(ResultSet rs) {
         try {
             String id = rs.getString(1);

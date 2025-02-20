@@ -12,6 +12,7 @@ import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import application.portfolio.clientmodule.utils.PageFactory;
 import javafx.application.Platform;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -19,6 +20,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 
+import java.awt.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -27,9 +29,9 @@ public class Chat extends VBox implements Page {
 
     private final ChatBinder chatBinder = new ChatBinder();
 
-    private final TopChatBar topChatBar = new TopChatBar(chatBinder);
+    private TopChatBar topChatBar;
+    private BottomChatBar bottomChatBar;
     private static final StackPane chatPages = new StackPane();
-    private BottomChatBar bottomChatBar = null;
     private final VBox chatTemplate = new VBox();
     private Friends friendsList = null;
 
@@ -54,45 +56,43 @@ public class Chat extends VBox implements Page {
     @Override
     public CompletableFuture<Boolean> initializePage() {
 
+        CompletableFuture<TopChatBar> topBarFuture =
+                CompletableFuture.supplyAsync(() -> new TopChatBar(chatBinder), executor);
+
         CompletableFuture<BottomChatBar> bottomBarFuture =
-                CompletableFuture.supplyAsync(() -> PageFactory.getInstance(BottomChatBar.class), executor);
+                CompletableFuture.supplyAsync(() -> new BottomChatBar(chatBinder), executor);
+
         CompletableFuture<Friends> friendsFuture =
                 CompletableFuture.supplyAsync(() -> PageFactory.getInstance(Friends.class), executor);
 
-        return CompletableFuture.allOf(bottomBarFuture, friendsFuture)
-                .thenComposeAsync(v -> {
-
-                    bottomChatBar = bottomBarFuture.join();
-                    friendsList = friendsFuture.join();
-
-                    if (friendsList == null || bottomChatBar == null) {
-                        return CompletableFuture.completedFuture(false);
-                    }
-
-                    friendsList.setChatBinder(chatBinder);
-                    bottomChatBar.setChatBinder(chatBinder);
-
-                    bindSizeProperties();
-
-                    return CompletableFuture.completedFuture(true);
-                }, executor)
+        return topBarFuture
+                .thenCombine(bottomBarFuture, (topResult, bottomResult) -> {
+                    this.topChatBar = topResult;
+                    this.bottomChatBar = bottomResult;
+                    return topResult != null && bottomResult != null;
+                })
+                .thenCombine(friendsFuture, (success, friendsResult) -> {
+                    this.friendsList = friendsResult;
+                    return success && friendsResult != null;
+                })
                 .thenApply(success -> {
                     if (success) {
-                        Platform.runLater(() -> {
 
-                            chatTemplate.getChildren().addAll(topChatBar, chatPages, bottomChatBar);
-                            friendsList.loadChatAction(chatTemplate);
+                        friendsList.setChatBinder(chatBinder);
+                        friendsList.loadChatAction(chatTemplate);
 
-                            HBox elements = new HBox(chatTemplate, friendsList);
-                            HBox.setHgrow(chatTemplate, Priority.ALWAYS);
+                        chatTemplate.getChildren().addAll(topChatBar, chatPages, bottomChatBar);
+                        chatTemplate.setFillWidth(true);
+                        chatTemplate.setVisible(false);
 
-                            this.getChildren().add(elements);
-                            chatTemplate.setVisible(false);
-                        });
+                        HBox elements = new HBox(chatTemplate, friendsList);
+                        Platform.runLater(() -> this.getChildren().add(elements));
                     }
-
                     return success;
-                }).exceptionally(e -> {
+                })
+                .thenRun(this::bindSizeProperties)
+                .thenApply(v -> true)
+                .exceptionally(e -> {
                     System.out.println("initializeCheckBoxes " + this.getClass().getSimpleName());
                     e.printStackTrace();
                     return false;
@@ -106,25 +106,31 @@ public class Chat extends VBox implements Page {
     @Override
     public void bindSizeProperties() {
 
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        double screenHeight = screenBounds.getHeight();
-
         Platform.runLater(() -> {
 
-            topChatBar.setMinHeight(screenHeight * 0.03);
-            topChatBar.setMaxHeight(screenHeight * 0.03);
-            bottomChatBar.setMinHeight(screenHeight * 0.05);
-            bottomChatBar.setMaxHeight(screenHeight * 0.05);
+            topChatBar.prefHeightProperty().bind(chatTemplate.heightProperty().multiply(0.05));
 
-            friendsList.prefHeightProperty().bind(this.widthProperty().multiply(0.2));
-            chatPages.prefWidthProperty().bind(this.widthProperty().multiply(0.8));
-            topChatBar.prefWidthProperty().bind(chatPages.widthProperty());
-            bottomChatBar.prefWidthProperty().bind(chatPages.widthProperty());
+            chatPages.setMinHeight(100);
+            chatPages.setMaxHeight(Double.MAX_VALUE);
+            chatPages.prefHeightProperty().bind(
+                    this.heightProperty()
+                            .subtract(topChatBar.prefHeightProperty())
+                            .subtract(bottomChatBar.prefHeightProperty())
+            );
 
             friendsList.prefHeightProperty().bind(this.heightProperty());
-            chatPages.prefHeightProperty().bind(this.heightProperty().subtract(bottomChatBar.heightProperty().add(topChatBar.heightProperty())));
+
+            VBox.setVgrow(chatPages, Priority.ALWAYS);
+            VBox.setVgrow(topChatBar, Priority.NEVER);
+            VBox.setVgrow(bottomChatBar, Priority.NEVER);
+            VBox.setVgrow(chatTemplate, Priority.ALWAYS);
+            HBox.setHgrow(chatTemplate, Priority.ALWAYS);
+
+            chatTemplate.requestLayout();
+            this.requestLayout();
         });
     }
+
 
     @Override
     public Boolean loadStyleClass() {
@@ -133,8 +139,8 @@ public class Chat extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("baseBG");
-        friendsList.getStyleClass().add("chatFriendsList");
+        topChatBar.loadStyles();
+        bottomChatBar.loadStyles();
     }
 
     @Override

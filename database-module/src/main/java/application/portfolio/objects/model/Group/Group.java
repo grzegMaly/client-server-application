@@ -51,4 +51,13 @@ public class Group implements DAOConverter<Group, GroupDAO> {
     public GroupDAO toDAO() {
         return new GroupDAO(getGroupId(), getGroupName(), getOwnerId());
     }
+
+    @Override
+    public String toString() {
+        return "Group{" +
+                "groupId=" + groupId +
+                ", groupName='" + groupName + '\'' +
+                ", ownerId=" + ownerId +
+                '}';
+    }
 }

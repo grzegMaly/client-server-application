@@ -1,0 +1,8 @@
+.chatInfoDialogGB {
+    -fx-background-color: #404040;
+}
+
+.chatInfoDialogLbl {
+    -fx-text-fill: white;
+    -fx-font-size: 15;
+}

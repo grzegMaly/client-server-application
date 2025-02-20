@@ -3,7 +3,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDia
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequestViewModel;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import javafx.scene.control.*;
 
 import java.time.LocalDate;
@@ -17,8 +17,8 @@ import java.util.Set;
 public class TaskBinder {
 
     private TaskDialog.Operation operation;
-    private PersonDAO selectedUser;
-    private final PersonDAO actualUser = UserSession.getInstance().getLoggedInUser();
+    private Person selectedUser;
+    private final Person actualUser = UserSession.getInstance().getLoggedInUser();
     private Task task;
     private Button saveBtn;
 
@@ -70,7 +70,7 @@ public class TaskBinder {
             clearSet.add(() -> authorLbl.setText(null));
 
             if (operation != TaskDialog.Operation.READ) {
-                viewModel.setCreatedBy(actualUser.getId().toString());
+                viewModel.setCreatedBy(actualUser.getUserId().toString());
                 clearSet.add(() -> viewModel.setCreatedBy(null));
             }
         });
@@ -94,11 +94,11 @@ public class TaskBinder {
             clearSet.add(searchTf::clear);
 
             searchBtn.setOnAction(evt -> {
-                PersonDAO personDAO = UserSelectionDialog.getSelectedPerson();
+                Person personDAO = UserSelectionDialog.getSelectedPerson();
                 if (personDAO != null) {
                     selectedUser = personDAO;
                     searchTf.setText(selectedUser.getName());
-                    viewModel.setAssignedTo(selectedUser.getId().toString());
+                    viewModel.setAssignedTo(selectedUser.getUserId().toString());
                     clearSet.add(() -> viewModel.setCreatedBy(null));
                 }
             });
@@ -174,6 +174,14 @@ public class TaskBinder {
             clearSet.addAll(List.of(this.descriptionTa::clear,
                     () -> this.descriptionTa.textProperty().unbindBidirectional(viewModel.descriptionProperty())));
         });
+    }
+
+    public void withDeleteBtn(Button deleteBtn, Runnable deleteAction) {
+
+        binds.add(() -> deleteBtn.setOnAction(evt -> {
+            viewModel.deleteTask(task.getTaskId());
+            deleteAction.run();
+        }));
     }
 
     public void withSaveBtn(Button saveBtn, Runnable saveAction) {

@@ -16,7 +16,13 @@ public class DeleteGroup {
 
     private static final String[] ID = {"id"};
 
-    public static void handleDelete(HttpExchange exchange, Map<String, String> paramsMap) throws IOException {
+    public static void handleDelete(HttpExchange exchange) throws IOException {
+
+        Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
+        if (paramsMap == null) {
+            ResponseHandler.handleError(exchange, "Forbidden", HTTP_FORBIDDEN);
+            return;
+        }
 
         Map<String, String> dbData = Infrastructure.getDatabaseData();
         if (DataParser.validateParams(paramsMap, ID)) {

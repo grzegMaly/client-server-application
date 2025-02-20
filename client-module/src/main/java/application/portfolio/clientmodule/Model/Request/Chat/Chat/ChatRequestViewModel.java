@@ -7,7 +7,7 @@ import application.portfolio.clientmodule.Connection.WebSocket.WebSocketClientHo
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequest.ChatRequest;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.ChatController;
 import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.utils.DataParser;
 import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -22,8 +22,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ChatRequestViewModel {
 
-    private final SimpleObjectProperty<PersonDAO> sender = new SimpleObjectProperty<>();
-    private final SimpleObjectProperty<PersonDAO> receiver = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<Person> sender = new SimpleObjectProperty<>();
+    private final SimpleObjectProperty<Person> receiver = new SimpleObjectProperty<>();
 
     private final SimpleStringProperty message = new SimpleStringProperty();
     private final SimpleListProperty<MessageDAO> messages = new SimpleListProperty<>();
@@ -31,29 +31,29 @@ public class ChatRequestViewModel {
     private final ChatRequestModel model = new ChatRequestModel();
     private final ChatRequestConverter converter = new ChatRequestConverter();
 
-    public PersonDAO getSender() {
+    public Person getSender() {
         return sender.get();
     }
 
-    public SimpleObjectProperty<PersonDAO> senderProperty() {
+    public SimpleObjectProperty<Person> senderProperty() {
         return sender;
     }
 
-    public void setSender(PersonDAO sender) {
+    public void setSender(Person sender) {
         this.sender.set(sender);
     }
 
     //-------------------------------------------------------------------------
 
-    public PersonDAO getReceiver() {
+    public Person getReceiver() {
         return receiver.get();
     }
 
-    public SimpleObjectProperty<PersonDAO> receiverProperty() {
+    public SimpleObjectProperty<Person> receiverProperty() {
         return receiver;
     }
 
-    public void setReceiver(PersonDAO receiver) {
+    public void setReceiver(Person receiver) {
         this.receiver.set(receiver);
     }
 
@@ -108,7 +108,7 @@ public class ChatRequestViewModel {
             return;
         }
 
-        String userId = UserSession.getInstance().getLoggedInUser().getId().toString();
+        String userId = UserSession.getInstance().getLoggedInUser().getUserId().toString();
         Map<String, String> gWSData = Infrastructure.getGatewayChatWSData();
         String params = DataParser.paramsString(Map.of("userId", userId));
         String spec = Infrastructure.uriSpecificPart(gWSData, "chat", params);

@@ -7,6 +7,7 @@ import application.portfolio.utils.DataParser;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -52,6 +53,19 @@ public class GroupGetMethod {
             cs.setInt(1, iOffset);
             cs.setInt(2, iLimit);
 
+            return new GroupResponse()
+                    .groupResponseFromDB(cs, null);
+        } catch (SQLException e) {
+            return new GroupResponse("Unknown Error", HTTP_INTERNAL_ERROR);
+        }
+    }
+
+    public static GroupResponse getAllGroupsFromDatabase() {
+
+        Connection conn = DBConnectionHolder.getConnection();
+        try (CallableStatement cs = conn.prepareCall(
+                DBConnectionHolder.getAllGroups()
+        )) {
             return new GroupResponse()
                     .groupResponseFromDB(cs, null);
         } catch (SQLException e) {

@@ -4,7 +4,7 @@ import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Login.LoginRequest.LoginRequest;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.CustomAlert;
 import application.portfolio.clientmodule.utils.PageFactory;
@@ -43,7 +43,7 @@ public class LoginRequestViewModel {
         Map<String, String> map = Map.of("email", getEmail(), "password", getPassword());
         LoginRequest data = converter.toLoginRequest(map);
 
-        PersonDAO person = model.login(data);
+        Person person = model.login(data);
 
         if (person != null) {
             UserSession.getInstance().setLoggedInUser(person);

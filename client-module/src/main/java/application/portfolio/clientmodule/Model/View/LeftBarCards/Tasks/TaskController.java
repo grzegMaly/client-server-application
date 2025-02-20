@@ -2,8 +2,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks;
 
 import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDialog.TaskDialog;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
-import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.TableColumn;
@@ -35,7 +34,7 @@ public class TaskController {
 
         titleCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getTitle()));
         authorCol.setCellValueFactory(cellData -> {
-            PersonDAO author = cellData.getValue().getCreatedBy();
+            Person author = cellData.getValue().getCreatedBy();
             String fullName = author.getFirstName() + " " + author.getLastName();
             return new SimpleStringProperty(fullName);
         });

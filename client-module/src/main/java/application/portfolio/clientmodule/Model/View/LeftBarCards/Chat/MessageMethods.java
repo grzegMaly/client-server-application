@@ -3,7 +3,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.utils.DataParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -17,9 +17,9 @@ import java.util.UUID;
 public class MessageMethods {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final PersonDAO loggedInUsed = UserSession.getInstance().getLoggedInUser();
+    private static final Person loggedInUsed = UserSession.getInstance().getLoggedInUser();
 
-    public static MessageDAO createMessage(JsonNode node, PersonDAO sender, PersonDAO receiver)
+    public static MessageDAO createMessage(JsonNode node, Person sender, Person receiver)
             throws IllegalArgumentException {
 
         if (!validateNodeStructure(node)) {
@@ -28,7 +28,7 @@ public class MessageMethods {
 
         MessageDAO message;
         String senderId = node.get("senderId").asText();
-        if (senderId.equalsIgnoreCase(sender.getId().toString())) {
+        if (senderId.equalsIgnoreCase(sender.getUserId().toString())) {
             message = new MessageDAO(sender, receiver);
         } else {
             message = new MessageDAO(receiver, sender);
@@ -46,12 +46,12 @@ public class MessageMethods {
             return null;
         }
 
-        PersonDAO receiver = UserSession.getInstance().getLoggedInUser();
-        List<PersonDAO> friends = FriendsRequestViewModel.getFriends();
+        Person receiver = UserSession.getInstance().getLoggedInUser();
+        List<Person> friends = FriendsRequestViewModel.getFriends();
 
         String senderId = node.get("senderId").asText();
-        PersonDAO sender = friends.stream()
-                .filter(f -> f.getId().toString().equalsIgnoreCase(senderId))
+        Person sender = friends.stream()
+                .filter(f -> f.getUserId().toString().equalsIgnoreCase(senderId))
                 .findFirst()
                 .orElse(null);
 
@@ -84,7 +84,7 @@ public class MessageMethods {
     public static MessageDAO parseReceivedMessage(String data) {
 
         JsonNode node;
-        PersonDAO actualUser = ChatController.getActualUser();
+        Person actualUser = ChatController.getActualUser();
         try {
             node = objectMapper.readTree(data);
         } catch (JsonProcessingException e) {
@@ -101,7 +101,7 @@ public class MessageMethods {
         MessageDAO messageDAO;
 
         if (actualUser == null) {
-            PersonDAO friend = FriendsRequestViewModel.getPerson(senderId);
+            Person friend = FriendsRequestViewModel.getPerson(senderId);
             if (friend == null) {
                 return null;
             } else {
@@ -109,10 +109,10 @@ public class MessageMethods {
                 messageDAO.setTempId(null);
             }
         } else {
-            if (actualUser.getId().equals(senderId)) {
+            if (actualUser.getUserId().equals(senderId)) {
                 messageDAO = new MessageDAO(actualUser, loggedInUsed);
                 messageDAO.setTempId(null);
-            } else if (loggedInUsed.getId().equals(senderId)) {
+            } else if (loggedInUsed.getUserId().equals(senderId)) {
                 if (!node.hasNonNull("tempId")) {
                     return null;
                 }
@@ -121,9 +121,9 @@ public class MessageMethods {
                 messageDAO = new MessageDAO(loggedInUsed, loggedInUsed);
                 messageDAO.setTempId(tempId);
             } else {
-                PersonDAO personDAO = FriendsRequestViewModel.getFriends()
+                Person personDAO = FriendsRequestViewModel.getFriends()
                         .stream()
-                        .filter(p -> p.getId().equals(senderId))
+                        .filter(p -> p.getUserId().equals(senderId))
                         .findFirst()
                         .orElse(null);
                 if (personDAO == null) {

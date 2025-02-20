@@ -3,21 +3,23 @@ Use TeamLinkDB;
 GO
 
 Create or Alter Procedure ModifyUserById
-	@UserData UserData READONLY,
-	@statusCode int OUTPUT
+	@UserData UserData READONLY
 AS
 BEGIN
+
+	SET NOCOUNT ON;
+    SET XACT_ABORT ON;
 
 	IF EXISTS (
             SELECT 1
             FROM @UserData
             WHERE id IS NULL
-               OR fName IS NULL OR TRIM(fName) = ''
-               OR lName IS NULL OR TRIM(lName) = ''
+               OR fName IS NULL OR LEN(fName) = 0
+			   OR lName IS NULL OR LEN(lName) = 0
         )
         BEGIN
-            SET @statusCode = 3;
-            ROLLBACK;
+            Select description AS Message
+			From StatusCodes Where id = 3;
             RETURN;
         END
 	
@@ -26,7 +28,8 @@ BEGIN
 		where not exists
 			(Select 1 From Employees e where e.id = u.id))
 		BEGIN
-			Set @statusCode = 1;
+            Select description AS Message
+			From StatusCodes Where id = 1;
 			RETURN;
 		END
 
@@ -36,12 +39,11 @@ BEGIN
             WHERE NOT EXISTS (SELECT 1 FROM Roles r WHERE r.roleId = u.role)
         )
         BEGIN
-            SET @statusCode = 2;
+            Select description AS Message
+			From StatusCodes Where id = 2;
             ROLLBACK;
             RETURN;
         END
-	
-	SET XACT_ABORT OFF;
 
 	BEGIN TRAN
 	BEGIN TRY
@@ -54,11 +56,17 @@ BEGIN
 		Join @UserData u ON u.id = e.id;
 
 		COMMIT;
-		SET @statusCode = 0;
+        Select e.id,
+			   e.firstName,
+			   e.lastName,
+			   e.role
+		From Employees e
+		JOIN @UserData ud ON e.id = ud.id;
 	END TRY
 	BEGIN CATCH
 		ROLLBACK;
-		Set @statusCode = 3;
+		Select description AS Message
+		From StatusCodes Where id = 3;
 	END CATCH
 
 	SET XACT_ABORT ON;

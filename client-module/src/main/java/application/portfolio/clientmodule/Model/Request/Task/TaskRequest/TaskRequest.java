@@ -31,12 +31,4 @@ public class TaskRequest {
     public void setUserId(UUID userId) {
         this.userId = userId;
     }
-
-    @Override
-    public String toString() {
-        return "TaskRequest{" +
-                "taskId=" + taskId +
-                ", userId=" + userId +
-                '}';
-    }
 }

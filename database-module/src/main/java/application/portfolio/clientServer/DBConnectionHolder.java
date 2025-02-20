@@ -79,6 +79,10 @@ public class DBConnectionHolder {
         return statements.get("getUserById");
     }
 
+    public static String getAllUsers() {
+        return statements.get("getAllUsers");
+    }
+
     public static String modifyUser() {
         return statements.get("modifyUser");
     }
@@ -103,6 +107,10 @@ public class DBConnectionHolder {
 
     public static String getGroups() {
         return statements.get("getGroups");
+    }
+
+    public static String getAllGroups() {
+        return statements.get("getAllGroups");
     }
 
     public static String modifyGroupById() {

@@ -3,7 +3,6 @@ package application.portfolio.endpoints.endpointClasses.groupUser;
 import application.portfolio.clientServer.response.GroupResponse;
 import application.portfolio.endpoints.EndpointHandler;
 import application.portfolio.endpoints.EndpointInfo;
-import application.portfolio.endpoints.endpointClasses.group.groupUtils.GroupDeleteMethod;
 import application.portfolio.endpoints.endpointClasses.group.groupUtils.GroupPostMethods;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.ResponseHandler;
@@ -59,9 +58,7 @@ public class GroupUserMoveEndpoint implements EndpointHandler, HttpHandler {
         JsonNode node;
 
         if (params == null) {
-
-            byte[] data = exchange.getRequestBody().readAllBytes();
-            node = objectMapper.readTree(data);
+            node = DataParser.convertToNode(exchange);
         } else if (params.size() == 3 && params.keySet().containsAll(MOVE_PARAMS)) {
 
             ObjectNode objectNode = objectMapper.createObjectNode();

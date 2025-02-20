@@ -42,25 +42,9 @@ BEGIN
 END
 GO
 
-Create Or Alter Procedure GetGroups
-	@offset int,
-	@limit int
+Create Or Alter Procedure GetAllGroups
 AS
 BEGIN
-	
-	IF @offset < 0 OR @limit <= 0
-		BEGIN
-			Select 'Bad Data' AS Message;
-			RETURN;
-		END
-
-	IF @limit > 50
-		BEGIN
-			Set @limit = 10;
-		END
-
 	Select id, groupName, ownerId
 	From Groups
-	Order By id
-	OFFSET (@offset * @limit) ROWS FETCH NEXT @limit ROWS ONLY;
 END

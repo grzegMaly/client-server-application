@@ -4,9 +4,10 @@ import application.portfolio.clientmodule.Config.LoadStyles;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
+import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.Bars.BottomChatBar;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.TeamLinkApp;
 import javafx.application.Platform;
 import javafx.scene.Parent;
@@ -19,7 +20,7 @@ import javafx.util.Callback;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
-public class Friends extends ListView<PersonDAO> implements Page {
+public class Friends extends ListView<Person> implements Page {
 
     private static ChatBinder chatBinder = null;
 
@@ -33,6 +34,7 @@ public class Friends extends ListView<PersonDAO> implements Page {
                 CompletableFuture.runAsync(this::initListCell);
         CompletableFuture<Void> friendsFuture =
                 CompletableFuture.runAsync(this::loadFriends);
+
         return CompletableFuture.allOf(cellFuture, friendsFuture)
                 .thenRun(this::bindFriendsToViewModel)
                 .thenApply(v -> true)
@@ -47,15 +49,17 @@ public class Friends extends ListView<PersonDAO> implements Page {
 
         this.setCellFactory(new Callback<>() {
             @Override
-            public ListCell<PersonDAO> call(ListView<PersonDAO> listView) {
+            public ListCell<Person> call(ListView<Person> listView) {
                 return new ListCell<>() {
                     @Override
-                    protected void updateItem(PersonDAO item, boolean empty) {
+                    protected void updateItem(Person item, boolean empty) {
                         super.updateItem(item, empty);
                         if (item == null || empty) {
                             setText(null);
+                            setStyle("");
                         } else {
                             setText(item.getName());
+                            setStyle("-fx-text-fill: white;");
                         }
                     }
                 };
@@ -72,7 +76,7 @@ public class Friends extends ListView<PersonDAO> implements Page {
     private void loadFriends() {
 
         if (UserSession.getPersonObjects().isEmpty()) {
-            List<PersonDAO> friendsList = FriendsRequestViewModel.loadFriends();
+            List<Person> friendsList = FriendsRequestViewModel.loadFriends();
             CompletableFuture.runAsync(() -> friendsList.forEach(UserSession::addPerson));
         }
     }
@@ -90,7 +94,7 @@ public class Friends extends ListView<PersonDAO> implements Page {
                 struct.setVisible(true);
             }
 
-            PersonDAO personDAO = this.getSelectionModel().getSelectedItem();
+            Person personDAO = this.getSelectionModel().getSelectedItem();
             if (personDAO == null) {
                 return;
             }
@@ -99,7 +103,7 @@ public class Friends extends ListView<PersonDAO> implements Page {
             Optional<ChatView> existingChatView = chats.getChildren().stream()
                     .filter(c -> c instanceof ChatView)
                     .map(c -> (ChatView) c)
-                    .filter(chatView -> chatView.getChatId().equals(personDAO.getId()))
+                    .filter(chatView -> chatView.getChatId().equals(personDAO.getUserId()))
                     .findFirst();
 
             ChatView chatView;
@@ -117,7 +121,7 @@ public class Friends extends ListView<PersonDAO> implements Page {
         });
     }
 
-    public static ChatView createChat(PersonDAO personDAO) {
+    public static ChatView createChat(Person personDAO) {
 
         ChatRequestViewModel viewModel = chatBinder.getViewModel();
         return ChatController.createChat(personDAO, viewModel);

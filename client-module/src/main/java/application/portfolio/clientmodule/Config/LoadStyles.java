@@ -38,8 +38,8 @@ public final class LoadStyles {
         return addStyles(scene, StyleProps.getTaskPageStylesPath());
     }
 
-    public static Boolean loadWatchSceneStyle(Scene scene) {
-        return addStyles(scene, StyleProps.getWatchPageStylesPath());
+    public static Boolean loadManagementSceneStyle(Scene scene) {
+        return addStyles(scene, StyleProps.getManagementPageStylesPath());
     }
 
     public static Boolean loadFriendsListClass(Scene scene) {

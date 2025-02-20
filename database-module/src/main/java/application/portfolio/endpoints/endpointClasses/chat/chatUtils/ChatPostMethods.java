@@ -20,9 +20,8 @@ public class ChatPostMethods {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static MessageResponse sendMessage(byte[] data) throws IOException {
+    public static MessageResponse sendMessage(JsonNode node) {
 
-        JsonNode node = objectMapper.readTree(data);
         if (!validateMessageNode(node)) {
             return new MessageResponse("Bad Data", HTTP_FORBIDDEN);
         }

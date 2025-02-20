@@ -8,7 +8,7 @@ import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequest.Ch
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
 import application.portfolio.clientmodule.Model.Model.Chat.MessageDAO;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.MessageMethods;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.utils.JsonBodyHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -65,8 +65,8 @@ public class ChatRequestModel {
 
         UUID receiverId = chatRequest.getReceiverId();
 
-        PersonDAO sender = UserSession.getInstance().getLoggedInUser();
-        PersonDAO receiver = FriendsRequestViewModel.getPerson(receiverId);
+        Person sender = UserSession.getInstance().getLoggedInUser();
+        Person receiver = FriendsRequestViewModel.getPerson(receiverId);
 
         List<MessageDAO> messages = new ArrayList<>();
 

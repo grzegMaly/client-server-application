@@ -1,5 +1,6 @@
 package application.portfolio.utils.UserUtils;
 
+import application.portfolio.endpoints.endpointClasses.files.FileUtils.ResourceDeleteMethods;
 import application.portfolio.utils.DataParser;
 import application.portfolio.utils.FilesManager;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -9,10 +10,8 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class UserResourcesManager {
@@ -50,12 +49,11 @@ public class UserResourcesManager {
         }
 
         Path driverPath = FilesManager.getUserResourcePath();
-        Path userResourcesPath = driverPath.resolve("users");
-        createDirectory(userResourcesPath);
+        createDirectory(driverPath);
 
-        List<String> dirs = List.of("Drive", "Notes", "Tasks", "Thumbnail");
+        List<String> dirs = List.of("Drive", "Notes", "Thumbnail");
         for (UUID id : userIds) {
-            createDirectories(userResourcesPath, id, dirs);
+            createDirectories(driverPath, id, dirs);
         }
     }
 
@@ -74,9 +72,33 @@ public class UserResourcesManager {
     }
 
     private static void createDirectory(Path path) throws IOException {
-
         if (!Files.exists(path)) {
             Files.createDirectory(path);
         }
+    }
+
+    public static void handleUserResourceDelete(Map<String, String> paramsMap) {
+
+        String id = paramsMap.get("userId");
+        UUID userId = DataParser.parseId(id);
+
+        if (userId == null) {
+            return;
+        }
+
+        Path driverPath = FilesManager.getUserResourcePath();
+        Path userResourcesPath = driverPath.resolve(userId.toString());
+        System.out.println(userResourcesPath);
+        if (!Files.exists(userResourcesPath)) {
+            return;
+        }
+
+        CompletableFuture.runAsync(() -> {
+            try {
+                ResourceDeleteMethods.deleteRecursive(userResourcesPath);
+            } catch (IOException e) {
+                //Ignore
+            }
+        });
     }
 }

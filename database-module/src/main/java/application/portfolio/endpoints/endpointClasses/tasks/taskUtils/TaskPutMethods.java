@@ -4,6 +4,7 @@ import application.portfolio.clientServer.DBConnectionHolder;
 import application.portfolio.clientServer.response.TaskResponse;
 import application.portfolio.objects.model.Task.Task;
 import application.portfolio.objects.model.Task.TaskUtils;
+import application.portfolio.utils.DataParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -25,7 +26,7 @@ public class TaskPutMethods {
 
     public static Map.Entry<Integer, JsonNode> handlePut(HttpExchange exchange) throws IOException {
 
-        JsonNode node = objectMapper.readTree(exchange.getRequestBody().readAllBytes());
+        JsonNode node = DataParser.convertToNode(exchange);
         Task task = TaskUtils.createTask(node);
 
         if (task == null) {

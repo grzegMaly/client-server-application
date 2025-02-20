@@ -1,18 +1,17 @@
 package application.portfolio.clientmodule.Model.Model.Group;
 
 
-import application.portfolio.clientmodule.utils.DataParser;
-
-import java.util.UUID;
-
 public class GroupDAO {
 
-    private UUID groupId;
+    private String groupId;
     private String groupName;
-    private UUID ownerId;
+    private String ownerId;
+
+    public GroupDAO() {
+    }
 
     public GroupDAO(String groupName) {
-        this(null, groupName);
+        this(groupName, null);
     }
 
     public GroupDAO(String groupName, String ownerId) {
@@ -20,17 +19,17 @@ public class GroupDAO {
     }
 
     public GroupDAO(String groupId, String groupName, String ownerId) {
-        this.groupId = DataParser.parseId(groupId);
-        this.groupName = groupName;
-        this.ownerId = DataParser.parseId(ownerId);
-    }
-
-    public void setGroupId(UUID groupId) {
         this.groupId = groupId;
+        this.groupName = groupName;
+        this.ownerId = ownerId;
     }
 
-    public UUID getGroupId() {
+    public String getGroupId() {
         return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
     }
 
     public String getGroupName() {
@@ -41,11 +40,20 @@ public class GroupDAO {
         this.groupName = groupName;
     }
 
-    public UUID getOwner() {
+    public String getOwnerId() {
         return ownerId;
     }
 
-    public void setOwner(UUID owner) {
-        this.ownerId = owner;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    @Override
+    public String toString() {
+        return "GroupDAO{" +
+                "groupId=" + groupId +
+                ", groupName='" + groupName + '\'' +
+                ", ownerId=" + ownerId +
+                '}';
     }
 }

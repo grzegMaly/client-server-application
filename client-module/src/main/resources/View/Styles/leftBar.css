@@ -1,10 +1,15 @@
 .leftBarBG {
-    -fx-background-color: #2e2e2e;
+    -fx-spacing: 15px;
+    -fx-padding: 20 5 0 5;
+    -fx-background-color: #252525;
+    -fx-alignment: top-center;
 }
 
 .leftBarBtn {
+    -fx-font-size: 15;
     -fx-background-color: #3b3b3b;
     -fx-text-fill: #dbdbdb;
+    -fx-background-radius: 15;
 }
 
 .leftBarBtn:hover {

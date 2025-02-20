@@ -1,7 +1,6 @@
 package application.portfolio.clientmodule.Model.Request.Task;
 
 import application.portfolio.clientmodule.Connection.ClientHolder;
-import application.portfolio.clientmodule.Connection.Infrastructure;
 import application.portfolio.clientmodule.Model.Model.Task.Task;
 import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
 import application.portfolio.clientmodule.Model.Request.Task.TaskRequest.TaskRequest;
@@ -16,16 +15,13 @@ import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 public class TaskRequestModel {
 
-    private final Map<String, String> gData;
     private final ObjectMapper objectMapper;
 
     {
-        gData = Infrastructure.getGatewayData();
         objectMapper = new ObjectMapper();
     }
 
@@ -46,9 +42,6 @@ public class TaskRequestModel {
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
         }
-
-        System.out.println(response.statusCode());
-        System.out.println(response.body());
     }
 
     public List<Task> loadTasks(TaskRequest taskRequest, String key) {
@@ -68,6 +61,17 @@ public class TaskRequestModel {
             return parseEntities(response);
         }
         return Collections.emptyList();
+    }
+
+
+    public void deleteTask(TaskRequest taskRequest) {
+
+        String params = TaskRequestConverter.toQueryDeleteParams(taskRequest);
+
+        HttpRequest request = ClientHolder.prepareRequest(params, "tasks", "DELETE",
+                HttpRequest.BodyPublishers.noBody()).build();
+
+        ClientHolder.getClient().sendAsync(request, JsonBodyHandler.getJsonHandler());
     }
 
     private List<Task> parseEntities(HttpResponse<JsonNode> response) {

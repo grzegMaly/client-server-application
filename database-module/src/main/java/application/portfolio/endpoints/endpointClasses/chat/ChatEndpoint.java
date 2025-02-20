@@ -37,15 +37,16 @@ public class ChatEndpoint implements EndpointHandler, HttpHandler {
         }
     }
 
-    private void handlePost(HttpExchange exchange) throws IOException {
+    private void handlePost(HttpExchange exchange) {
+
         Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
         if (paramsMap != null && !paramsMap.isEmpty()) {
             ResponseHandler.handleError(exchange, "Unexpected Params", HTTP_BAD_REQUEST);
             return;
         }
 
-        byte[] data = exchange.getRequestBody().readAllBytes();
-        MessageResponse messageResponse = ChatPostMethods.sendMessage(data);
+        JsonNode node = DataParser.convertToNode(exchange);
+        MessageResponse messageResponse = ChatPostMethods.sendMessage(node);
         Map.Entry<Integer, JsonNode> entry = messageResponse.toJsonResponse();
         ResponseHandler.sendResponse(exchange, entry);
     }

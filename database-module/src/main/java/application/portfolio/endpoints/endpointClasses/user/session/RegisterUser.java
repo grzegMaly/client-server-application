@@ -6,6 +6,7 @@ import application.portfolio.endpoints.endpointClasses.user.userUtils.UserPostMe
 import application.portfolio.objects.model.Person.Person;
 import application.portfolio.clientServer.response.PersonResponse;
 import application.portfolio.objects.model.Person.PersonUtils;
+import application.portfolio.utils.DataParser;
 import application.portfolio.utils.ResponseHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,7 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 import static java.net.HttpURLConnection.*;
 
@@ -37,13 +39,12 @@ public class RegisterUser implements EndpointHandler, HttpHandler {
                 return;
             }
 
-            var body = exchange.getRequestBody();
-            JsonNode node = objectMapper.readTree(body);
+            JsonNode node = DataParser.convertToNode(exchange);
             PersonResponse personResponse = handleAdding(node);
 
             Map.Entry<Integer, JsonNode> entry = personResponse.toJsonResponse();
             ResponseHandler.sendResponse(exchange, entry);
-        } catch (IOException e) {
+        } catch (Exception e) {
             exchange.sendResponseHeaders(HTTP_INTERNAL_ERROR, -1);
         }
     }

@@ -1,6 +1,6 @@
 package application.portfolio.clientmodule.Model.Model.Chat;
 
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -9,19 +9,19 @@ public class MessageDAO {
 
     private UUID tempId = UUID.randomUUID();
     private Long id;
-    private PersonDAO sender;
-    private PersonDAO receiver;
+    private Person sender;
+    private Person receiver;
     private String content;
     private LocalDateTime timestamp;
 
     public MessageDAO() {}
 
-    public MessageDAO(PersonDAO sender, PersonDAO receiver) {
+    public MessageDAO(Person sender, Person receiver) {
         this.sender = sender;
         this.receiver = receiver;
     }
 
-    public MessageDAO(PersonDAO sender, PersonDAO receiver, String content, LocalDateTime timestamp) {
+    public MessageDAO(Person sender, Person receiver, String content, LocalDateTime timestamp) {
         this.sender = sender;
         this.receiver = receiver;
         this.content = content;
@@ -44,19 +44,19 @@ public class MessageDAO {
         this.tempId = tempId;
     }
 
-    public PersonDAO getSender() {
+    public Person getSender() {
         return sender;
     }
 
-    public void setSender(PersonDAO sender) {
+    public void setSender(Person sender) {
         this.sender = sender;
     }
 
-    public PersonDAO getReceiver() {
+    public Person getReceiver() {
         return receiver;
     }
 
-    public void setReceiver(PersonDAO receiver) {
+    public void setReceiver(Person receiver) {
         this.receiver = receiver;
     }
 

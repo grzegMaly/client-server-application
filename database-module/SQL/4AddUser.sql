@@ -2,11 +2,11 @@ Use TeamLinkDB;
 GO
 
 Create or alter procedure AddUser
-	@UserData UserData READONLY,
-	@statusCode INT OUTPUT
+	@UserData UserData READONLY
 AS
 BEGIN
 
+	SET NOCOUNT ON;
 	SET XACT_ABORT OFF;
 
 	BEGIN TRAN
@@ -27,12 +27,16 @@ BEGIN
 				i.lName = u.lName;
 		
 		COMMIT;
-		SET @statusCode = 0;
-		RETURN;
+        Select e.id,
+			   e.firstName,
+			   e.lastName,
+			   e.role
+		From Employees e
+		JOIN @InsertedIds iid ON e.id = iid.id
 	END TRY
 	BEGIN CATCH
 		ROLLBACK;
-		SET @statusCode = 3;
+        Select description From StatusCodes Where id = 3;
 		RETURN;
 	END CATCH
 	

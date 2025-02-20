@@ -19,6 +19,7 @@ public class GetUser implements EndpointHandler, HttpHandler {
 
     private final String[] ID = {"id"};
     private final String[] LIMIT_OFFSET = {"limit", "offset"};
+    private final String[] ALL = {"all"};
 
     @Override
     public HttpHandler endpoint() {
@@ -31,7 +32,8 @@ public class GetUser implements EndpointHandler, HttpHandler {
             if ("GET".equals(exchange.getRequestMethod())) {
 
                 Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
-                if (!DataParser.validateParams(paramsMap, LIMIT_OFFSET) && !DataParser.validateParams(paramsMap, ID)) {
+                if (!DataParser.validateParams(paramsMap, LIMIT_OFFSET) &&
+                        !DataParser.validateParams(paramsMap, ID) && !DataParser.validateParams(paramsMap, ALL)) {
                     ResponseHandler.handleError(exchange, "Bad Params", HTTP_FORBIDDEN);
                     return;
                 }

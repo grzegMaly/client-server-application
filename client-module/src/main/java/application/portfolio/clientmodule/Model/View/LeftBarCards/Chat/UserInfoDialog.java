@@ -2,21 +2,25 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Chat;
 
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
-import application.portfolio.clientmodule.Model.Model.Person.PersonDAO;
+import application.portfolio.clientmodule.Model.Model.Person.Person;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
+import java.net.URL;
 import java.util.List;
 
-public class UserInfoDialog extends Stage {
+public class UserInfoDialog {
 
-    private PersonDAO person = null;
-    private PersonDAO supervisor = null;
-    private static UserInfoDialog instance = null;
+    private final Person person;
+    private Person supervisor = null;
 
+    private final Stage stage = new Stage(StageStyle.UTILITY);
     private final GridPane gp = new GridPane();
 
     private final Label nameLbl1 = new Label("Name:");
@@ -25,39 +29,31 @@ public class UserInfoDialog extends Stage {
     private final Label supervisorLbl2 = new Label();
     private final Label roleLbl1 = new Label("Role:");
     private final Label roleLbl2 = new Label();
+    private Scene scene;
 
     private final List<Label> elements = List.of(nameLbl1, nameLbl2, supervisorLbl1,
             supervisorLbl2, roleLbl1, roleLbl2);
 
-    private UserInfoDialog() {
-        this.setOnCloseRequest(evt -> {
-            close();
-            evt.consume();
+    public UserInfoDialog(Person person) {
+        this.person = person;
+
+        Platform.runLater(() -> {
+            scene = new Scene(gp, 400, 200);
+            getSupervisor();
+            bindFields();
+            completeGp();
+            loadStyles();
         });
     }
 
-    public static UserInfoDialog getInstance() {
+    public void showDialog() {
 
-        if (instance == null) {
-            instance = new UserInfoDialog();
-        }
-
-        return instance;
-    }
-
-    public void showDialog(PersonDAO personDAO) {
-
-        this.person = personDAO;
-
-        getSupervisor();
-        bindFields();
-        completeGp();
-
-        Scene scene = new Scene(gp, 400, 200);
-        this.setScene(scene);
-        this.setResizable(false);
-        this.setTitle("Info about " + personDAO.getName());
-        this.show();
+        Platform.runLater(() -> {
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.setTitle("Info about " + person.getName());
+            stage.show();
+        });
     }
 
     private void completeGp() {
@@ -93,9 +89,18 @@ public class UserInfoDialog extends Stage {
         roleLbl2.setText(person.getRole().toString());
     }
 
-    @Override
-    public void close() {
-        instance = null;
-        super.close();
+    private void loadStyles() {
+
+        URL resourceUrl = getClass().getResource("/View/Styles/ChatInfoDialog.css");
+        if (resourceUrl == null) {
+            return;
+        }
+        scene.getStylesheets().add(resourceUrl.toExternalForm());
+        gp.getStyleClass().add("chatInfoDialogGB");
+        elements.forEach(e -> e.getStyleClass().add("chatInfoDialogLbl"));
+    }
+
+    public void setOnHidden(Button infoBtn) {
+        stage.setOnHidden(e -> infoBtn.setDisable(false));
     }
 }
