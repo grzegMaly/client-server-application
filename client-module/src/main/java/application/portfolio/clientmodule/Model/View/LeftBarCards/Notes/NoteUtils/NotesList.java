@@ -44,10 +44,7 @@ public class NotesList extends VBox {
                     });
                     return true;
                 }, executor)
-                .exceptionally(ex -> {
-                    System.err.println("Błąd inicjalizacji strony: " + ex.getMessage());
-                    return false;
-                });
+                .exceptionally(ex -> false);
     }
 
     private boolean setUpTable() {

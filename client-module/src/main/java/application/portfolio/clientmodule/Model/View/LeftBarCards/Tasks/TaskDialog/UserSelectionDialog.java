@@ -49,10 +49,7 @@ public class UserSelectionDialog {
                     usersData.setAll(users);
                     tableView.setItems(usersData);
                 })
-        ).exceptionally(e -> {
-            System.out.println("Error in " + this.getClass().getSimpleName() + ", initializePage");
-            return null;
-        }).join();
+        ).exceptionally(e -> null).join();
 
         scene = new Scene(tableView, 400, 400);
         loadStyles();

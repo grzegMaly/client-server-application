@@ -64,7 +64,6 @@ public class ResourceDeleteMethods {
                         try {
                             Files.delete(p);
                         } catch (IOException e) {
-                            System.out.println(e.getMessage());
                             //Ignore
                         }
                     });

@@ -11,10 +11,12 @@ import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
@@ -100,10 +102,18 @@ public class Tasks extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.setPadding(new Insets(20, 20, 20, 20));
-        this.getStyleClass().add("tasksForm");
-        List.of(newTaskBtn, receivedTasksBtn, wroteTasksBtn, refreshBtn)
-                .forEach(e -> e.getStyleClass().add("tasksBtn"));
+
+        Platform.runLater(() -> {
+            this.setPadding(new Insets(20, 20, 20, 20));
+            this.getStyleClass().add("tasksForm");
+
+            List<Node> elements = new ArrayList<>(List.of(refreshBtn));
+
+            if (UserSession.getInstance().getLoggedInUser().getRole().getId() > 0) {
+                elements.addAll(List.of(receivedTasksBtn, newTaskBtn, wroteTasksBtn));
+            }
+            elements.forEach(e -> e.getStyleClass().add("tasksBtn"));
+        });
     }
 
     @Override

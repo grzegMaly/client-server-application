@@ -11,16 +11,12 @@ import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import application.portfolio.clientmodule.utils.PageFactory;
 import javafx.application.Platform;
-import javafx.geometry.Rectangle2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 
-import java.awt.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -92,11 +88,7 @@ public class Chat extends VBox implements Page {
                 })
                 .thenRun(this::bindSizeProperties)
                 .thenApply(v -> true)
-                .exceptionally(e -> {
-                    System.out.println("initializeCheckBoxes " + this.getClass().getSimpleName());
-                    e.printStackTrace();
-                    return false;
-                });
+                .exceptionally(e -> false);
     }
 
     public static StackPane getChats() {

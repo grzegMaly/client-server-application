@@ -18,7 +18,6 @@ public interface Page {
             TeamLinkApp.addScene(this.getClass(), scene);
             return true;
         } catch (Exception e) {
-            System.out.println("Exception in createScene loadPage");
             return false;
         }
     }
@@ -39,10 +38,7 @@ public interface Page {
                         return true;
                     }
                     return false;
-                }).exceptionally(e -> {
-                    System.out.println("Exception in loadPage: " + e.getMessage());
-                    return false;
-                });
+                }).exceptionally(e -> false);
     }
 
     default CompletableFuture<Boolean> initializePage() {

@@ -88,7 +88,6 @@ public class UserResourcesManager {
 
         Path driverPath = FilesManager.getUserResourcePath();
         Path userResourcesPath = driverPath.resolve(userId.toString());
-        System.out.println(userResourcesPath);
         if (!Files.exists(userResourcesPath)) {
             return;
         }

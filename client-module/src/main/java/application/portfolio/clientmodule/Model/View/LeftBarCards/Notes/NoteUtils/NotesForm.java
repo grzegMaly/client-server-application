@@ -59,10 +59,7 @@ public class NotesForm extends GridPane {
             setSaveBtnAction();
             actions.useListener();
             return true;
-        }).exceptionally(ext -> {
-            System.err.println("Błąd inicjalizacji: " + ext.getMessage());
-            return false;
-        });
+        }).exceptionally(ext -> false);
     }
 
     private boolean setUpDatePicker() {

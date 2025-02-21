@@ -31,7 +31,6 @@ public class RemoveUserResource implements EndpointHandler, HttpHandler {
                 return;
             }
 
-            System.out.println("DUPA");
             Map<String, String> paramsMap = DataParser.getParams(exchange.getRequestURI());
             if (paramsMap == null || !paramsMap.containsKey("userId") || paramsMap.size() != 1) {
                 ResponseHandler.handleError(exchange, "Invalid Params", HTTP_BAD_REQUEST);

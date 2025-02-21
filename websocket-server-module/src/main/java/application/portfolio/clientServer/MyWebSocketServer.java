@@ -51,7 +51,7 @@ public class MyWebSocketServer extends WebSocketServer {
         }
 
         if (!PostMessageMethods.postMessageToDataBase(message)) {
-            message = generateErrorResponse(node, "Error");
+            message = generateErrorResponse(node);
         } else {
             message = prepareMessageForRecipient(node);
             if (message == null) {
@@ -71,7 +71,7 @@ public class MyWebSocketServer extends WebSocketServer {
         }
     }
 
-    private String generateErrorResponse(JsonNode node, String message) {
+    private String generateErrorResponse(JsonNode node) {
 
         ObjectNode responseNode = objectMapper.createObjectNode();
         String receiverId = node.get("senderId").asText();
@@ -80,14 +80,13 @@ public class MyWebSocketServer extends WebSocketServer {
         responseNode.put("tempId", tempId);
         responseNode.put("senderId", receiverId);
         responseNode.put("receiverId", receiverId);
-        responseNode.put("content", message);
+        responseNode.put("content", "Error");
 
         return responseNode.asText();
     }
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        System.err.println("WebSocket error: " + (ex != null ? ex.getMessage() : "Unknown error"));
     }
 
     @Override

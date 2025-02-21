@@ -113,7 +113,7 @@ public class NotesGetMethods {
             return "";
         }
 
-        Path notesPath = userPath.resolve(NOTES_DIR).resolve(noteId.toString() + ".txt");
+        Path notesPath = userPath.resolve(NOTES_DIR).resolve(noteId + ".txt");
 
         if (!Files.exists(notesPath)) {
             return "";
@@ -127,8 +127,7 @@ public class NotesGetMethods {
                     return getContent(reader);
                 }
             }
-        } catch (IOException | IllegalArgumentException e) {
-            System.err.println("Coś poszło nie tak jak zakładano");
+        } catch (IOException | IllegalArgumentException ignored) {
         }
         return null;
     }

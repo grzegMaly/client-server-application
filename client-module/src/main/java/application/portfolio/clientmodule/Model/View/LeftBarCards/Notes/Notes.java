@@ -54,10 +54,7 @@ public class Notes extends StackPane implements Page {
                                 CompletableFuture.runAsync(() -> {
                                     notesList = new NotesList();
                                     notesList.initPage(noteBinder, executor)
-                                            .exceptionally(ex -> {
-                                                System.err.println("Błąd inicjalizacji NotesList: " + ex.getMessage());
-                                                return false;
-                                            })
+                                            .exceptionally(ex -> false)
                                             .thenAccept(successList -> {
                                                 if (!successList) return;
 
