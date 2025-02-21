@@ -4,6 +4,7 @@ import application.portfolio.clientmodule.Model.Model.Group.Group;
 import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.Model.Request.Management.UserAndGroups.ManageUsersAndGroupsViewModel;
 import application.portfolio.clientmodule.Model.View.LeftBarCards.Management.ManagementBinder;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -14,7 +15,9 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -22,7 +25,9 @@ import java.util.stream.Collectors;
 
 public class UserGroupAssignmentDialog {
 
-    private final Stage stage;
+    private Scene scene;
+    private final Stage stage = new Stage(StageStyle.UTILITY);
+
     private final Person user;
     private final ObservableList<Group> availableGroups;
     private final boolean isAssignMode;
@@ -33,7 +38,6 @@ public class UserGroupAssignmentDialog {
         this.user = user;
         this.isAssignMode = isAssignMode;
 
-        this.stage = new Stage();
         this.stage.initModality(Modality.APPLICATION_MODAL);
         this.stage.setTitle(isAssignMode ? "Assign User to Group" : "Remove User from group");
 
@@ -44,6 +48,7 @@ public class UserGroupAssignmentDialog {
 
         setUpListView();
         setUpButtons();
+        loadStyles();
     }
 
     private List<Group> getInitialGroups() {
@@ -86,8 +91,9 @@ public class UserGroupAssignmentDialog {
 
         VBox layout = new VBox(10, groupListView, confirmBtn, cancelBtn);
         layout.setPrefSize(350, 400);
+        scene = new Scene(layout);
 
-        stage.setScene(new Scene(layout));
+        stage.setScene(scene);
     }
 
     private void handleAction() {
@@ -135,6 +141,19 @@ public class UserGroupAssignmentDialog {
 
         user.removeJoinedGroup(selectedGroup);
         availableGroups.remove(selectedGroup);
+    }
+
+    private void loadStyles() {
+
+        URL resource = getClass().getResource("/View/Styles/Dialogs/Management/ManagementListDialog.css");
+        if (resource == null) {
+            return;
+        }
+
+        scene.getStylesheets().add(resource.toExternalForm());
+        Platform.runLater(() -> {
+
+        });
     }
 
     public void show() {

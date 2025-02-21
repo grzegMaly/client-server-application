@@ -7,14 +7,15 @@ import application.portfolio.clientmodule.Model.View.LeftBarCards.Tasks.TaskDial
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.Model.Model.Person.Role;
-import application.portfolio.clientmodule.Model.Model.Task.TaskDAO;
 import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -23,9 +24,9 @@ public class Tasks extends VBox implements Page {
     private Button newTaskBtn = null;
     private Button receivedTasksBtn = null;
     private Button wroteTasksBtn = null;
-    private Button refreshBtn = new Button("Refresh");
-    private ButtonBar buttonBar = new ButtonBar();
-    private TableView<Task> tasksTable = new TableView<>();
+    private final Button refreshBtn = new Button("Refresh");
+    private final ButtonBar buttonBar = new ButtonBar();
+    private TableView<Task> tasksTable;
     private final TaskController taskController = new TaskController();
 
     private final ExecutorService executor =
@@ -50,6 +51,7 @@ public class Tasks extends VBox implements Page {
                         executor)
                 .thenApply(v -> {
                     this.tasksTable = taskController.getTasksTable();
+                    this.tasksTable.getStyleClass().add("tasksTableView");
                     return tasksTable;
                 })
                 .thenComposeAsync(table -> {
@@ -65,12 +67,7 @@ public class Tasks extends VBox implements Page {
                     });
                     return true;
                 })
-                .exceptionally(e -> {
-                    //Todo: Make it Custom
-                    System.out.println("Error in " + this.getClass().getSimpleName() + ", initializePage");
-                    e.printStackTrace();
-                    return false;
-                });
+                .exceptionally(e -> false);
     }
 
     private CompletableFuture<Void> initializeManagerControls() {
@@ -96,7 +93,6 @@ public class Tasks extends VBox implements Page {
         });
     }
 
-
     @Override
     public Boolean loadStyleClass() {
         return LoadStyles.loadTasksSceneStyle(TeamLinkApp.getScene(MainScene.class));
@@ -104,7 +100,10 @@ public class Tasks extends VBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("baseBG");
+        this.setPadding(new Insets(20, 20, 20, 20));
+        this.getStyleClass().add("tasksForm");
+        List.of(newTaskBtn, receivedTasksBtn, wroteTasksBtn, refreshBtn)
+                .forEach(e -> e.getStyleClass().add("tasksBtn"));
     }
 
     @Override

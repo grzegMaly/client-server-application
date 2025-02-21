@@ -40,45 +40,59 @@ public class Notes extends StackPane implements Page {
         CompletableFuture<NotesForm> formFuture = CompletableFuture.supplyAsync(NotesForm::new, executor);
 
         return formFuture.thenCompose(form -> {
-            if (form == null) {
-                return CompletableFuture.completedFuture(false);
-            }
+                    if (form == null) {
+                        return CompletableFuture.completedFuture(false);
+                    }
 
-            notesForm = form;
-            return notesForm.initPage(noteBinder, executor)
-                    .exceptionally(ex -> {
-                        System.err.println("Błąd inicjalizacji NotesForm: " + ex.getMessage());
-                        return false;
-                    })
-                    .thenApply(success -> {
-                        if (!success) return false;
+                    notesForm = form;
+                    return notesForm.initPage(noteBinder, executor)
+                            .thenApply(success -> {
+                                if (!success) return false;
 
-                        Platform.runLater(() -> this.getChildren().add(notesForm));
+                                Platform.runLater(() -> this.getChildren().add(notesForm));
 
-                        CompletableFuture.runAsync(() -> {
-                            notesList = new NotesList();
-                            notesList.initPage(noteBinder, executor)
-                                    .exceptionally(ex -> {
-                                        System.err.println("Błąd inicjalizacji NotesList: " + ex.getMessage());
-                                        return false;
-                                    })
-                                    .thenAccept(successList -> {
-                                        if (!successList) return;
+                                CompletableFuture.runAsync(() -> {
+                                    notesList = new NotesList();
+                                    notesList.initPage(noteBinder, executor)
+                                            .exceptionally(ex -> {
+                                                System.err.println("Błąd inicjalizacji NotesList: " + ex.getMessage());
+                                                return false;
+                                            })
+                                            .thenAccept(successList -> {
+                                                if (!successList) return;
 
-                                        Platform.runLater(() -> {
-                                            notesList.setVisible(false);
-                                            this.getChildren().add(notesList);
-                                            notesForm.setSwitchVisibility(notesList);
-                                            notesList.setSwitchVisibility(notesForm);
-                                        });
-                                    });
-                        }, executor);
-                        return true;
-                    });
-        }).exceptionally(ex -> {
-            System.err.println("Błąd inicjalizacji komponentów: " + ex.getMessage());
-            return false;
-        }).join();
+                                                Platform.runLater(() -> {
+                                                    notesList.setVisible(false);
+                                                    this.getChildren().add(notesList);
+                                                    notesForm.setSwitchVisibility(notesList);
+                                                    notesList.setSwitchVisibility(notesForm);
+                                                });
+                                            });
+                                }, executor);
+                                return true;
+                            });
+                })
+                .thenApply(success -> {
+                    if (success) {
+                        bindSizeProperties();
+                    }
+                    return success;
+                }).exceptionally(ex -> {
+                    System.err.println("Błąd inicjalizacji komponentów: " + ex.getMessage());
+                    return false;
+                }).join();
+    }
+
+    @Override
+    public void bindSizeProperties() {
+
+        Platform.runLater(() -> {
+            notesForm.prefHeightProperty().bind(this.heightProperty());
+            notesForm.prefWidthProperty().bind(this.widthProperty());
+
+            notesList.prefHeightProperty().bind(this.heightProperty());
+            notesForm.prefWidthProperty().bind(this.widthProperty());
+        });
     }
 
     @Override
@@ -88,7 +102,10 @@ public class Notes extends StackPane implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("baseBG");
+        Platform.runLater(() -> Platform.runLater(() -> {
+            notesForm.loadStyles();
+            notesList.loadStyles();
+        }));
     }
 
     @Override

@@ -1,3 +1,164 @@
+.notesGridPane {
+    -fx-vgap: 8;
+    -fx-hgap: 5;
+}
+
+.notesLabels,
+.notesTitleTf,
+.notesContentTa,
+.notesComboBox {
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+}
+
+.notesTitleTf, .notesContentTa {
+    -fx-background-color: #404040;
+}
+
+.notesContentTa {
+    -fx-background: #404040;
+    -fx-control-inner-background: #404040;
+    -fx-prompt-text-fill: rgba(255, 255, 255, 0.5);
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-radius: 15;
+    -fx-padding: 10;
+}
+
+.notesContentTa:focused {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-color: #404040;
+    -fx-control-inner-background: #404040;
+}
+
+.notesTitleTf {
+    -fx-border-color: transparent;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.0, 0.0, 2.0);
+}
+
+.notesComboBox {
+    -fx-background-color: #404040;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 2px;
+}
+
+.notesComboBox .list-cell,
+.notesComboBox .list-cell:selected,
+.notesComboBox .list-cell:hover {
+    -fx-text-fill: white;
+}
+
+.notesComboBox .arrow-button:hover {
+    -fx-background-color: #606060;
+}
+
+.notesComboBox .list-cell {
+    -fx-background-color: #404040;
+}
+
+.notesComboBox .arrow-button,
+.notesComboBox .list-cell:selected,
+.notesComboBox .list-cell:hover {
+    -fx-background-color: #505050;
+}
+
+.notesComboBox:focused {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+}
+
+.notesBtn {
+    -fx-background-color: #3b3b3b;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.notesBtn:hover {
+    -fx-background-color: #505050;
+}
+
+/*---------------------------------------------------*/
+
+.notesForm {
+    -fx-spacing: 10;
+}
+
+.notesTableView {
+    -fx-background-color: #2e2e2e;
+    -fx-border-color: transparent;
+    -fx-padding: 5;
+}
+
+.notesTableView .column-header-background {
+    -fx-background-color: #404040;
+}
+
+.notesTableView .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+}
+
+.notesTableView .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.notesTableView .table-row-cell {
+    -fx-background-color: #2e2e2e;
+    -fx-text-fill: white;
+}
+
+.notesTableView .table-cell {
+    -fx-text-fill: white;
+    -fx-padding: 5;
+    -fx-font-size: 14;
+}
+
+.notesTableView .table-row-cell:selected {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.notesTableView .table-row-cell:hover {
+    -fx-background-color: #5c5c5c;
+}
+
+.notesTableView .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.notesTableView .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.notesTableView .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.notesTableView .scroll-bar .thumb {
+    -fx-background-color: #5c5c5c;
+}
+
+/*---------------------------------------------------*/
+
 .badElement {
     -fx-border-color: red;
     -fx-border-width: 1;

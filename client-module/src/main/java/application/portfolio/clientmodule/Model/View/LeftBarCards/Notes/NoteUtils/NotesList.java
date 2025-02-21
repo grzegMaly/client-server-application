@@ -2,6 +2,7 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUti
 
 import application.portfolio.clientmodule.Model.Model.Notes.Note;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.TableView;
@@ -51,6 +52,7 @@ public class NotesList extends VBox {
 
     private boolean setUpTable() {
         notesTbl = noteBinder.loadNotesView();
+        notesTbl.getStyleClass().add("notesTableView");
         return notesTbl != null;
     }
 
@@ -63,6 +65,16 @@ public class NotesList extends VBox {
         createNoteBtn.setOnAction(evt -> {
             this.setVisible(false);
             notesForm.setVisible(true);
+        });
+    }
+
+    public void loadStyles() {
+
+        Platform.runLater(() -> {
+            this.getStyleClass().add("notesForm");
+            this.setPadding(new Insets(20, 20, 20, 20));
+            List.of(createNoteBtn, reloadBtn)
+                    .forEach(e -> e.getStyleClass().add("notesBtn"));
         });
     }
 }

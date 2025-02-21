@@ -1,0 +1,82 @@
+.managementDialogGp {
+    -fx-background-color: #606060;
+    -fx-hgap: 8;
+    -fx-vgap: 8;
+}
+
+.managementDialogTf {
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+    -fx-background-color: #404040;
+    -fx-border-color: transparent;
+    -fx-border-radius: 15;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 5, 0.0, 0.0, 2.0);
+}
+
+.managementDialogLbl {
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+}
+
+.managementDialogBtn {
+    -fx-background-color: #3b3b3b;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+}
+
+.managementDialogBtn:hover {
+    -fx-background-color: #505050;
+}
+
+.managementDialogChoiceBox {
+    -fx-font-size: 15;
+    -fx-text-fill: white;
+    -fx-background-color: #404040;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+    -fx-background-insets: 0;
+    -fx-border-insets: 0;
+    -fx-padding: 2px;
+}
+
+.managementDialogChoiceBox .label {
+    -fx-text-fill: white;
+}
+
+.managementDialogChoiceBox .open-button {
+    -fx-background-color: #505050;
+}
+
+.managementDialogChoiceBox .open-button:hover {
+    -fx-background-color: #606060;
+}
+
+.managementDialogChoiceBox .context-menu {
+    -fx-background-color: #404040;
+    -fx-border-color: #505050;
+}
+
+.managementDialogChoiceBox .menu-item {
+    -fx-background-color: #404040;
+    -fx-text-fill: white;
+}
+
+.managementDialogChoiceBox .menu-item:hover {
+    -fx-background-color: #505050;
+}
+
+.managementDialogChoiceBox .menu-item:focused {
+    -fx-background-color: #606060;
+    -fx-text-fill: white;
+}
+
+.managementDialogChoiceBox:focused {
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-insets: 0;
+}

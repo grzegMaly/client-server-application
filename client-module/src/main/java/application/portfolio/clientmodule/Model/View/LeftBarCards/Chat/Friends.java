@@ -4,7 +4,6 @@ import application.portfolio.clientmodule.Config.LoadStyles;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Chat.Chat.ChatRequestViewModel;
 import application.portfolio.clientmodule.Model.Request.Chat.Friends.FriendsRequestViewModel;
-import application.portfolio.clientmodule.Model.View.LeftBarCards.Chat.Bars.BottomChatBar;
 import application.portfolio.clientmodule.Model.View.Page;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.Model.Model.Person.Person;
@@ -38,11 +37,7 @@ public class Friends extends ListView<Person> implements Page {
         return CompletableFuture.allOf(cellFuture, friendsFuture)
                 .thenRun(this::bindFriendsToViewModel)
                 .thenApply(v -> true)
-                .exceptionally(e -> {
-                    //TODO: Send to server
-                    e.printStackTrace();
-                    return false;
-                });
+                .exceptionally(e -> false);
     }
 
     private void initListCell() {
@@ -68,9 +63,8 @@ public class Friends extends ListView<Person> implements Page {
     }
 
     private void bindFriendsToViewModel() {
-        Platform.runLater(() -> {
-            this.setItems(FriendsRequestViewModel.getFriends());
-        });
+        Platform.runLater(() ->
+                this.setItems(FriendsRequestViewModel.getFriends()));
     }
 
     private void loadFriends() {

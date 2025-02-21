@@ -3,6 +3,7 @@ package application.portfolio.clientmodule.Model.Request.Login;
 import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Request.Login.LoginRequest.LoginRequest;
 import application.portfolio.clientmodule.Model.View.Page;
+import application.portfolio.clientmodule.Model.View.Scenes.LoginPage.LoginBinder;
 import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.TeamLinkApp;
@@ -15,6 +16,8 @@ import java.util.Map;
 
 
 public class LoginRequestViewModel {
+
+    private LoginBinder loginBinder;
 
     private final SimpleStringProperty email = new SimpleStringProperty();
     private final SimpleStringProperty password = new SimpleStringProperty();
@@ -38,6 +41,10 @@ public class LoginRequestViewModel {
         return password;
     }
 
+    public void setLoginBinder(LoginBinder loginBinder) {
+        this.loginBinder = loginBinder;
+    }
+
     public void login() {
 
         Map<String, String> map = Map.of("email", getEmail(), "password", getPassword());
@@ -46,6 +53,7 @@ public class LoginRequestViewModel {
         Person person = model.login(data);
 
         if (person != null) {
+            loginBinder.clearFields();
             UserSession.getInstance().setLoggedInUser(person);
             UserSession.loadFriends();
             Page mainScene = PageFactory.getInstance(MainScene.class);

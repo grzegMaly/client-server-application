@@ -1,3 +1,71 @@
-.managementBG {
-    -fx-background-color: #1bda14;
+.managementBtn {
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-background-color: #3b3b3b;
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+}
+
+.managementBtn:hover {
+    -fx-background-color: #505050;
+}
+
+.managementDialogTableView {
+    -fx-background-color: #2e2e2e;
+    -fx-border-color: transparent;
+    -fx-padding: 5;
+}
+
+.managementDialogTableView .column-header-background {
+    -fx-background-color: #404040;
+}
+
+.managementDialogTableView .column-header {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-border-color: transparent;
+}
+
+.managementDialogTableView .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-size: 14;
+    -fx-font-weight: bold;
+}
+
+.managementDialogTableView .table-row-cell {
+    -fx-background-color: #2e2e2e;
+    -fx-text-fill: white;
+}
+
+.managementDialogTableView .table-cell {
+    -fx-text-fill: white;
+    -fx-padding: 5;
+    -fx-font-size: 14;
+}
+
+.managementDialogTableView .table-row-cell:selected {
+    -fx-background-color: #505050;
+    -fx-text-fill: white;
+}
+
+.managementDialogTableView .table-row-cell:hover {
+    -fx-background-color: #5c5c5c;
+}
+
+.managementDialogTableView .table-row-cell:empty {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.managementDialogTableView .scroll-bar:vertical {
+    -fx-background-color: transparent;
+}
+
+.managementDialogTableView .scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.managementDialogTableView .scroll-bar .thumb {
+    -fx-background-color: #5c5c5c;
 }

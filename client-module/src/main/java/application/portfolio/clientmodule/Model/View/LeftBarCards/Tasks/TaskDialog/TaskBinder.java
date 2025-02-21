@@ -94,7 +94,10 @@ public class TaskBinder {
             clearSet.add(searchTf::clear);
 
             searchBtn.setOnAction(evt -> {
-                Person personDAO = UserSelectionDialog.getSelectedPerson();
+
+                UserSelectionDialog dialog = new UserSelectionDialog();
+                Person personDAO = dialog.useDialog();
+
                 if (personDAO != null) {
                     selectedUser = personDAO;
                     searchTf.setText(selectedUser.getName());

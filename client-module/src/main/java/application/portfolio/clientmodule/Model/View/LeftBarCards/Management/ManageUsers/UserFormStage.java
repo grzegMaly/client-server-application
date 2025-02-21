@@ -6,6 +6,7 @@ import application.portfolio.clientmodule.Model.Request.Management.Users.ManageU
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -15,12 +16,15 @@ import javafx.stage.StageStyle;
 import javafx.util.Pair;
 import javafx.util.StringConverter;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
 public class UserFormStage {
 
     //Tools
+    private Scene scene;
+    private final Stage stage = new Stage(StageStyle.UTILITY);
     private Person person;
     private final ManageUsersViewModel viewModel;
     private final ManageUsersBinder manageUsersBinder;
@@ -33,11 +37,22 @@ public class UserFormStage {
     private final StringProperty role = new SimpleStringProperty();
 
     //Fields
-    private final Stage stage = new Stage(StageStyle.UTILITY);
     private final GridPane grid = new GridPane();
+
+    private final Label fNameLbl = new Label("First Name:");
     private final TextField firstNameField = new TextField();
+
+    private final Label lNameLbl = new Label("Last Name:");
     private final TextField lastNameField = new TextField();
+
+    private final Label roleLbl = new Label("Role:");
     private final ChoiceBox<Pair<String, Integer>> roleBox = new ChoiceBox<>();
+
+    private Label emailLbl;
+    private Label passwordLbl;
+    private TextField emailTf;
+    private TextField passwordTf;
+
     private final Button saveBtn = new Button("Save");
     private final Button cancelBtn = new Button("Cancel");
 
@@ -66,8 +81,11 @@ public class UserFormStage {
             fillFields();
         }
 
+        scene = new Scene(grid, 300, 250);
+        loadStyles();
+
         Platform.runLater(() -> {
-            stage.setScene(new Scene(grid, 300, 250));
+            stage.setScene(scene);
             stage.show();
         });
     }
@@ -79,37 +97,39 @@ public class UserFormStage {
         lastNameField.textProperty().bindBidirectional(lastName);
 
         Platform.runLater(() -> {
-            grid.add(new Label("First Name:"), 0, 0);
+            grid.add(fNameLbl, 0, 0);
             grid.add(firstNameField, 1, 0);
-            grid.add(new Label("Last Name:"), 0, 1);
+            grid.add(lNameLbl, 0, 1);
             grid.add(lastNameField, 1, 1);
-            grid.add(new Label("Role:"), 0, 4);
+            grid.add(roleLbl, 0, 4);
             grid.add(roleBox, 1, 4);
             grid.add(saveBtn, 0, 5);
             grid.add(cancelBtn, 1, 5);
         });
 
         if (person != null) {
-            Platform.runLater(() -> {
-                roleBox.getItems().stream()
-                        .filter(pair -> pair.getValue().equals(person.getRole().getId()))
-                        .findFirst()
-                        .ifPresent(roleBox::setValue);
-            });
+            Platform.runLater(() ->
+                    roleBox.getItems().stream()
+                    .filter(pair -> pair.getValue().equals(person.getRole().getId()))
+                    .findFirst()
+                    .ifPresent(roleBox::setValue));
         }
     }
 
     private void initAdditionalElements() {
-        TextField emailField = new TextField();
-        emailField.textProperty().bindBidirectional(email);
-        PasswordField passwordField = new PasswordField();
-        passwordField.textProperty().bindBidirectional(password);
+        emailLbl = new Label("Email:");
+        emailTf = new TextField();
+        emailTf.textProperty().bindBidirectional(email);
+
+        passwordLbl = new Label("Password:");
+        passwordTf = new PasswordField();
+        passwordTf.textProperty().bindBidirectional(password);
 
         Platform.runLater(() -> {
-            grid.add(new Label("Email:"), 0, 2);
-            grid.add(emailField, 1, 2);
-            grid.add(new Label("Password:"), 0, 3);
-            grid.add(passwordField, 1, 3);
+            grid.add(emailLbl, 0, 2);
+            grid.add(emailTf, 1, 2);
+            grid.add(passwordLbl, 0, 3);
+            grid.add(passwordTf, 1, 3);
         });
     }
 
@@ -187,6 +207,32 @@ public class UserFormStage {
             roleBox.getItems().add(firstPair);
             roleBox.getItems().addAll(list);
             roleBox.setValue(firstPair);
+        });
+    }
+
+    private void loadStyles() {
+
+        URL resource = getClass().getResource("/View/Styles/Dialogs/Management/ManagementDialog.css");
+        if (resource == null) {
+            return;
+        }
+
+        scene.getStylesheets().add(resource.toExternalForm());
+        Platform.runLater(() -> {
+            grid.getStyleClass().add("managementDialogGp");
+            List<Node> labels = new ArrayList<>(List.of(fNameLbl, lNameLbl, roleLbl));
+            List<Node> textFields = new ArrayList<>(List.of(firstNameField, lastNameField));
+            List.of(saveBtn, cancelBtn).forEach(e -> e.getStyleClass().add("managementDialogBtn"));
+
+            if (person == null) {
+                labels.addAll(List.of(emailLbl, passwordLbl));
+                textFields.addAll(List.of(emailTf, passwordTf));
+            }
+
+            labels.forEach(e -> e.getStyleClass().add("managementDialogLbl"));
+            textFields.forEach(e -> e.getStyleClass().add("managementDialogTf"));
+
+            roleBox.getStyleClass().add("managementDialogChoiceBox");
         });
     }
 }

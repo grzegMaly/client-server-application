@@ -19,11 +19,29 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.net.URL;
+import java.util.List;
+
 
 public class GroupFormStage {
 
+    private Scene scene;
+    private final Stage stage = new Stage(StageStyle.UTILITY);
+    private final GridPane grid = new GridPane();
+
     private final ManageGroupsViewModel viewModel;
     private final ManageGroupsBinder manageGroupsBinder;
+
+    private final Label groupNameLbl = new Label("Group Name:");
+    private final TextField groupNameTf = new TextField();
+
+    private final Label ownerLbl = new Label("Owner:");
+    private final TextField ownerTf = new TextField();
+
+    private final Button selectOwnerBtn = new Button("≡");
+
+    private final Button saveBtn = new Button("Save");
+    private final Button cancelBtn = new Button("Cancel");
 
     private final StringProperty groupName = new SimpleStringProperty();
     private final StringProperty ownerName = new SimpleStringProperty();
@@ -36,33 +54,27 @@ public class GroupFormStage {
     }
 
     public void openGroupForm(Group existingGroup) {
-        Stage stage = new Stage(StageStyle.UTILITY);
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle(existingGroup == null ? "Add New Group" : "Edit Group");
 
-        GridPane grid = new GridPane();
+        scene = new Scene(grid, 350, 200);
         grid.setHgap(10);
         grid.setVgap(10);
 
-        TextField groupNameField = new TextField();
-        groupNameField.textProperty().bindBidirectional(groupName);
+        groupNameTf.textProperty().bindBidirectional(groupName);
 
-        TextField ownerNameField = new TextField();
-        ownerNameField.textProperty().bind(ownerName);
-        ownerNameField.setDisable(true);
+        ownerTf.textProperty().bind(ownerName);
+        ownerTf.setDisable(true);
 
-        Button selectOwnerBtn = new Button("≡");
+
         selectOwnerBtn.setOnAction(evt -> openUserSelectionDialog());
 
-        grid.add(new Label("Group Name:"), 0, 0);
-        grid.add(groupNameField, 1, 0);
+        grid.add(groupNameLbl, 0, 0);
+        grid.add(groupNameTf, 1, 0);
 
-        grid.add(new Label("Owner:"), 0, 1);
-        grid.add(ownerNameField, 1, 1);
+        grid.add(ownerLbl, 0, 1);
+        grid.add(ownerTf, 1, 1);
         grid.add(selectOwnerBtn, 2, 1);
-
-        Button saveBtn = new Button("Save");
-        Button cancelBtn = new Button("Cancel");
 
         grid.add(saveBtn, 0, 2);
         grid.add(cancelBtn, 1, 2);
@@ -106,7 +118,9 @@ public class GroupFormStage {
 
         cancelBtn.setOnAction(evt -> stage.close());
 
-        stage.setScene(new Scene(grid, 350, 200));
+        stage.setScene(scene);
+        loadStyles();
+
         stage.show();
     }
 
@@ -142,5 +156,27 @@ public class GroupFormStage {
         VBox vbox = new VBox(listView);
         dialogStage.setScene(new Scene(vbox, 300, 400));
         dialogStage.show();
+    }
+
+    private void loadStyles() {
+
+        URL resource = getClass().getResource("/View/Styles/Dialogs/Management/ManagementDialog.css");
+        if (resource == null) {
+            return;
+        }
+
+        scene.getStylesheets().add(resource.toExternalForm());
+        Platform.runLater(() -> {
+
+            grid.getStyleClass().add("managementDialogGp");
+            List.of(cancelBtn, saveBtn, selectOwnerBtn)
+                    .forEach(e -> e.getStyleClass().add("managementDialogBtn"));
+
+            List.of(groupNameLbl, ownerLbl)
+                    .forEach(e -> e.getStyleClass().add("managementDialogLbl"));
+
+            List.of(groupNameTf, ownerTf)
+                    .forEach(e -> e.getStyleClass().add("managementDialogTf"));
+        });
     }
 }

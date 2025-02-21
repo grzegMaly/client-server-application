@@ -16,14 +16,17 @@ public class LoginBinder {
     private TextField emailTf;
     private PasswordField passPf;
 
+    {
+        viewModel.setLoginBinder(this);
+    }
+
     public void withEmailTf(TextField emailTf) {
 
         this.emailTf = emailTf;
         emailTf.setPromptText("example@company.com");
-        emailTf.setText("MiTy@teamLink.com");
         viewModel.emailProperty().bind(emailTf.textProperty());
         clearFields.add(() -> {
-            emailTf.setText(null);
+            emailTf.setText("");
             viewModel.emailProperty().unbind();
         });
     }
@@ -31,10 +34,9 @@ public class LoginBinder {
     public void withPasswordTf(PasswordField passPf) {
 
         this.passPf = passPf;
-        passPf.setText("Password123@");
         viewModel.passwordProperty().bind(passPf.textProperty());
         clearFields.add(() -> {
-            passPf.setText(null);
+            passPf.setText("");
             viewModel.passwordProperty().unbind();
         });
     }
@@ -46,7 +48,7 @@ public class LoginBinder {
     private void login() {
 
         if (!validate()) {
-            //addListeners();
+            addListeners();
             return;
         }
         viewModel.login();
@@ -57,31 +59,29 @@ public class LoginBinder {
         boolean flag = true;
 
         if (emailTf.getText() == null || emailTf.getText().isBlank()) {
-//            emailTf.getStyleClass().add("badElement");
+            emailTf.getStyleClass().add("loginBadElement");
             flag = false;
         }
 
         if (passPf.getText() == null || passPf.getText().isBlank()) {
-//            passPf.getStyleClass().add("badElement");
+            passPf.getStyleClass().add("loginBadElement");
             flag = false;
         }
-
         return flag;
     }
 
     private void addListeners() {
         emailTf.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !newValue.isBlank()) {
-//                titleTf.getStyleClass().remove("badElement");
+            if (!newValue.isBlank()) {
+                emailTf.getStyleClass().remove("loginBadElement");
             }
         });
 
         passPf.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.isEmpty() && !newValue.isBlank()) {
-//                contentTa.getStyleClass().remove("badElement");
+            if (!newValue.isBlank()) {
+                passPf.getStyleClass().remove("loginBadElement");
             }
         });
-
     }
 
     public void clearFields() {

@@ -4,32 +4,44 @@ import application.portfolio.clientmodule.Model.Model.Notes.Note;
 import application.portfolio.clientmodule.Model.Model.Notes.NoteType;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.util.Pair;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
-public class NoteInfoDialog extends Stage {
+public class NoteInfoDialog {
+
+    private final Stage stage = new Stage(StageStyle.UTILITY);
+    private final Scene scene;
 
     private final GridPane gp = new GridPane();
+
     private final HBox btnBar = new HBox();
     private final Button cancelBtn = new Button("Cancel");
     private final Button editBtn = new Button("Edit");
     private final Button saveBtn = new Button("Save");
 
     private final Label titleLbl1 = new Label("Title:");
+    private final Label titleLbl2 = new Label();
     private final TextField titleTf = new TextField();
-    private final Label createdDateLbl1 = new Label("Created Date:");
-    private final Label noteTypeLbl1 = new Label("Note Type:");
-
     private StackPane titleSp;
+
+    private final Label createdDateLbl1 = new Label("Created Date:");
+    private final Label createdDateLbl2 = new Label();
+
+    private final Label noteTypeLbl1 = new Label("Note Type:");
+    private final Label noteTypeLbl2 = new Label();
+
     private final ComboBox<String> typeCb = new ComboBox<>();
     private StackPane noteTypeSp;
     private final StackPane categoryPriorityLblSp = new StackPane();
@@ -37,61 +49,53 @@ public class NoteInfoDialog extends Stage {
     private StackPane deadlineSp;
     private final TextArea contentTa = new TextArea();
 
-    private Note noteDAO;
-    private OpenOption openOption = null;
+    private final Note note;
+    private final NoteType type;
 
     private final NoteBinder noteBinder = new NoteBinder();
     private final InfoDialogActions actions = new InfoDialogActions();
     private final ExecutorService executor =
             ExecutorServiceManager.createCachedThreadPool(this.getClass().getSimpleName());
-    private NoteType type;
 
     private Pair<Runnable, Boolean> secondInitialization;
     private boolean secondElementInitialized = false;
 
-    public enum OpenOption {
-        READ, WRITE
-    }
+    public NoteInfoDialog(Note note, TableView<Note> notesTbl) {
 
-    public NoteInfoDialog() {
-        this.setOnCloseRequest(evt -> {
-            close();
-            evt.consume();
-        });
-    }
-
-    public void useDialog(Note note, OpenOption option, TableView<Note> notesTbl) {
+        scene = new Scene(gp, 400, 500);
 
         noteBinder.setNotesTbl(notesTbl);
 
-        this.openOption = option;
-        this.noteDAO = note;
+        this.note = note;
         this.type = note.getNoteType();
 
+        loadComponents();
+    }
+
+    private void loadComponents() {
         CompletableFuture<Boolean> uiFuture = CompletableFuture.supplyAsync(this::initializeUI, executor);
         CompletableFuture<Optional<String>> contentFuture =
                 CompletableFuture.supplyAsync(() -> loadContentIfNeeded(note), executor);
 
         uiFuture.thenCombineAsync(contentFuture, (uiInitialized, contentOpt) -> {
                     if (!uiInitialized) {
-                        System.err.println("Something went wrong");
                         return false;
                     }
 
                     contentOpt.ifPresent(note::setContent);
-                    noteBinder.withNote(note);
+                    Platform.runLater(() -> noteBinder.withNote(note));
                     return true;
                 }, executor)
-                .thenRunAsync(() -> Platform.runLater(() -> {
-                    if (openOption == OpenOption.WRITE) {
-                        editBtn.fire();
-                    }
-                    this.show();
-                }))
-                .exceptionally(ext -> {
-                    System.err.println("NoteInfoDialog coś poszło nie tak " + ext.getMessage());
-                    return null;
-                });
+                .exceptionally(ext -> null);
+    }
+
+    public void useDialog() {
+
+        Platform.runLater(() -> {
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        });
     }
 
     private Boolean initializeUI() {
@@ -99,10 +103,10 @@ public class NoteInfoDialog extends Stage {
             Platform.runLater(() -> {
                 initBaseElements();
                 boundSizeProperties();
+                loadStyles();
             });
             return true;
         } catch (Exception e) {
-            System.err.println("Błąd w inicjalizacji UI: " + e.getMessage());
             return false;
         }
     }
@@ -133,6 +137,8 @@ public class NoteInfoDialog extends Stage {
                         }
                     });
                     saveBtn.setVisible(false);
+
+                    cancelBtn.setOnAction(e -> stage.close());
                     btnBar.getChildren().addAll(cancelBtn, spacer, editBtn, saveBtn);
                     noteBinder.withContent(contentTa);
                     contentTa.setEditable(false);
@@ -151,7 +157,6 @@ public class NoteInfoDialog extends Stage {
 
     private void manageTitle() {
 
-        Label titleLbl2 = new Label();
         noteBinder.withTitleLbl(titleLbl2);
 
         noteBinder.withTitleTf(titleTf);
@@ -164,7 +169,6 @@ public class NoteInfoDialog extends Stage {
 
     private void manageCreatedDate() {
 
-        Label createdDateLbl2 = new Label();
         noteBinder.withNoteCreatedDate(createdDateLbl2);
 
         gp.add(createdDateLbl1, 0, 2);
@@ -173,7 +177,6 @@ public class NoteInfoDialog extends Stage {
 
     private void manageType() {
 
-        Label noteTypeLbl2 = new Label();
         noteBinder.withNoteTypeLbl(noteTypeLbl2);
 
         noteBinder.withNoteTypeCb(typeCb);
@@ -186,9 +189,10 @@ public class NoteInfoDialog extends Stage {
             loadDeadlineNoteFields();
         }
 
-        CompletableFuture.runAsync(() -> actions.setTypeCb(typeCb), executor);
-        CompletableFuture.runAsync(() -> actions.setCategoryPriorityLblSp(categoryPriorityLblSp), executor);
-        CompletableFuture.runAsync(() -> actions.setCategoryPriorityCbSp(categoryPriorityCbSp), executor);
+        CompletableFuture.runAsync(() -> actions.setTypeCb(typeCb), executor)
+                .thenRunAsync(() -> actions.setCategoryPriorityLblSp(categoryPriorityLblSp), executor)
+                .thenRunAsync(() -> actions.setCategoryPriorityCbSp(categoryPriorityCbSp), executor)
+                .join();
 
         gp.add(noteTypeLbl1, 0, 3);
         gp.add(noteTypeSp, 1, 3);
@@ -218,6 +222,17 @@ public class NoteInfoDialog extends Stage {
 
         categoryPriorityLblSp.getChildren().add(categoryLbl1);
         categoryPriorityCbSp.getChildren().add(categorySp);
+
+        loadRNStyles(categoryLbl1, categoryLbl2, categoryCb);
+    }
+
+    private void loadRNStyles(Label categoryLbl1, Label categoryLbl2, ComboBox<String> categoryCb) {
+        Platform.runLater(() -> {
+            List.of(categoryLbl1, categoryLbl2)
+                    .forEach(e -> e.getStyleClass().add("noteInfoDialogLbl"));
+
+            categoryCb.getStyleClass().add("notesDialogComboBox");
+        });
     }
 
     private void loadDeadlineNoteFields() {
@@ -259,6 +274,17 @@ public class NoteInfoDialog extends Stage {
 
         gp.add(deadlineLbl1, 0, 5);
         gp.add(deadlineSp, 1, 5);
+
+        loadDNStyles(priorityLbl1, priorityLbl2, deadlineLbl1, deadlineLbl2, priorityCb);
+    }
+
+    private void loadDNStyles(Label priorityLbl1, Label priorityLbl2, Label deadlineLbl1,
+                              Label deadlineLbl2, ComboBox<String> priorityCb) {
+
+        List.of(priorityLbl1, priorityLbl2, deadlineLbl1, deadlineLbl2)
+                .forEach(e -> e.getStyleClass().add("noteInfoDialogLbl"));
+
+        priorityCb.getStyleClass().add("notesDialogComboBox");
     }
 
     private void swapVisible() {
@@ -271,7 +297,7 @@ public class NoteInfoDialog extends Stage {
             secondInitialization.getKey().run();
             actions.useListener();
         } else if (!secondElementInitialized) {
-            typeCb.getSelectionModel().select(Note.getName(noteDAO.getNoteType()));
+            typeCb.getSelectionModel().select(Note.getName(note.getNoteType()));
         }
         swap();
     }
@@ -297,16 +323,34 @@ public class NoteInfoDialog extends Stage {
         double width = screen.getBounds().getWidth();
         double windowWidth = width * 0.20;
 
-        Scene scene = new Scene(gp, windowWidth, 500);
-
-        this.setScene(scene);
-        this.setMinWidth(windowWidth);
-        this.setMaxWidth(windowWidth);
+        stage.setMinWidth(windowWidth);
+        stage.setMaxWidth(windowWidth);
     }
 
-    @Override
-    public void close() {
-        super.close();
-        noteBinder.clearFields();
+    private void loadStyles() {
+        URL resource = getClass().getResource("/View/Styles/Dialogs/NoteInfoDialog.css");
+        if (resource == null) {
+            return;
+        }
+        scene.getStylesheets().add(resource.toExternalForm());
+
+        Platform.runLater(() -> {
+
+            titleTf.getStyleClass().add("noteInfoDialogTf");
+
+            gp.setPadding(new Insets(10, 10, 10, 10));
+            gp.getStyleClass().add("noteInfoDialogGp");
+
+            contentTa.getStyleClass().add("noteInfoDialogTextArea");
+
+            List.of(cancelBtn, saveBtn, editBtn)
+                    .forEach(e -> e.getStyleClass().add("noteInfoDialogBtn"));
+            List.of(titleLbl1, createdDateLbl1, noteTypeLbl1,
+                            titleLbl2, noteTypeLbl2, createdDateLbl2)
+                    .forEach(e -> e.getStyleClass().add("noteInfoDialogLbl"));
+
+
+            typeCb.getStyleClass().add("notesDialogComboBox");
+        });
     }
 }

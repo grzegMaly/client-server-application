@@ -7,7 +7,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -33,26 +32,16 @@ public interface Page {
         CompletableFuture<Boolean> initializePage = initializePage();
         CompletableFuture<Boolean> loadStyleClassFuture = CompletableFuture.supplyAsync(this::loadStyleClass, executor);
 
-        return CompletableFuture.allOf(initializePage, loadStyleClassFuture)
-                .thenCompose(v -> {
-                    try {
-                        boolean initialized = initializePage.get();
-                        boolean stylesLoaded = loadStyleClassFuture.get();
-
-                        if (initialized && stylesLoaded) {
-                            loadStyles();
-                            return CompletableFuture.completedFuture(true);
-                        }
-                    } catch (ExecutionException | InterruptedException e) {
-                        System.out.println("Exception in loadPage: " + e.getMessage());
-                        return CompletableFuture.completedFuture(false);
+        return initializePage
+                .thenCombine(loadStyleClassFuture, (initialSuccess, lSCSuccess) -> {
+                    if (initialSuccess && lSCSuccess) {
+                        loadStyles();
+                        return true;
                     }
-
-                    return CompletableFuture.completedFuture(false);
+                    return false;
                 }).exceptionally(e -> {
-                    /*System.out.println("Exception in loadPage: " + e.getMessage());
-                    return false;*/
-                    throw new RuntimeException(e);
+                    System.out.println("Exception in loadPage: " + e.getMessage());
+                    return false;
                 });
     }
 

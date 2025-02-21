@@ -49,8 +49,8 @@ public class NoteController {
                         !row.isEmpty()) {
 
                     Note note = row.getItem();
-                    NoteInfoDialog infoDialog = new NoteInfoDialog();
-                    infoDialog.useDialog(note, NoteInfoDialog.OpenOption.READ, notesTable);
+                    NoteInfoDialog infoDialog = new NoteInfoDialog(note, notesTable);
+                    infoDialog.useDialog();
                 } else if (event.getButton().equals(MouseButton.SECONDARY) && !row.isEmpty()) {
                     showContextMenu(row, event.getScreenX(), event.getScreenY());
                 }
@@ -74,24 +74,12 @@ public class NoteController {
 
     private ContextMenu getContextMenu(TableRow<Note> row) {
         ContextMenu contextMenu = new ContextMenu();
-        MenuItem details = new MenuItem("Details");
-        MenuItem edit = new MenuItem("Edit");
         MenuItem delete = new MenuItem("Delete");
 
         Note note = row.getItem();
-        details.setOnAction(evt -> {
-            NoteInfoDialog infoDialog = new NoteInfoDialog();
-            infoDialog.useDialog(note, NoteInfoDialog.OpenOption.READ, notesTable);
-        });
-
-        edit.setOnAction(evt -> {
-            NoteInfoDialog infoDialog = new NoteInfoDialog();
-            infoDialog.useDialog(note, NoteInfoDialog.OpenOption.WRITE, notesTable);
-        });
 
         delete.setOnAction(evt -> delete(note));
-
-        contextMenu.getItems().addAll(details, edit, delete);
+        contextMenu.getItems().addAll(delete);
         return contextMenu;
     }
 

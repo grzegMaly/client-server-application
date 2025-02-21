@@ -18,10 +18,6 @@ public final class LoadStyles {
         return addStyles(scene, StyleProps.getLeftBarStylesPath());
     }
 
-    public static Boolean loadTopBarStyles(Scene scene) {
-        return addStyles(scene, StyleProps.getTopBarStylesPath());
-    }
-
     public static Boolean loadChatSceneStyle(Scene scene) {
         return addStyles(scene, StyleProps.getChatPageStylesPath());
     }
@@ -51,16 +47,13 @@ public final class LoadStyles {
         try {
             URL styleResource = LoadStyles.class.getResource(path);
             if (styleResource == null) {
-                //TODO: Make it custom
-                throw new IllegalArgumentException("Resource Not Found: " + path);
+                return false;
             }
 
             String styleSheet = styleResource.toExternalForm();
             scene.getStylesheets().add(styleSheet);
             return true;
         } catch (Exception e) {
-            //TODO: Make it custom
-            System.out.println("Exception: " + e);
             return false;
         }
     }

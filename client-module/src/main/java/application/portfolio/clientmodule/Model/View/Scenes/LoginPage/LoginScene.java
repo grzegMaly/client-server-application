@@ -41,8 +41,6 @@ public class LoginScene extends GridPane implements Page {
                 future.complete(true);
             } catch (Exception e) {
                 future.complete(false);
-                System.out.println("initializePage, " + this.getClass().getSimpleName());
-                e.printStackTrace();
             }
         });
 
@@ -74,13 +72,6 @@ public class LoginScene extends GridPane implements Page {
             GridPane.setHalignment(loginBtn, HPos.CENTER);
             loginBtn.setMaxWidth(Double.MAX_VALUE);
             loginBtn.requestFocus();
-
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            loginBtn.fire();
     }
 
     @Override

@@ -6,8 +6,11 @@ import application.portfolio.clientmodule.Model.View.Scenes.start.MainScene;
 import application.portfolio.clientmodule.TeamLinkApp;
 import application.portfolio.clientmodule.utils.ExecutorServiceManager;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -21,7 +24,8 @@ public class Management extends HBox implements Page {
     private final Button manageGroupsBtn = new Button("Manage Groups");
     private final Button manageUsersAndGroupsBtn = new Button("Manage Users & Groups");
 
-    private VBox menuBar;
+    private final ButtonBar menuBar = new ButtonBar();
+    private final VBox menuWrapper = new VBox();
     private final StackPane managingPages = new StackPane();
 
     private final ManagementBinder binder = new ManagementBinder();
@@ -40,8 +44,10 @@ public class Management extends HBox implements Page {
         binder.setManageGroupsBtn(manageGroupsBtn);
         binder.setMangeUsersAndGroupsBtn(manageUsersAndGroupsBtn);
 
-        menuBar = new VBox(10, manageUsersBtn, manageGroupsBtn, manageUsersAndGroupsBtn);
-        Platform.runLater(() -> this.getChildren().addAll(menuBar, managingPages));
+        menuBar.getButtons().addAll(manageUsersBtn, manageGroupsBtn, manageUsersAndGroupsBtn);
+        menuWrapper.getChildren().addAll(menuBar, managingPages);
+
+        Platform.runLater(() -> this.getChildren().add(menuWrapper));
 
         return CompletableFuture.supplyAsync(() -> {
             binder.initialize();
@@ -56,8 +62,12 @@ public class Management extends HBox implements Page {
 
     @Override
     public void loadStyles() {
-        this.getStyleClass().add("managementBG");
-        menuBar.getStyleClass().add("menuBar");
+        Platform.runLater(() -> {
+            menuWrapper.setAlignment(Pos.TOP_LEFT);
+            menuWrapper.setPadding(new Insets(10, 10, 10, 10));
+            menuWrapper.setSpacing(10);
+            menuBar.getButtons().forEach(e -> e.getStyleClass().add("managementBtn"));
+        });
     }
 
     @Override

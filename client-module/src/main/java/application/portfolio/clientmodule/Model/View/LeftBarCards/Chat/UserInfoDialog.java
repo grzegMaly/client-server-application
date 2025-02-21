@@ -91,7 +91,7 @@ public class UserInfoDialog {
 
     private void loadStyles() {
 
-        URL resourceUrl = getClass().getResource("/View/Styles/ChatInfoDialog.css");
+        URL resourceUrl = getClass().getResource("/View/Styles/Dialogs/ChatInfoDialog.css");
         if (resourceUrl == null) {
             return;
         }

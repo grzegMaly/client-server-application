@@ -65,10 +65,7 @@ public class MainScene extends VBox implements Page {
                 .thenRun(() -> Platform.runLater(this::bindSizeProperties))
                 .thenRun(() -> Platform.runLater(leftBar::bindSizeProperties))
                 .thenApply(v -> true)
-                .exceptionally(ex -> {
-                    System.out.println("initializePage, " + this.getClass().getSimpleName());
-                    return false;
-                });
+                .exceptionally(ex -> false);
     }
 
     @Override

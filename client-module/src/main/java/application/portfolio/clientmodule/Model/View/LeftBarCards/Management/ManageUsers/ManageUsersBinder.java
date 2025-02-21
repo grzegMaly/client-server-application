@@ -57,6 +57,10 @@ public class ManageUsersBinder {
         removeBtn.setOnAction(e -> {
             Person personDAO = personTable.getSelectionModel().getSelectedItem();
 
+            if (personDAO == null) {
+                return;
+            }
+
             if (personDAO.equals(UserSession.getInstance().getLoggedInUser())) {
                 new Alert(Alert.AlertType.ERROR, "Unsupported Operation").show();
                 return;

@@ -19,7 +19,6 @@ public class ResponseHandler {
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
     }
 
-    //Todo: Improve to login errors
     public static void handleError(HttpExchange exchange, String message, int statusCode) {
 
         ObjectNode responseNode = objectMapper.createObjectNode();
@@ -34,7 +33,7 @@ public class ResponseHandler {
         int statusCode = responseData.getKey();
         JsonNode responseNode = responseData.getValue();
 
-        byte[] data = null;
+        byte[] data;
         try {
             data = objectMapper.writeValueAsBytes(responseNode);
             exchange.sendResponseHeaders(statusCode, data.length);

@@ -2,10 +2,13 @@ package application.portfolio.clientmodule.Model.View.LeftBarCards.Notes.NoteUti
 
 import javafx.application.Platform;
 import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.geometry.VPos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 
@@ -122,10 +125,10 @@ public class NotesForm extends GridPane {
             ColumnConstraints col3 = new ColumnConstraints();
             ColumnConstraints col4 = new ColumnConstraints();
 
-            col0.setPercentWidth(25);
-            col1.setPercentWidth(20);
-            col2.setPercentWidth(20);
-            col3.setPercentWidth(20);
+            col0.setPercentWidth(15);
+            col1.setPercentWidth(15);
+            col2.setPercentWidth(15);
+            col3.setPercentWidth(40);
             col4.setPercentWidth(15);
 
             RowConstraints row0 = new RowConstraints();
@@ -193,5 +196,24 @@ public class NotesForm extends GridPane {
         noteBinder.withContent(contentTa);
         this.add(contentTa, 0, 5, 3, 1);
         contentTa.setMinHeight(350);
+    }
+
+    public void loadStyles() {
+
+        this.setAlignment(Pos.TOP_RIGHT);
+        this.setPadding(new Insets(20, 20, 20, 20));
+        this.getStyleClass().add("notesGridPane");
+
+        List.of(titleLbl, noteTypeLbl, deadlineLbl)
+                .forEach(e -> e.getStyleClass().add("notesLabels"));
+
+        titleTf.getStyleClass().add("notesTitleTf");
+        contentTa.getStyleClass().add("notesContentTa");
+
+        List.of(typeCb, categoryCb, priorityCb)
+                .forEach(e -> e.getStyleClass().add("notesComboBox"));
+
+        List.of(saveBtn, listBtn)
+                .forEach(e -> e.getStyleClass().add("notesBtn"));
     }
 }

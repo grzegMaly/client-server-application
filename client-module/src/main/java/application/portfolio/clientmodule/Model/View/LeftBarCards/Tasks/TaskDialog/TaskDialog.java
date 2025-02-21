@@ -4,6 +4,7 @@ import application.portfolio.clientmodule.Connection.UserSession;
 import application.portfolio.clientmodule.Model.Model.Person.Person;
 import application.portfolio.clientmodule.Model.Model.Person.Role;
 import application.portfolio.clientmodule.Model.Model.Task.Task;
+import javafx.application.Platform;
 import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -16,6 +17,7 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.List;
 
 
@@ -59,6 +61,8 @@ public class TaskDialog extends Stage {
 
     private final Label assignedToLbl2 = new Label();
     private final StackPane assignedToSp = new StackPane();
+    private TextField searchTf;
+    private Button searchBtn;
 
     private final Label createdDateLbl2 = new Label();
 
@@ -66,6 +70,8 @@ public class TaskDialog extends Stage {
     private final StackPane deadlineSp = new StackPane();
 
     private final TextArea descriptionTa = new TextArea();
+
+    private Scene scene;
 
     private final List<Node> baseElements = List.of(titleLbl1, titleSp, authorLbl1, authorLbl2,
             assignedToLbl1, assignedToSp, createdDateLbl1, createdDateLbl2, deadlineLbl1,
@@ -97,6 +103,8 @@ public class TaskDialog extends Stage {
         boundSizeProperties();
 
         taskBinder.bind();
+
+        loadStyles();
         this.showAndWait();
     }
 
@@ -187,9 +195,9 @@ public class TaskDialog extends Stage {
         titleTf = new TextField();
         taskBinder.withTitle(titleTf);
 
-        TextField searchTf = new TextField();
+        searchTf = new TextField();
         searchTf.setEditable(false);
-        Button searchBtn = new Button("≡");
+        searchBtn = new Button("≡");
         searchStruct = new HBox(searchTf, searchBtn);
         taskBinder.withAssignedTo(searchTf, searchBtn);
 
@@ -247,11 +255,50 @@ public class TaskDialog extends Stage {
         double width = screen.getBounds().getWidth();
         double windowWidth = width * 0.20;
 
-        Scene scene = new Scene(gp, windowWidth, 500);
+        scene = new Scene(gp, windowWidth, 500);
 
         this.setScene(scene);
         this.setMinWidth(windowWidth);
         this.setMaxWidth(windowWidth);
+    }
+
+    private void loadStyles() {
+
+        URL resource = getClass().getResource("/View/Styles/Dialogs/TaskDialog.css");
+        if (resource == null) {
+            return;
+        }
+        scene.getStylesheets().add(resource.toExternalForm());
+
+        Platform.runLater(() -> {
+            cancelBtn.getStyleClass().add("taskBtn");
+
+            if (openOperation == Operation.READ_MODIFY || openOperation == Operation.READ) {
+                List.of(titleLbl2, assignedToLbl2, deadlineLbl2)
+                        .forEach(e -> e.getStyleClass().add("taskDialogLbl"));
+            }
+
+            if (openOperation == Operation.READ_MODIFY || openOperation == Operation.CREATE) {
+                saveBtn.getStyleClass().add("taskBtn");
+
+                List.of(titleTf, searchTf)
+                        .forEach(e -> e.getStyleClass().add("taskDialogTf"));
+                searchBtn.getStyleClass().add("taskSearchBtn");
+            }
+
+            if (openOperation == Operation.READ_MODIFY) {
+                editBtn.getStyleClass().add("taskBtn");
+                deleteBtn.getStyleClass().add("taskBtn");
+            }
+        });
+
+        gp.getStyleClass().add("taskDialogGridPane");
+        descriptionTa.getStyleClass().add("taskDialogTextArea");
+
+        List.of(titleLbl1, authorLbl1, authorLbl2,
+                assignedToLbl1, assignedToSp, createdDateLbl1,
+                createdDateLbl2, deadlineLbl1, descriptionLbl)
+                .forEach(e -> e.getStyleClass().add("taskDialogLbl"));
     }
 
     @Override
